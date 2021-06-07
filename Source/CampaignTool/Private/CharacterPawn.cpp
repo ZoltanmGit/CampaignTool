@@ -11,12 +11,15 @@
 ACharacterPawn::ACharacterPawn()
 {
 	//Create components 
-	CharacterMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CharacterMesh"));
-	RootComponent = CharacterMesh; //Set the mesh as the RootComponent
+
+	
 	CharacterDisplay = CreateDefaultSubobject<UWidgetComponent>(TEXT("CharacterDisplay"));
-	CharacterDisplay->SetupAttachment(CharacterMesh);
-	CharacterDisplay->SetRelativeLocation(FVector(0.0f, 10.0f, 0.0f));
-	CharacterDisplay->SetRelativeRotation(FRotator(0.0f, 90.0f, 0.0f));
+	RootComponent = CharacterDisplay; //Set the Widget as the RootComponent
+	CharacterDisplay->SetWorldRotation(FRotator(90.0f, 0.0f, 0.0f));
+
+	CharacterMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CharacterMesh"));
+	CharacterMesh->SetupAttachment(RootComponent);
+
 	CharacterHealth = CreateDefaultSubobject<UHealthComponent>(TEXT("CharacterHealth"));
 
 	// Subscribe to HandleTakeDamage to OnTakeAnyDamage event
