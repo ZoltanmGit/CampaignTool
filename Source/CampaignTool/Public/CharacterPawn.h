@@ -37,4 +37,9 @@ protected:
 	//Damage Handling
 	UFUNCTION()
 		void HandleTakeDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser);
+	//Events
+	UFUNCTION(BlueprintNativeEvent)
+		void OnHealthChange();
+	//Test method
+	void HandleTestAction();
 };

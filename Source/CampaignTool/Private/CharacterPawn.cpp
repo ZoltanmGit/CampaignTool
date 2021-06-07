@@ -5,6 +5,7 @@
 #include "../Public/HealthComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 
 // Sets default values
@@ -34,6 +35,7 @@ void ACharacterPawn::BeginPlay()
 	if (CharacterHealth != nullptr)
 	{
 		CharacterHealth->SetCurrentHealth(CharacterHealth->GetFullHealth());
+		OnHealthChange();
 	}
 }
 
@@ -41,6 +43,8 @@ void ACharacterPawn::BeginPlay()
 void ACharacterPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	PlayerInputComponent->BindAction("TestAction", IE_Pressed, this, &ACharacterPawn::HandleTestAction);
 }
 
 void ACharacterPawn::HandleTakeDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
@@ -48,7 +52,14 @@ void ACharacterPawn::HandleTakeDamage(AActor* DamagedActor, float Damage, const 
 	if (CharacterHealth != nullptr)
 	{
 		CharacterHealth->HandleTakeDamage(Damage);
+		OnHealthChange();
 		UE_LOG(LogTemp, Warning, TEXT("Character's Health: %f"), CharacterHealth->GetCurrentHealth());
 	}
+}
+//Events
+void ACharacterPawn::OnHealthChange_Implementation() {}
+void ACharacterPawn::HandleTestAction()
+{
+	UGameplayStatics::ApplyDamage(this, 20, nullptr, this, nullptr);
 }
 
