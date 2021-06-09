@@ -8,10 +8,13 @@
 AGridField::AGridField()
 {
 	FieldMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("FieldMesh"));
+	FieldMesh->bAllowCullDistanceVolume = false;
+	FieldMesh->CastShadow = false;
 	RootComponent = FieldMesh;
 	ObjectMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("FieldObject"));
 	ObjectMesh->SetupAttachment(RootComponent);
 	ObjectMesh->SetRelativeLocation(FVector(0.0f, 0.0f, 50.0f));
+	ObjectMesh->bAllowCullDistanceVolume = true;
 	FieldState = FieldState::Empty;
 }
 
