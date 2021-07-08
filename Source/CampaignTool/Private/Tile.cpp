@@ -8,11 +8,6 @@
 // Sets default values
 ATile::ATile()
 {
-
-	/*TileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TileMesh"));
-	TileMesh->SetupAttachment(RootComponent);
-	TileMesh->CastShadow = false;
-	*/
 	TileState = TileState::Empty;
 }
 

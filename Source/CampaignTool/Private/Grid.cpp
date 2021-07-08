@@ -12,6 +12,7 @@ AGrid::AGrid()
 	InstancedTileMesh = CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("InstancedTileMesh"));
 	InstancedTileMesh->SetMobility(EComponentMobility::Static);
 	InstancedTileMesh->CastShadow = false;
+	InstancedTileMesh->SetStaticLightingMapping(true, 8);
 	RootComponent = InstancedTileMesh;
 
 	gridSize = 10;
@@ -22,6 +23,10 @@ AGrid::AGrid()
 void AGrid::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void AGrid::SpawnGrid()
+{
 	if (InstancedTileMesh->GetStaticMesh() != nullptr)
 	{
 		int adjustment = fieldSize / 2;
@@ -36,9 +41,5 @@ void AGrid::BeginPlay()
 				InstancedTileMesh->AddInstance(transform);
 			}
 		}
-	}
-	else
-	{
-		this->Destroy();
 	}
 }
