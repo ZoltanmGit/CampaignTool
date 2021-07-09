@@ -10,8 +10,7 @@ UENUM(BlueprintType)
 enum FieldState
 {
 	Empty UMETA(DisplayName="Emtpy"),
-	Character UMETA(DisplayName="Character Field"),
-	Npc UMETA(DisplayName="Npc Field")
+	Occupied UMETA(DisplayName = "Occupied")
 };
 
 
@@ -28,20 +27,16 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 public:
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Location)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = FieldAttributes)
 		FVector FieldLocation;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Location)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = FieldAttributes)
 		float Row;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Location)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = FieldAttributes)
 		float Column;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = FieldMesh)
-		class UStaticMeshComponent* FieldMesh;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = FieldObject)
-		class UStaticMeshComponent* ObjectMesh;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = FieldState)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = FieldAttributes)
+		class UStaticMeshComponent* FieldObjectMesh;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = FieldAttributes)
+		class UBoxComponent* FieldCollisionBox;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = FieldAttributes)
 		TEnumAsByte<FieldState> FieldState;
-public:
-	//Functionality
-	UFUNCTION(BlueprintCallable)
-		void ObjectAdded();
 };

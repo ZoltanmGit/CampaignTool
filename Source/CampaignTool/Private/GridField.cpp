@@ -3,18 +3,14 @@
 
 #include "GridField.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/BoxComponent.h"
 
 // Sets default values
 AGridField::AGridField()
 {
-	FieldMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("FieldMesh"));
-	FieldMesh->bAllowCullDistanceVolume = false;
-	FieldMesh->CastShadow = false;
-	RootComponent = FieldMesh;
-	ObjectMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("FieldObject"));
-	ObjectMesh->SetupAttachment(RootComponent);
-	ObjectMesh->SetRelativeLocation(FVector(0.0f, 0.0f, 50.0f));
-	ObjectMesh->bAllowCullDistanceVolume = true;
+	FieldCollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
+	FieldCollisionBox->SetBoxExtent(FVector(100.0f, 100.0f, 20.0f));
+	RootComponent = FieldCollisionBox;
 	FieldState = FieldState::Empty;
 }
 
@@ -22,8 +18,4 @@ AGridField::AGridField()
 void AGridField::BeginPlay()
 {
 	Super::BeginPlay();
-}
-void AGridField::ObjectAdded()
-{
-	//Implementation needed
 }
