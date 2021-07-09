@@ -20,14 +20,16 @@ protected:
 	virtual void BeginPlay() override;
 	
 public:	
-	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = GridProperties)
+		TArray<class AGridField*> Grid;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = GridProperties)
+		int Rows;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = GridProperties)
+		int Columns;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = GridProperties)
-		UInstancedStaticMeshComponent* InstancedTileMesh;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = GridProperties)
-		int gridSize;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = GridProperties)
 		int fieldSize;
 
+	//UFUNCTIONS
 	UFUNCTION(BlueprintCallable)
 		void SpawnGrid();
 };

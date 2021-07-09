@@ -9,7 +9,7 @@
 AGridField::AGridField()
 {
 	FieldCollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
-	FieldCollisionBox->SetBoxExtent(FVector(100.0f, 100.0f, 20.0f));
+	FieldCollisionBox->SetBoxExtent(FVector(50.0f, 50.0f, 5.0f));
 	RootComponent = FieldCollisionBox;
 	FieldState = FieldState::Empty;
 }

@@ -2,20 +2,13 @@
 
 
 #include "Grid.h"
+#include "../Public/GridField.h"
 
 // Sets default values
 AGrid::AGrid()
 {
-	PrimaryActorTick.bCanEverTick = false;
-	PrimaryActorTick.bStartWithTickEnabled = false;
-
-	InstancedTileMesh = CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("InstancedTileMesh"));
-	InstancedTileMesh->SetMobility(EComponentMobility::Static);
-	InstancedTileMesh->CastShadow = false;
-	InstancedTileMesh->SetStaticLightingMapping(true, 8);
-	RootComponent = InstancedTileMesh;
-
-	gridSize = 10;
+	Rows = 10;
+	Columns = 10;
 	fieldSize = 100;
 }
 
@@ -27,19 +20,22 @@ void AGrid::BeginPlay()
 
 void AGrid::SpawnGrid()
 {
-	if (InstancedTileMesh->GetStaticMesh() != nullptr)
+	int adjustment = fieldSize / 2; //Should be 50
+
+	for (int i = 0; i < Rows; i++)
 	{
-		int adjustment = fieldSize / 2;
-		FVector spawnLocation;
-		for (int i = 0; i < gridSize; i++)
+		for (int j = 0; j < Columns; j++)
 		{
-			for (int j = 0; j < gridSize; j++)
-			{
-				spawnLocation = FVector((i * fieldSize) + adjustment, (j * fieldSize) + adjustment, adjustment);
-				FTransform transform;
-				transform.SetLocation(spawnLocation);
-				InstancedTileMesh->AddInstance(transform);
-			}
+			FTransform spawnTransform;
+			spawnTransform.SetLocation(FVector(this->GetActorLocation().X + (i * fieldSize) + adjustment, this->GetActorLocation().Y + (j * fieldSize) + adjustment, this->GetActorLocation().Z+5));
+			AGridField* newField = GetWorld()->SpawnActor<AGridField>(AGridField::StaticClass(),spawnTransform);
+			newField->Row = i;
+			newField->Column = j;
+			newField->SetActorRelativeLocation(FVector((i * fieldSize) + adjustment, (j * fieldSize) + adjustment, 5));
+			newField->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
+
+			//Add it to our array of fields
+			Grid.Add(newField);
 		}
 	}
 }
