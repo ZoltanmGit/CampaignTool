@@ -12,7 +12,13 @@ enum FieldState
 	Empty UMETA(DisplayName="Emtpy"),
 	Occupied UMETA(DisplayName = "Occupied")
 };
-
+UENUM(BlueprintType)
+enum LightLevel
+{
+	Darkness UMETA(DisplayName = "Darkness"),
+	Dim UMETA(DisplayName = "Dim Light"),
+	Bright UMETA(DisplayName = "Bright Light")
+};
 
 UCLASS()
 class CAMPAIGNTOOL_API AGridField : public AActor
@@ -33,10 +39,10 @@ public:
 		float Row;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = FieldAttributes)
 		float Column;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = FieldAttributes)
-		class UStaticMeshComponent* FieldObjectMesh;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = FieldAttributes)
-		class UBoxComponent* FieldCollisionBox;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = FieldAttributes)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = FieldAttributes)
 		TEnumAsByte<FieldState> FieldState;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = FieldAttributes)
+		TEnumAsByte<LightLevel> FieldLightLevel;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = FieldAttributes)
+		bool bIsVisible;
 };

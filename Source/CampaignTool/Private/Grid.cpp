@@ -3,39 +3,52 @@
 
 #include "Grid.h"
 #include "../Public/GridField.h"
+#include "Components/HierarchicalInstancedStaticMeshComponent.h"
 
-// Sets default values
+/// <summary>
+/// Constructor, set default values here
+/// </summary>
 AGrid::AGrid()
 {
+	HISMC_Grid = CreateDefaultSubobject<UHierarchicalInstancedStaticMeshComponent>(TEXT("HierarchicalInstancedStaticMesh"));
+	SetRootComponent(HISMC_Grid);
+
 	Rows = 10;
-	Columns = 10;
+	Columns = 8;
 	fieldSize = 100;
 }
 
-// Called when the game starts or when spawned
+/// <summary>
+/// Called when the game starts or when spawned
+/// </summary>
 void AGrid::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-void AGrid::SpawnGrid()
-{
-	int adjustment = fieldSize / 2; //Should be 50
+/// <summary>
+/// Called at every property change in the editor
+/// We use this to drag the grid in the editor
+/// </summary>
+/// <param name="Transform">An FTransform as parameter</param>
+void AGrid::OnConstruction(const FTransform& Transform) {
 
-	for (int i = 0; i < Rows; i++)
+	if (HISMC_Grid && HISMC_Grid->GetStaticMesh())
 	{
-		for (int j = 0; j < Columns; j++)
-		{
-			FTransform spawnTransform;
-			spawnTransform.SetLocation(FVector(this->GetActorLocation().X + (i * fieldSize) + adjustment, this->GetActorLocation().Y + (j * fieldSize) + adjustment, this->GetActorLocation().Z+5));
-			AGridField* newField = GetWorld()->SpawnActor<AGridField>(AGridField::StaticClass(),spawnTransform);
-			newField->Row = i;
-			newField->Column = j;
-			newField->SetActorRelativeLocation(FVector((i * fieldSize) + adjustment, (j * fieldSize) + adjustment, 5));
-			newField->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
+		
+		RegisterAllComponents(); //Register all of the components
+		
+		this->HISMC_Grid->ClearInstances(); //Clear instances and remake them, I guess
 
-			//Add it to our array of fields
-			Grid.Add(newField);
+		for (int i = 0; i < Rows; i++)
+		{
+			for (int j = 0; j < Columns; j++)
+			{
+				FTransform newInstanceTransform;
+				newInstanceTransform.SetLocation(FVector((i*fieldSize)+(fieldSize/2), (j * fieldSize) + (fieldSize / 2), 0));
+				HISMC_Grid->AddInstance(newInstanceTransform);
+			}
 		}
 	}
+	
 }

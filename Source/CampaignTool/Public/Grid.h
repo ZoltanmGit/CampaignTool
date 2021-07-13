@@ -20,16 +20,17 @@ protected:
 	virtual void BeginPlay() override;
 	
 public:	
+	/*UPROPERTY(EditAnywhere, EditInline, BlueprintReadOnly, Category = GridProperties)
+		TArray<class AGridField*> RepGrid;*/
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = GridProperties)
+		class UHierarchicalInstancedStaticMeshComponent* HISMC_Grid;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = GridProperties)
-		TArray<class AGridField*> Grid;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = GridProperties)
 		int Rows;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = GridProperties)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = GridProperties)
 		int Columns;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = GridProperties)
 		int fieldSize;
 
-	//UFUNCTIONS
-	UFUNCTION(BlueprintCallable)
-		void SpawnGrid();
+public:
+	virtual void OnConstruction(const FTransform& transform);
 };
