@@ -32,6 +32,8 @@ public:
 		class UHealthComponent* CharacterHealth;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Health)
 		class UStaticMeshComponent* CharacterMesh;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+		class USpringArmComponent* CharacterSpringArm;
 
 protected:
 	//Damage Handling

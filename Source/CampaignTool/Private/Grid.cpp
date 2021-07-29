@@ -11,7 +11,7 @@
 AGrid::AGrid()
 {
 	HISMC_Grid = CreateDefaultSubobject<UHierarchicalInstancedStaticMeshComponent>(TEXT("HierarchicalInstancedStaticMesh"));
-	SetRootComponent(HISMC_Grid);
+	SetRootComponent(HISMC_Grid); // Set the instancedMesh as the rootcomponent for this class
 
 	Rows = 10;
 	Columns = 8;
@@ -36,9 +36,9 @@ void AGrid::OnConstruction(const FTransform& Transform) {
 	if (HISMC_Grid && HISMC_Grid->GetStaticMesh())
 	{
 		
-		RegisterAllComponents(); //Register all of the components
+		RegisterAllComponents(); //Register all of the components - we register components if they are dynamically created at runtime
 		
-		this->HISMC_Grid->ClearInstances(); //Clear instances and remake them, I guess
+		this->HISMC_Grid->ClearInstances(); //Clear instances and remake them
 
 		for (int i = 0; i < Rows; i++)
 		{
@@ -50,5 +50,4 @@ void AGrid::OnConstruction(const FTransform& Transform) {
 			}
 		}
 	}
-	
 }
