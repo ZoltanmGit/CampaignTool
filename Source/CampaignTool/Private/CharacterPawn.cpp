@@ -5,6 +5,7 @@
 #include "../Public/HealthComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/HierarchicalInstancedStaticMeshComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -14,13 +15,16 @@
 // Sets default values
 ACharacterPawn::ACharacterPawn()
 {
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	PrimaryActorTick.bCanEverTick = true;
+
 	//Mesh
 	CharacterMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CharacterMesh"));
 	RootComponent = CharacterMesh; //Set Mesh as the RootComponent
 
 	//Camera and SpringArm
 	CharacterSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CharacterSpringArm"));
-	CharacterSpringArm->TargetArmLength = 600.0f;
+	CharacterSpringArm->TargetArmLength = 700.0f;
 	CharacterSpringArm->bEnableCameraLag = true;
 	CharacterSpringArm->SetRelativeRotation(FRotator(-40.0f, 0.0f, 0.0f));
 	CharacterSpringArm->SetupAttachment(RootComponent);
@@ -34,6 +38,8 @@ ACharacterPawn::ACharacterPawn()
 
 	//Initialize values
 	bIsRightMouseDown = false;
+	bCastMouseLineTrace = true;
+	PlayerCursorState = CursorState::OverGameWorld;
 	
 	// Subscribe to HandleTakeDamage to OnTakeAnyDamage event
 	OnTakeAnyDamage.AddDynamic(this, &ACharacterPawn::HandleTakeDamage);
@@ -74,6 +80,61 @@ void ACharacterPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("RMBAction", IE_Released, this, &ACharacterPawn::HandleRMBRelease);
 }
 
+void ACharacterPawn::Tick(float DeltaTime)
+{
+	if (DefaultController != nullptr && bCastMouseLineTrace && PlayerCursorState == CursorState::OverGameWorld)
+	{
+		FHitResult UnderCursorResult;
+
+		if (DefaultController->GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel1), true, UnderCursorResult))
+		{
+			//DrawDebugLine(this->GetWorld(), CharacterCamera->GetComponentLocation(), UnderCursorResult.Location, FColor::Orange, false, 10.0f, (uint8)('\003'), 2.0f);
+
+			if (UnderCursorResult.IsValidBlockingHit())
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Valid Block"));
+				UHierarchicalInstancedStaticMeshComponent* temp = Cast<UHierarchicalInstancedStaticMeshComponent>(UnderCursorResult.GetComponent());
+				if (temp != nullptr)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Hit HISMC %d"), UnderCursorResult.Item);
+					FTransform TileTransform;
+					temp->GetInstanceTransform(UnderCursorResult.Item,TileTransform,true);
+					if (GEngine)
+					{
+						GEngine->AddOnScreenDebugMessage(-2, 0.0, FColor::Emerald, FString::Printf(TEXT("Tile Location: %s"), *TileTransform.GetLocation().ToString()));
+					}
+				}
+			}
+			else
+			{
+				GEngine->AddOnScreenDebugMessage(-2, 0.0, FColor::Red, TEXT("INVALID BLOCK"));
+			}
+		}
+		else
+		{
+			GEngine->AddOnScreenDebugMessage(-2, 0.0, FColor::Emerald, TEXT("Trace did not hit"));
+		}
+	}
+	//DEBUG
+	if (GEngine)
+	{
+		switch (PlayerCursorState)
+		{
+		case OverGameWorld:
+			GEngine->AddOnScreenDebugMessage(-1, 0.0, FColor::Yellow, TEXT("CursorState: OverGameWorld"));
+			break;
+		case OverInterface:
+			GEngine->AddOnScreenDebugMessage(-1, 0.0, FColor::Yellow, TEXT("CursorState: OverInterface"));
+			break;
+		case Turning:
+			GEngine->AddOnScreenDebugMessage(-1, 0.0, FColor::Yellow, TEXT("CursorState: Turning"));
+			break;
+		default:
+			break;
+		}
+	}
+}
+
 void ACharacterPawn::HandleTakeDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
 	if (CharacterHealth != nullptr)
@@ -88,6 +149,7 @@ void ACharacterPawn::OnHealthChange_Implementation() {}
 void ACharacterPawn::HandleTestAction()
 {
 	UGameplayStatics::ApplyDamage(this, 20, nullptr, this, nullptr);
+	CharacterSpringArm->SetWorldLocation(this->GetActorLocation());
 }
 
 void ACharacterPawn::CameraForward(float value)
@@ -124,9 +186,10 @@ void ACharacterPawn::CameraTurn(float value)
 
 void ACharacterPawn::HandleRMBPress()
 {
-	if (!bIsRightMouseDown)
+	if (!bIsRightMouseDown && PlayerCursorState == CursorState::OverGameWorld)
 	{
 		bIsRightMouseDown = true;
+		PlayerCursorState = CursorState::Turning;
 		if (DefaultController)
 		{
 			DefaultController->GetMousePosition(savedMousePosition.X, savedMousePosition.Y);
@@ -140,9 +203,11 @@ void ACharacterPawn::HandleRMBPress()
 }
 void ACharacterPawn::HandleRMBRelease()
 {
-	if (bIsRightMouseDown)
+	if (bIsRightMouseDown && PlayerCursorState == CursorState::Turning)
 	{
 		bIsRightMouseDown = false;
+		PlayerCursorState = CursorState::OverGameWorld;
+
 		if (DefaultController)
 		{
 			DefaultController->SetMouseLocation(savedMousePosition.X, savedMousePosition.Y);
@@ -153,5 +218,9 @@ void ACharacterPawn::HandleRMBRelease()
 			DefaultController->bEnableMouseOverEvents = true;
 		}
 	}
+}
+
+void ACharacterPawn::HandleLMBPress()
+{
 }
 

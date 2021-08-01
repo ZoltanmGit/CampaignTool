@@ -5,6 +5,15 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "CharacterPawn.generated.h"
+UENUM()
+enum CursorState
+{
+	OverGameWorld UMETA(DisplayName = "OverGameWorld"),
+	OverInterface UMETA(DisplayName = "OverInterface"),
+	Turning UMETA(DisplayName = "Turning"),
+	OverEnemy UMETA(DisplayName = "OverEnemy"),
+	OverAlly UMETA(DisplayName = "OverAlly")
+};
 
 UCLASS()
 class CAMPAIGNTOOL_API ACharacterPawn : public APawn
@@ -24,6 +33,9 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
 public:
 	//Components
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Health)
@@ -41,10 +53,14 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Controller)
 		class APlayerController* DefaultController; //The Default playerController
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		TEnumAsByte<CursorState> PlayerCursorState;
+
 protected:
 	//values
 	FVector2D savedMousePosition;
 	bool bIsRightMouseDown;
+	bool bCastMouseLineTrace;
 protected:
 	//Damage Handling
 	UFUNCTION()
@@ -59,8 +75,10 @@ protected:
 	void CameraForward(float value);
 	void CameraRight(float value);
 	void CameraTurn(float value);
-
+	//Mouse Actions
 	void HandleRMBPress();
 	void HandleRMBRelease();
+
+	void HandleLMBPress();
 
 };

@@ -11,6 +11,8 @@
 AGrid::AGrid()
 {
 	HISMC_Grid = CreateDefaultSubobject<UHierarchicalInstancedStaticMeshComponent>(TEXT("HierarchicalInstancedStaticMesh"));
+	HISMC_Grid->SetCollisionEnabled(ECollisionEnabled::QueryOnly); //Does not react to physics, only overlaps, traces , etc...
+	HISMC_Grid->SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECollisionResponse::ECR_Block);
 	SetRootComponent(HISMC_Grid); // Set the instancedMesh as the rootcomponent for this class
 
 	Rows = 10;

@@ -36,6 +36,11 @@ float UHealthComponent::GetArmorClass()
 	return 0.0f;
 }
 
+float UHealthComponent::GetHealthPercent()
+{
+	return currentHealth/fullHealth;
+}
+
 void UHealthComponent::SetCurrentHealth(float value)
 {
 	currentHealth = FMath::Clamp<float>(value, 0, fullHealth);

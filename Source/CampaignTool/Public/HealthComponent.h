@@ -36,6 +36,8 @@ public:
 		float GetFullHealth();
 	UFUNCTION(BlueprintCallable)
 		float GetArmorClass();
+	UFUNCTION(BlueprintCallable)
+		float GetHealthPercent();
 	//Setters
 	void SetCurrentHealth(float value);
 	void SetFullHealth(float value);
