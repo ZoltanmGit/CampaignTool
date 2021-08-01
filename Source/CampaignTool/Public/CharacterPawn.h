@@ -26,15 +26,25 @@ public:
 
 public:
 	//Components
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Display)
-		class UWidgetComponent* CharacterDisplay;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Health)
-		class UHealthComponent* CharacterHealth;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Health)
-		class UStaticMeshComponent* CharacterMesh;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
-		class USpringArmComponent* CharacterSpringArm;
+		class UHealthComponent* CharacterHealth; //Component that manages the health of the character
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Mesh)
+		class UStaticMeshComponent* CharacterMesh; //The Mesh that represents the character in-game
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+		class USpringArmComponent* CharacterSpringArm; //The springArm the camera is attached to
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+		class UCameraComponent* CharacterCamera; //The Camera the player sees
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Controller)
+		class APlayerController* DefaultController; //The Default playerController
+
+protected:
+	//values
+	FVector2D savedMousePosition;
+	bool bIsRightMouseDown;
 protected:
 	//Damage Handling
 	UFUNCTION()
@@ -44,4 +54,13 @@ protected:
 		void OnHealthChange();
 	//Test method
 	void HandleTestAction();
+
+	//CameraMovement
+	void CameraForward(float value);
+	void CameraRight(float value);
+	void CameraTurn(float value);
+
+	void HandleRMBPress();
+	void HandleRMBRelease();
+
 };
