@@ -5,7 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "CharacterPawn.generated.h"
-UENUM()
+
+UENUM(BlueprintType)
 enum CursorState
 {
 	OverGameWorld UMETA(DisplayName = "OverGameWorld"),

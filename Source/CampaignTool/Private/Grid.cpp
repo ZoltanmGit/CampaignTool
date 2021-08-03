@@ -2,7 +2,6 @@
 
 
 #include "Grid.h"
-#include "../Public/GridField.h"
 #include "Components/HierarchicalInstancedStaticMeshComponent.h"
 
 /// <summary>
@@ -14,7 +13,6 @@ AGrid::AGrid()
 	HISMC_Grid->SetCollisionEnabled(ECollisionEnabled::QueryOnly); //Does not react to physics, only overlaps, traces , etc...
 	HISMC_Grid->SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECollisionResponse::ECR_Block);
 	SetRootComponent(HISMC_Grid); // Set the instancedMesh as the rootcomponent for this class
-
 	Rows = 10;
 	Columns = 8;
 	fieldSize = 100;
@@ -41,6 +39,7 @@ void AGrid::OnConstruction(const FTransform& Transform) {
 		RegisterAllComponents(); //Register all of the components - we register components if they are dynamically created at runtime
 		
 		this->HISMC_Grid->ClearInstances(); //Clear instances and remake them
+		this->GridDataArray.Empty();
 
 		for (int i = 0; i < Rows; i++)
 		{
@@ -48,6 +47,11 @@ void AGrid::OnConstruction(const FTransform& Transform) {
 			{
 				FTransform newInstanceTransform;
 				newInstanceTransform.SetLocation(FVector((i*fieldSize)+(fieldSize/2), (j * fieldSize) + (fieldSize / 2), 0));
+				FTileProperties newTileData = FTileProperties();
+				newTileData.bIsObscured = true;
+				newTileData.TerrainType = TerrainType::Dirt;
+				newTileData.LightType = LightType::Bright;
+				GridDataArray.Add(newTileData);
 				HISMC_Grid->AddInstance(newInstanceTransform);
 			}
 		}

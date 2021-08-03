@@ -3,6 +3,7 @@
 
 #include "CharacterPawn.h"
 #include "../Public/HealthComponent.h"
+#include "../Public/Grid.h"
 #include "Components/WidgetComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/HierarchicalInstancedStaticMeshComponent.h"
@@ -93,12 +94,12 @@ void ACharacterPawn::Tick(float DeltaTime)
 			if (UnderCursorResult.IsValidBlockingHit())
 			{
 				UE_LOG(LogTemp, Warning, TEXT("Valid Block"));
-				UHierarchicalInstancedStaticMeshComponent* temp = Cast<UHierarchicalInstancedStaticMeshComponent>(UnderCursorResult.GetComponent());
+				AGrid* temp = Cast<AGrid>(UnderCursorResult.Actor);
 				if (temp != nullptr)
 				{
 					UE_LOG(LogTemp, Warning, TEXT("Hit HISMC %d"), UnderCursorResult.Item);
 					FTransform TileTransform;
-					temp->GetInstanceTransform(UnderCursorResult.Item,TileTransform,true);
+					temp->HISMC_Grid->GetInstanceTransform(UnderCursorResult.Item, TileTransform, true);
 					if (GEngine)
 					{
 						GEngine->AddOnScreenDebugMessage(-2, 0.0, FColor::Emerald, FString::Printf(TEXT("Tile Location: %s"), *TileTransform.GetLocation().ToString()));

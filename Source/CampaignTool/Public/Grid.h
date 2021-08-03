@@ -6,6 +6,33 @@
 #include "GameFramework/Actor.h"
 #include "Grid.generated.h"
 
+
+UENUM(BlueprintType)
+enum TerrainType
+{
+	Grass UMETA(DisplayName = "Grass"),
+	Water UMETA(DisplayName = "Water"),
+	Dirt  UMETA(DisplayName = "Dirt"),
+	Rock  UMETA(DisplayName = "Rock")
+};
+UENUM(BlueprintType)
+enum LightType
+{
+	Bright UMETA(DisplayName = "Bright"),
+	Dim UMETA(DisplayName = "Dim"),
+	Darkness  UMETA(DisplayName = "Darkness"),
+};
+
+USTRUCT(BlueprintType)
+struct FTileProperties
+{
+	GENERATED_BODY()
+public:
+	bool bIsObscured;
+	TEnumAsByte<TerrainType> TerrainType;
+	TEnumAsByte<LightType> LightType;
+};
+
 UCLASS(BlueprintType, DefaultToInstanced)
 class CAMPAIGNTOOL_API AGrid : public AActor
 {
@@ -20,10 +47,10 @@ protected:
 	virtual void BeginPlay() override;
 	
 public:	
-	/*UPROPERTY(EditAnywhere, EditInline, BlueprintReadOnly, Category = GridProperties)
-		TArray<class AGridField*> RepGrid;*/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = GridProperties)
 		class UHierarchicalInstancedStaticMeshComponent* HISMC_Grid;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = GridProperties)
+		TArray<FTileProperties> GridDataArray;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = GridProperties)
 		int Rows;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = GridProperties)
