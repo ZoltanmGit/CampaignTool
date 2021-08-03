@@ -102,6 +102,7 @@ void ACharacterPawn::Tick(float DeltaTime)
 					if (GEngine)
 					{
 						GEngine->AddOnScreenDebugMessage(-2, 0.0, FColor::Emerald, FString::Printf(TEXT("Tile Location: %s"), *TileTransform.GetLocation().ToString()));
+						GEngine->AddOnScreenDebugMessage(-3, 0.0, FColor::Emerald, FString::Printf(TEXT("Tile Index: %d"), UnderCursorResult.Item));
 					}
 				}
 			}
