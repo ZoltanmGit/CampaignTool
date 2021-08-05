@@ -28,9 +28,12 @@ struct FTileProperties
 {
 	GENERATED_BODY()
 public:
-	bool bIsObscured;
-	TEnumAsByte<TerrainType> TerrainType;
-	TEnumAsByte<LightType> LightType;
+	UPROPERTY(VisibleAnywhere)
+		bool bIsObscured;
+	UPROPERTY(VisibleAnywhere)
+		TEnumAsByte<TerrainType> TerrainType;
+	UPROPERTY(VisibleAnywhere)
+		TEnumAsByte<LightType> LightType;
 };
 
 UCLASS(BlueprintType, DefaultToInstanced)
