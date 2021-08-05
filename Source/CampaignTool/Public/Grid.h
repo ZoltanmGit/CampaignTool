@@ -34,6 +34,10 @@ public:
 		TEnumAsByte<TerrainType> TerrainType;
 	UPROPERTY(VisibleAnywhere)
 		TEnumAsByte<LightType> LightType;
+	UPROPERTY(VisibleAnywhere)
+		int Row;
+	UPROPERTY(VisibleAnywhere)
+		int Column;
 };
 
 UCLASS(BlueprintType, DefaultToInstanced)

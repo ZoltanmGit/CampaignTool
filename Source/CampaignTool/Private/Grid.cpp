@@ -51,6 +51,8 @@ void AGrid::OnConstruction(const FTransform& Transform) {
 				newTileData.bIsObscured = true;
 				newTileData.TerrainType = TerrainType::Dirt;
 				newTileData.LightType = LightType::Bright;
+				newTileData.Row = i;
+				newTileData.Column = j;
 				GridDataArray.Add(newTileData);
 				HISMC_Grid->AddInstance(newInstanceTransform);
 			}
