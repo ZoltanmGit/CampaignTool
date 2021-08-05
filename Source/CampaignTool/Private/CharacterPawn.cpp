@@ -89,7 +89,7 @@ void ACharacterPawn::Tick(float DeltaTime)
 
 		if (DefaultController->GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel1), true, UnderCursorResult))
 		{
-			//DrawDebugLine(this->GetWorld(), CharacterCamera->GetComponentLocation(), UnderCursorResult.Location, FColor::Orange, false, 10.0f, (uint8)('\003'), 2.0f);
+			DrawDebugLine(this->GetWorld(), CharacterCamera->GetComponentLocation(), UnderCursorResult.Location, FColor::Orange, false, 10.0f, (uint8)('\003'), 2.0f);
 
 			if (UnderCursorResult.IsValidBlockingHit())
 			{
