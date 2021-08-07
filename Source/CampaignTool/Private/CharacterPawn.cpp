@@ -89,21 +89,31 @@ void ACharacterPawn::Tick(float DeltaTime)
 
 		if (DefaultController->GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel1), true, UnderCursorResult))
 		{
-			DrawDebugLine(this->GetWorld(), CharacterCamera->GetComponentLocation(), UnderCursorResult.Location, FColor::Orange, false, 10.0f, (uint8)('\003'), 2.0f);
+			//DrawDebugLine(this->GetWorld(), CharacterCamera->GetComponentLocation(), UnderCursorResult.Location, FColor::Orange, false, 10.0f, (uint8)('\003'), 2.0f);
 
 			if (UnderCursorResult.IsValidBlockingHit())
 			{
 				UE_LOG(LogTemp, Warning, TEXT("Valid Block"));
-				AGrid* temp = Cast<AGrid>(UnderCursorResult.Actor);
-				if (temp != nullptr)
+				AGrid* hitGrid = Cast<AGrid>(UnderCursorResult.Actor);
+				if (hitGrid != nullptr)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("Hit HISMC %d"), UnderCursorResult.Item);
+					
+					UHierarchicalInstancedStaticMeshComponent* hitHISMC = Cast<UHierarchicalInstancedStaticMeshComponent>(UnderCursorResult.Component);
+
 					FTransform TileTransform;
-					temp->HISMC_Grid->GetInstanceTransform(UnderCursorResult.Item, TileTransform, true);
+					hitHISMC->GetInstanceTransform(UnderCursorResult.Item, TileTransform, true);
+					
+					int32 tileIndex;
+					FTileProperties hitTileProperties = hitGrid->GetTilePropertiesFromTransform(TileTransform,tileIndex);
+					
 					if (GEngine)
 					{
 						GEngine->AddOnScreenDebugMessage(-2, 0.0, FColor::Emerald, FString::Printf(TEXT("Tile Location: %s"), *TileTransform.GetLocation().ToString()));
-						GEngine->AddOnScreenDebugMessage(-3, 0.0, FColor::Emerald, FString::Printf(TEXT("Tile Index: %d"), UnderCursorResult.Item));
+						GEngine->AddOnScreenDebugMessage(-4, 0.0, FColor::Emerald, FString::Printf(TEXT("Tile TerrainType: %i"), hitTileProperties.TerrainType));
+						GEngine->AddOnScreenDebugMessage(-5, 0.0, FColor::Emerald, FString::Printf(TEXT("Tile LightType: %i"), hitTileProperties.LightType));
+						GEngine->AddOnScreenDebugMessage(-6, 0.0, FColor::Emerald, FString::Printf(TEXT("Tile Row: %i"), hitTileProperties.Row));
+						GEngine->AddOnScreenDebugMessage(-7, 0.0, FColor::Emerald, FString::Printf(TEXT("Tile Column: %i"), hitTileProperties.Column));
+
 					}
 				}
 			}
