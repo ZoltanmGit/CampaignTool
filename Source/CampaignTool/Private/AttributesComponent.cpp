@@ -18,127 +18,127 @@ void UAttributesComponent::BeginPlay()
 	
 }
 
-int UAttributesComponent::GetModifier(int value)
+int32 UAttributesComponent::GetModifier(int32 value)
 {
-	return 0;
+	return (value-10)/2;
 }
 
-int UAttributesComponent::GetStrength(int value)
+int32 UAttributesComponent::GetStrength()
 {
-	return 0;
+	return Strength;
 }
 
-int UAttributesComponent::GetDexterity(int value)
+int32 UAttributesComponent::GetDexterity()
 {
-	return 0;
+	return Dexterity;
 }
 
-int UAttributesComponent::GetIntelligence(int value)
+int32 UAttributesComponent::GetIntelligence()
 {
-	return 0;
+	return Intelligence;
 }
 
-int UAttributesComponent::GetWisdom(int value)
+int32 UAttributesComponent::GetWisdom()
 {
-	return 0;
+	return Wisdom;
 }
 
-int UAttributesComponent::GetConstitution(int value)
+int32 UAttributesComponent::GetConstitution()
 {
-	return 0;
+	return Constitution;
 }
 
-int UAttributesComponent::GetCharisma(int value)
+int32 UAttributesComponent::GetCharisma()
 {
-	return 0;
+	return Charisma;
 }
 
-int UAttributesComponent::GetAthletics(int value)
+int32 UAttributesComponent::GetAthletics()
 {
-	return 0;
+	return Athletics;
 }
 
-int UAttributesComponent::GetAcrobatics(int value)
+int32 UAttributesComponent::GetAcrobatics()
 {
-	return 0;
+	return Acrobatics;
 }
 
-int UAttributesComponent::GetSleightOfHand(int value)
+int32 UAttributesComponent::GetSleightOfHand()
 {
-	return 0;
+	return SleightOfHand;
 }
 
-int UAttributesComponent::GetStealth(int value)
+int32 UAttributesComponent::GetStealth()
 {
-	return 0;
+	return Stealth;
 }
 
-int UAttributesComponent::GetArcana(int value)
+int32 UAttributesComponent::GetArcana()
 {
-	return 0;
+	return Arcana;
 }
 
-int UAttributesComponent::GetHistory(int value)
+int32 UAttributesComponent::GetHistory()
 {
-	return 0;
+	return History;
 }
 
-int UAttributesComponent::GetInvestigation(int value)
+int32 UAttributesComponent::GetInvestigation()
 {
-	return 0;
+	return Investigation;
 }
 
-int UAttributesComponent::GetNature(int value)
+int32 UAttributesComponent::GetNature()
 {
-	return 0;
+	return Nature;
 }
 
-int UAttributesComponent::GetReligion(int value)
+int32 UAttributesComponent::GetReligion()
 {
-	return 0;
+	return Religion;
 }
 
-int UAttributesComponent::GetAnimalHandling(int value)
+int32 UAttributesComponent::GetAnimalHandling()
 {
-	return 0;
+	return AnimalHandling;
 }
 
-int UAttributesComponent::GetInsight(int value)
+int32 UAttributesComponent::GetInsight()
 {
-	return 0;
+	return Insight;
 }
 
-int UAttributesComponent::GetMedicine(int value)
+int32 UAttributesComponent::GetMedicine()
 {
-	return 0;
+	return Medicine;
 }
 
-int UAttributesComponent::GetPerception(int value)
+int32 UAttributesComponent::GetPerception()
 {
-	return 0;
+	return Perception;
 }
 
-int UAttributesComponent::GetSurvival(int value)
+int32 UAttributesComponent::GetSurvival()
 {
-	return 0;
+	return Survival;
 }
 
-int UAttributesComponent::GetDeception(int value)
+int32 UAttributesComponent::GetDeception()
 {
-	return 0;
+	return Deception;
 }
 
-int UAttributesComponent::GetIntimidation(int value)
+int32 UAttributesComponent::GetIntimidation()
 {
-	return 0;
+	return Intimidation;
 }
 
-int UAttributesComponent::GetPerformance(int value)
+int32 UAttributesComponent::GetPerformance()
 {
-	return 0;
+	return Performance;
 }
 
-int UAttributesComponent::GetPersuasion(int value)
+int32 UAttributesComponent::GetPersuasion()
 {
-	return 0;
+	return Persuasion;
 }

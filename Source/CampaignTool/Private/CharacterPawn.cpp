@@ -83,15 +83,20 @@ void ACharacterPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 void ACharacterPawn::Tick(float DeltaTime)
 {
-	if (DefaultController != nullptr && bCastMouseLineTrace && PlayerCursorState == CursorState::OverGameWorld)
+	/*if ((DefaultController != nullptr && bCastMouseLineTrace && PlayerCursorState == CursorState::OverGameWorld))
+	{
+
+	}*/
+
+	/*if (DefaultController != nullptr && bCastMouseLineTrace && PlayerCursorState == CursorState::OverGameWorld)
 	{
 		FHitResult UnderCursorResult;
 
-		if (DefaultController->GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel1), true, UnderCursorResult))
+		if (DefaultController->GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel1), true, UnderCursorHitResult))
 		{
 			//DrawDebugLine(this->GetWorld(), CharacterCamera->GetComponentLocation(), UnderCursorResult.Location, FColor::Orange, false, 10.0f, (uint8)('\003'), 2.0f);
 
-			if (UnderCursorResult.IsValidBlockingHit())
+			if (UnderCursorHitResult.IsValidBlockingHit())
 			{
 				UE_LOG(LogTemp, Warning, TEXT("Valid Block"));
 				AGrid* hitGrid = Cast<AGrid>(UnderCursorResult.Actor);
@@ -126,7 +131,9 @@ void ACharacterPawn::Tick(float DeltaTime)
 		{
 			GEngine->AddOnScreenDebugMessage(-2, 0.0, FColor::Emerald, TEXT("Trace did not hit"));
 		}
-	}
+	}*/
+
+
 	//DEBUG
 	if (GEngine)
 	{
@@ -234,5 +241,10 @@ void ACharacterPawn::HandleRMBRelease()
 
 void ACharacterPawn::HandleLMBPress()
 {
+}
+
+FVector ACharacterPawn::GetPawnLocation()
+{
+	return PawnLocation;
 }
 

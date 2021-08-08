@@ -133,13 +133,12 @@ enum Alignment
 	LE UMETA(DisplayName = "Lawful Evil"),
 	NE UMETA(DisplayName = "Neutral Evil"),
 	CE UMETA(DisplayName = "Chaotic Evil"),
-	Unaligned UMETA(DisplayName = "Unaligned")
 };
 
 UENUM(BlueprintType)
 enum Faction
 {
-	F_Unaligned UMETA(DisplayName = "Unaligned")
+	Unaligned UMETA(DisplayName = "Unaligned")
 };
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class CAMPAIGNTOOL_API UAttributesComponent : public UActorComponent
@@ -154,100 +153,140 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-private:
+public:
 	//General
-	int level;
-	int proeficiencyBonus;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+	int32 level;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+	int32 proficiencyBonus;
 	
 	//Character Attributes
-	int strength;
-	int dexterity;
-	int intelligence;
-	int constitution;
-	int wisdom;
-	int charisma;
-	int speed;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+		int32 Strength;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+		int32 Dexterity;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+		int32 Intelligence;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+		int32 Constitution;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+		int32 Wisdom;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+		int32 Charisma;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+		int32 Speed;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+		TEnumAsByte<Race> Race;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+		TEnumAsByte<Class> Class;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+		TEnumAsByte<Alignment> Alignment;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+		TArray<TEnumAsByte<Faction>> ReputationArray;
+	//Collections
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+		TArray<TEnumAsByte<Proficiency>> ProficiencyArray;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+		TArray<TEnumAsByte<Language>> LanguageArray;
 	//Character Race and Background
 	
 	//Skills - Strength
-	int athletics;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+	int32 Athletics;
 	//Skills - Dexterity
-	int acrobatics;
-	int sleightOfHand;
-	int stealth;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+	int32 Acrobatics;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+	int32 SleightOfHand;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+	int32 Stealth;
 	//Skills - Intelligence
-	int arcana;
-	int history;
-	int investigation;
-	int nature;
-	int religion;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+	int32 Arcana;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+	int32 History;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+	int32 Investigation;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+	int32 Nature;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+	int32 Religion;
 	//Skills - Wisdom
-	int animalHandling;
-	int insight;
-	int medicine;
-	int perception;
-	int survival;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+	int32 AnimalHandling;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+	int32 Insight;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+	int32 Medicine;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+	int32 Perception;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+	int32 Survival;
 	//Skills - Charisma
-	int deception;
-	int intimidation;
-	int performance;
-	int persuasion;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+	int32 Deception;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+	int32 Intimidation;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+	int32 Performance;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+	int32 Persuasion;
 
 public:
 	UFUNCTION(BlueprintCallable)
-		int GetModifier(int value);
+		int32 GetModifier(int32 value);
 	UFUNCTION(BlueprintCallable)
-		int GetStrength(int value);
+		int32 GetStrength();
 	UFUNCTION(BlueprintCallable)
-		int GetDexterity(int value);
+		int32 GetDexterity();
 	UFUNCTION(BlueprintCallable)
-		int GetIntelligence(int value);
+		int32 GetIntelligence();
 	UFUNCTION(BlueprintCallable)
-		int GetWisdom(int value);
+		int32 GetWisdom();
 	UFUNCTION(BlueprintCallable)
-		int GetConstitution(int value);
+		int32 GetConstitution();
 	UFUNCTION(BlueprintCallable)
-		int GetCharisma(int value);
+		int32 GetCharisma();
 
 	UFUNCTION(BlueprintCallable)
-		int GetAthletics(int value);
+		int32 GetAthletics();
 
 	UFUNCTION(BlueprintCallable)
-		int GetAcrobatics(int value);
+		int32 GetAcrobatics();
 	UFUNCTION(BlueprintCallable)
-		int GetSleightOfHand(int value);
+		int32 GetSleightOfHand();
 	UFUNCTION(BlueprintCallable)
-		int GetStealth(int value);
+		int32 GetStealth();
 
 	UFUNCTION(BlueprintCallable)
-		int GetArcana(int value);
+		int32 GetArcana();
 	UFUNCTION(BlueprintCallable)
-		int GetHistory(int value);
+		int32 GetHistory();
 	UFUNCTION(BlueprintCallable)
-		int GetInvestigation(int value);
+		int32 GetInvestigation();
 	UFUNCTION(BlueprintCallable)
-		int GetNature(int value);
+		int32 GetNature();
 	UFUNCTION(BlueprintCallable)
-		int GetReligion(int value);
+		int32 GetReligion();
 
 	UFUNCTION(BlueprintCallable)
-		int GetAnimalHandling(int value);
+		int32 GetAnimalHandling();
 	UFUNCTION(BlueprintCallable)
-		int GetInsight(int value);
+		int32 GetInsight();
 	UFUNCTION(BlueprintCallable)
-		int GetMedicine(int value);
+		int32 GetMedicine();
 	UFUNCTION(BlueprintCallable)
-		int GetPerception(int value);
+		int32 GetPerception();
 	UFUNCTION(BlueprintCallable)
-		int GetSurvival(int value);
+		int32 GetSurvival();
 
 	UFUNCTION(BlueprintCallable)
-		int GetDeception(int value);
+		int32 GetDeception();
 	UFUNCTION(BlueprintCallable)
-		int GetIntimidation(int value);
+		int32 GetIntimidation();
 	UFUNCTION(BlueprintCallable)
-		int GetPerformance(int value);
+		int32 GetPerformance();
 	UFUNCTION(BlueprintCallable)
-		int GetPersuasion(int value);
+		int32 GetPersuasion();
 };

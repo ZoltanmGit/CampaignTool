@@ -38,7 +38,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 public:
-	//Components
+	//Properties
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Health)
 		class UHealthComponent* CharacterHealth; //Component that manages the health of the character
 
@@ -57,11 +57,18 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		TEnumAsByte<CursorState> PlayerCursorState;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		FVector PawnLocation; // The location the pawn is supposed to be at
+
 protected:
 	//values
-	FVector2D savedMousePosition;
+	
+	FVector2D savedMousePosition; // We save the mouse location and reset it when turning
 	bool bIsRightMouseDown;
 	bool bCastMouseLineTrace;
+
+	class UHierarchicalInstancedStaticMeshComponent* TargetedTile;
+	FHitResult UnderCursorHitResult;
 protected:
 	//Damage Handling
 	UFUNCTION()
@@ -81,5 +88,8 @@ protected:
 	void HandleRMBRelease();
 
 	void HandleLMBPress();
+
+public:
+	FVector GetPawnLocation();
 
 };
