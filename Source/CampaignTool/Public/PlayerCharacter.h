@@ -43,15 +43,21 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		TEnumAsByte<CursorState> PlayerCursorState;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		class ABaseCharacter* TargetedCharacter;
 protected:
 	//values
 
 	FVector2D savedMousePosition; // We save the mouse location and reset it when turning
 	bool bIsRightMouseDown;
 	bool bCastMouseLineTrace;
+	bool bIsValidMove;
+	bool bIsPossessed;
+
+	FHitResult UnderCursorHitResult;
 
 	class UHierarchicalInstancedStaticMeshComponent* TargetedTile;
-	FHitResult UnderCursorHitResult;
 
 	//Test method
 	void HandleTestAction();
@@ -65,4 +71,9 @@ protected:
 	void HandleRMBRelease();
 
 	void HandleLMBPress();
+	void ChangePossession(class ABaseCharacter* newCharacter);
+
+	//Event
+	UFUNCTION(BlueprintNativeEvent)
+		void OnPossessionChange();
 };

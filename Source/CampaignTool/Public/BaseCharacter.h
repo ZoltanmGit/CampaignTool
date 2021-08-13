@@ -6,6 +6,14 @@
 #include "GameFramework/Pawn.h"
 #include "BaseCharacter.generated.h"
 
+UENUM(BlueprintType)
+enum CharacterType
+{
+	Ally,
+	Hostile,
+	Self
+};
+
 UCLASS()
 class CAMPAIGNTOOL_API ABaseCharacter : public APawn
 {
@@ -40,6 +48,8 @@ public:
 		FVector CharacterLocation; // The location the pawn is supposed to be at, not necessarily where he is.
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		FVector CursorLocation; // The location of the tile the cursor is on
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		TEnumAsByte<CharacterType> CharacterType; // The location of the tile the cursor is on
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Grid)
 		class AGrid* Grid;

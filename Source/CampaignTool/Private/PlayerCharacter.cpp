@@ -29,9 +29,13 @@ APlayerCharacter::APlayerCharacter()
 	CharacterCamera->SetupAttachment(CharacterSpringArm, USpringArmComponent::SocketName); //Attach the camera to the SpringArmComponent
 
 	//Initialize values
+	TargetedCharacter = nullptr;
+	TargetedTile = nullptr;
 	bIsRightMouseDown = false;
 	bCastMouseLineTrace = true;
+	bIsValidMove = true;
 	PlayerCursorState = CursorState::OverGameWorld;
+	CharacterType = CharacterType::Ally;
 }
 
 void APlayerCharacter::BeginPlay()
@@ -45,7 +49,6 @@ void APlayerCharacter::BeginPlay()
 		DefaultController->bEnableMouseOverEvents = true;
 		DefaultController->bShowMouseCursor = true;
 	}
-	SetActorLocation(FVector(50.0f, 50.0f, 50.0f));
 	CharacterSpringArm->SetWorldLocation(FVector(50.0f, 50.0f, 50.0f));
 	CharacterLocation = GetActorLocation();
 }
@@ -76,17 +79,24 @@ void APlayerCharacter::Tick(float DeltaTime)
 		{
 			if (UnderCursorHitResult.IsValidBlockingHit())
 			{
-				if (Grid == UnderCursorHitResult.Actor)
+				if (Grid == UnderCursorHitResult.Actor) //Check if the grid is targeted
 				{
-					UHierarchicalInstancedStaticMeshComponent* hitHISMC = Cast<UHierarchicalInstancedStaticMeshComponent>(UnderCursorHitResult.Component);
+					if (TargetedCharacter != nullptr) //If the grid is targeted then the Target Character should be a null pointer
+					{
+						TargetedCharacter = nullptr;
+					}
+					if (TargetedTile != UnderCursorHitResult.Component) // Only cast if it's not already targeted
+					{
+						TargetedTile = Cast<UHierarchicalInstancedStaticMeshComponent>(UnderCursorHitResult.Component);
+					}
 
 					FTransform TileTransform;
-					hitHISMC->GetInstanceTransform(UnderCursorHitResult.Item, TileTransform, true);
-					CursorLocation = TileTransform.GetLocation();
-
+					TargetedTile->GetInstanceTransform(UnderCursorHitResult.Item, TileTransform, true); //Then its transform
 					int32 tileIndex;
 					FTileProperties hitTileProperties = Grid->GetTilePropertiesFromTransform(TileTransform, tileIndex);
-
+					
+					CursorLocation = TileTransform.GetLocation();
+					//DEBUG
 					if (GEngine)
 					{
 						GEngine->AddOnScreenDebugMessage(-2, 0.0, FColor::Emerald, FString::Printf(TEXT("Tile Location: %s"), *TileTransform.GetLocation().ToString()));
@@ -94,12 +104,52 @@ void APlayerCharacter::Tick(float DeltaTime)
 						GEngine->AddOnScreenDebugMessage(-4, 0.0, FColor::Emerald, FString::Printf(TEXT("Tile LightType: %i"), hitTileProperties.LightType));
 						GEngine->AddOnScreenDebugMessage(-5, 0.0, FColor::Emerald, FString::Printf(TEXT("Tile Row: %i"), hitTileProperties.Row));
 						GEngine->AddOnScreenDebugMessage(-6, 0.0, FColor::Emerald, FString::Printf(TEXT("Tile Column: %i"), hitTileProperties.Column));
-
+					}
+				}
+				else //If the grid isn't targeted then we check for characters
+				{
+					if (TargetedTile != nullptr) //If a character is targeted then a tile should not be selected
+					{
+						TargetedTile = nullptr;
+					}
+					if (TargetedCharacter != UnderCursorHitResult.Actor) //Only cast if it's not already targeted
+					{
+						TargetedCharacter = Cast<ABaseCharacter>(UnderCursorHitResult.Actor);
+						UE_LOG(LogTemp, Warning, TEXT("Character Cast."));
+					}
+					if (TargetedCharacter != nullptr)
+					{
+						if (GEngine)
+						{
+							GEngine->AddOnScreenDebugMessage(-2, 0.0, FColor::Emerald, FString::Printf(TEXT("Character is selected")));
+						}
+					}
+					else
+					{
+						UE_LOG(LogTemp, Warning, TEXT("Character selection failed."));
 					}
 				}
 			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Invalid Block. (You shouldn't see this :O )"));
+			}
+		}
+		else
+		{
+			if (TargetedCharacter != nullptr)
+			{
+				TargetedCharacter = nullptr;
+			}
+			if (TargetedTile != nullptr)
+			{
+				TargetedTile = nullptr;
+			}
+			GEngine->AddOnScreenDebugMessage(-2, 0.0, FColor::Emerald, TEXT("Trace didn't hit"));
+			CursorLocation = this->GetActorLocation();
 		}
 	}
+	//Movement
 	if (this->GetActorLocation() != CharacterLocation)
 	{
 		
@@ -109,12 +159,12 @@ void APlayerCharacter::Tick(float DeltaTime)
 			GEngine->AddOnScreenDebugMessage(-7, 0.0, FColor::Emerald,TEXT("Interpolating..."));
 		}
 	}
+
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(-8, 0.0, FColor::Red, FString::Printf(TEXT("ActorLocation: %s"), *GetActorLocation().ToString()));
 		GEngine->AddOnScreenDebugMessage(-9, 0.0, FColor::Red, FString::Printf(TEXT("CharacterLocation: %s"), *CharacterLocation.ToString()));
 	}
-
 }
 
 void APlayerCharacter::HandleTestAction()
@@ -160,6 +210,15 @@ void APlayerCharacter::HandleRMBPress()
 {
 	if (!bIsRightMouseDown && PlayerCursorState == CursorState::OverGameWorld)
 	{
+		if (TargetedCharacter != nullptr)
+		{
+			TargetedCharacter = nullptr;
+		}
+		if (TargetedTile != nullptr)
+		{
+			TargetedTile = nullptr;
+		}
+
 		bIsRightMouseDown = true;
 		PlayerCursorState = CursorState::Turning;
 		if (DefaultController)
@@ -195,6 +254,35 @@ void APlayerCharacter::HandleRMBRelease()
 
 void APlayerCharacter::HandleLMBPress()
 {
-	UE_LOG(LogTemp, Warning, TEXT("LMBPresse Called"));
-	CharacterLocation = FVector(CursorLocation.X,CursorLocation.Y,50.0f);
+	UE_LOG(LogTemp, Warning, TEXT("LMBPressed() Called"));
+	if (TargetedTile != nullptr && bIsValidMove)
+	{
+		CharacterLocation = FVector(CursorLocation.X, CursorLocation.Y, 50.0f);
+	}
+	else if (TargetedCharacter != nullptr)
+	{
+		if (TargetedCharacter != this)
+		{
+			/*APlayerCharacter* ptr = Cast<APlayerCharacter>(TargetedCharacter);
+			ptr->DefaultController = this->DefaultController;
+			DefaultController->UnPossess();
+			DefaultController->Possess(TargetedCharacter);
+			this->DefaultController = nullptr;*/
+			ChangePossession(TargetedCharacter);
+		}
+	}
 }
+void APlayerCharacter::ChangePossession(ABaseCharacter* newCharacter)
+{
+	APlayerCharacter* newPlayerCharacter = Cast<APlayerCharacter>(newCharacter);
+	newPlayerCharacter->CharacterSpringArm->SetWorldRotation(this->CharacterSpringArm->GetComponentRotation());
+	newPlayerCharacter->CharacterSpringArm->SetWorldLocation(newPlayerCharacter->GetActorLocation());
+	newPlayerCharacter->DefaultController = this->DefaultController;
+	this->DefaultController->UnPossess();
+	this->DefaultController->Possess(newPlayerCharacter);
+	this->CharacterSpringArm->SetWorldLocation(this->GetActorLocation());
+	this->DefaultController = nullptr;
+
+
+}
+void APlayerCharacter::OnPossessionChange_Implementation() {}

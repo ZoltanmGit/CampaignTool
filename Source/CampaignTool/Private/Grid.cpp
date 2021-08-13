@@ -21,6 +21,7 @@ AGrid::AGrid()
 		UHierarchicalInstancedStaticMeshComponent* newHISMC = CreateDefaultSubobject<UHierarchicalInstancedStaticMeshComponent>(newHISMCName);
 		newHISMC->SetCollisionEnabled(ECollisionEnabled::QueryOnly); //Does not react to physics, only overlaps, traces , etc...
 		newHISMC->SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECollisionResponse::ECR_Block); // Only blocks the selection channel
+		newHISMC->SetCollisionResponseToChannel(ECC_Camera, ECollisionResponse::ECR_Overlap);
 		newHISMC->SetMobility(EComponentMobility::Static);
 		newHISMC->bCastContactShadow = false;
 		newHISMC->CastShadow = false;

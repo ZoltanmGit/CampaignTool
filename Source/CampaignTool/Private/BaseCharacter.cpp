@@ -12,14 +12,18 @@ ABaseCharacter::ABaseCharacter()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	
 	//Mesh
 	CharacterMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CharacterMesh"));
+	CharacterMesh->SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECollisionResponse::ECR_Block);
+	CharacterMesh->SetCollisionObjectType(ECollisionChannel::ECC_Pawn);
+	CharacterMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Overlap);
 	RootComponent = CharacterMesh; //Set Mesh as the RootComponent
 
 	//Health and Attributes
 	CharacterHealth = CreateDefaultSubobject<UHealthComponent>(TEXT("CharacterHealth"));
 	CharacterAttributes = CreateDefaultSubobject<UAttributesComponent>(TEXT("CharacterAttributes"));
+
+	Grid = nullptr;
 
 	// Subscribe to HandleTakeDamage to OnTakeAnyDamage event
 	OnTakeAnyDamage.AddDynamic(this, &ABaseCharacter::HandleTakeDamage);
