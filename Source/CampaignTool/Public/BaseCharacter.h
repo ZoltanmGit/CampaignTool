@@ -26,7 +26,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-protected:
+public:
 	//Public properties exposed to the editor
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Health)
@@ -38,6 +38,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		FVector CharacterLocation; // The location the pawn is supposed to be at, not necessarily where he is.
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Grid)
+		class AGrid* Grid;
 
 	//Function that handles changes in health
 	UFUNCTION()

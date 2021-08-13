@@ -4,6 +4,8 @@
 #include "BaseCharacter.h"
 #include "../Public/HealthComponent.h"
 #include "../Public/AttributesComponent.h"
+#include "../Public/Grid.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ABaseCharacter::ABaseCharacter()
@@ -33,6 +35,15 @@ void ABaseCharacter::BeginPlay()
 		CharacterHealth->SetCurrentHealth(CharacterHealth->GetFullHealth());
 		OnHealthChange();
 	}
+	Grid = Cast<AGrid>(UGameplayStatics::GetActorOfClass(GetWorld(), AGrid::StaticClass()));
+	if (Grid)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Found Grid"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Didn't find Grid"));
+	}
 }
 
 // Called every frame
@@ -51,6 +62,7 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 void ABaseCharacter::HandleTakeDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
+	CharacterHealth->HandleTakeDamage(Damage);
 }
 
 UHealthComponent* ABaseCharacter::GetCharacterHealth() const

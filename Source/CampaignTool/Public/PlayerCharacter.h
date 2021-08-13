@@ -3,10 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Pawn.h"
-#include "CharacterPawn.generated.h"
+#include "BaseCharacter.h"
+#include "PlayerCharacter.generated.h"
 
-/*UENUM(BlueprintType)
+UENUM(BlueprintType)
 enum CursorState
 {
 	OverGameWorld UMETA(DisplayName = "OverGameWorld"),
@@ -14,36 +14,23 @@ enum CursorState
 	Turning UMETA(DisplayName = "Turning"),
 	OverEnemy UMETA(DisplayName = "OverEnemy"),
 	OverAlly UMETA(DisplayName = "OverAlly")
-};*/
+};
 
 UCLASS()
-class CAMPAIGNTOOL_API ACharacterPawn : public APawn
+class CAMPAIGNTOOL_API APlayerCharacter : public ABaseCharacter
 {
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this pawn's properties
-	ACharacterPawn();
-
+	APlayerCharacter();
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-public:	
-
+public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
 public:
-	//Properties
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Health)
-		class UHealthComponent* CharacterHealth; //Component that manages the health of the character
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Mesh)
-		class UStaticMeshComponent* CharacterMesh; //The Mesh that represents the character in-game
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 		class USpringArmComponent* CharacterSpringArm; //The springArm the camera is attached to
@@ -54,28 +41,18 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Controller)
 		class APlayerController* DefaultController; //The Default playerController
 
-	/*UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		TEnumAsByte<CursorState> PlayerCursorState;*/
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		FVector PawnLocation; // The location the pawn is supposed to be at
-
+		TEnumAsByte<CursorState> PlayerCursorState;
 protected:
 	//values
-	
+
 	FVector2D savedMousePosition; // We save the mouse location and reset it when turning
 	bool bIsRightMouseDown;
 	bool bCastMouseLineTrace;
 
 	class UHierarchicalInstancedStaticMeshComponent* TargetedTile;
 	FHitResult UnderCursorHitResult;
-protected:
-	//Damage Handling
-	UFUNCTION()
-		void HandleTakeDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser);
-	//Events
-	UFUNCTION(BlueprintNativeEvent)
-		void OnHealthChange();
+
 	//Test method
 	void HandleTestAction();
 
@@ -88,8 +65,4 @@ protected:
 	void HandleRMBRelease();
 
 	void HandleLMBPress();
-
-public:
-	FVector GetPawnLocation();
-
 };

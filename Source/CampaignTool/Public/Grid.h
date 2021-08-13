@@ -72,9 +72,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		class USceneComponent* GridRootComponent;
 
-	/*UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = GridProperties)
-		class UHierarchicalInstancedStaticMeshComponent* HISMC_Grid;*/
-
 	// 0 - Green, 1 - Blue, 2 - Brown, 3 - Grey
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = GridProperties)
 		TArray<class UHierarchicalInstancedStaticMeshComponent*> HISMC_GridArray;
