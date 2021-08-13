@@ -38,6 +38,8 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		FVector CharacterLocation; // The location the pawn is supposed to be at, not necessarily where he is.
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+		FVector CursorLocation; // The location of the tile the cursor is on
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Grid)
 		class AGrid* Grid;

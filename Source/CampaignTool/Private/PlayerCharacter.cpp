@@ -22,7 +22,8 @@ APlayerCharacter::APlayerCharacter()
 	CharacterSpringArm->TargetArmLength = 700.0f;
 	CharacterSpringArm->bEnableCameraLag = true;
 	CharacterSpringArm->SetRelativeRotation(FRotator(-40.0f, 0.0f, 0.0f));
-	CharacterSpringArm->SetupAttachment(RootComponent);
+	CharacterSpringArm->SetUsingAbsoluteLocation(true);
+	//CharacterSpringArm->SetupAttachment(RootComponent);
 
 	CharacterCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("CharacterCamera"));
 	CharacterCamera->SetupAttachment(CharacterSpringArm, USpringArmComponent::SocketName); //Attach the camera to the SpringArmComponent
@@ -44,7 +45,9 @@ void APlayerCharacter::BeginPlay()
 		DefaultController->bEnableMouseOverEvents = true;
 		DefaultController->bShowMouseCursor = true;
 	}
-
+	SetActorLocation(FVector(50.0f, 50.0f, 50.0f));
+	CharacterSpringArm->SetWorldLocation(FVector(50.0f, 50.0f, 50.0f));
+	CharacterLocation = GetActorLocation();
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -59,6 +62,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction("TestAction", IE_Pressed, this, &APlayerCharacter::HandleTestAction);
 	PlayerInputComponent->BindAction("RMBAction", IE_Pressed, this, &APlayerCharacter::HandleRMBPress);
 	PlayerInputComponent->BindAction("RMBAction", IE_Released, this, &APlayerCharacter::HandleRMBRelease);
+	PlayerInputComponent->BindAction("LMBAction", IE_Pressed, this, &APlayerCharacter::HandleLMBPress);
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -78,6 +82,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 					FTransform TileTransform;
 					hitHISMC->GetInstanceTransform(UnderCursorHitResult.Item, TileTransform, true);
+					CursorLocation = TileTransform.GetLocation();
 
 					int32 tileIndex;
 					FTileProperties hitTileProperties = Grid->GetTilePropertiesFromTransform(TileTransform, tileIndex);
@@ -85,16 +90,31 @@ void APlayerCharacter::Tick(float DeltaTime)
 					if (GEngine)
 					{
 						GEngine->AddOnScreenDebugMessage(-2, 0.0, FColor::Emerald, FString::Printf(TEXT("Tile Location: %s"), *TileTransform.GetLocation().ToString()));
-						GEngine->AddOnScreenDebugMessage(-4, 0.0, FColor::Emerald, FString::Printf(TEXT("Tile TerrainType: %i"), hitTileProperties.TerrainType));
-						GEngine->AddOnScreenDebugMessage(-5, 0.0, FColor::Emerald, FString::Printf(TEXT("Tile LightType: %i"), hitTileProperties.LightType));
-						GEngine->AddOnScreenDebugMessage(-6, 0.0, FColor::Emerald, FString::Printf(TEXT("Tile Row: %i"), hitTileProperties.Row));
-						GEngine->AddOnScreenDebugMessage(-7, 0.0, FColor::Emerald, FString::Printf(TEXT("Tile Column: %i"), hitTileProperties.Column));
+						GEngine->AddOnScreenDebugMessage(-3, 0.0, FColor::Emerald, FString::Printf(TEXT("Tile TerrainType: %i"), hitTileProperties.TerrainType));
+						GEngine->AddOnScreenDebugMessage(-4, 0.0, FColor::Emerald, FString::Printf(TEXT("Tile LightType: %i"), hitTileProperties.LightType));
+						GEngine->AddOnScreenDebugMessage(-5, 0.0, FColor::Emerald, FString::Printf(TEXT("Tile Row: %i"), hitTileProperties.Row));
+						GEngine->AddOnScreenDebugMessage(-6, 0.0, FColor::Emerald, FString::Printf(TEXT("Tile Column: %i"), hitTileProperties.Column));
 
 					}
 				}
 			}
 		}
 	}
+	if (this->GetActorLocation() != CharacterLocation)
+	{
+		
+		this->SetActorLocation(FVector(FMath::VInterpTo(this->GetActorLocation(), CharacterLocation, DeltaTime, 10.0f).X, FMath::VInterpTo(this->GetActorLocation(), CharacterLocation, DeltaTime, 10.0f).Y,50.0f));
+		if (GEngine)
+		{
+			GEngine->AddOnScreenDebugMessage(-7, 0.0, FColor::Emerald,TEXT("Interpolating..."));
+		}
+	}
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-8, 0.0, FColor::Red, FString::Printf(TEXT("ActorLocation: %s"), *GetActorLocation().ToString()));
+		GEngine->AddOnScreenDebugMessage(-9, 0.0, FColor::Red, FString::Printf(TEXT("CharacterLocation: %s"), *CharacterLocation.ToString()));
+	}
+
 }
 
 void APlayerCharacter::HandleTestAction()
@@ -175,4 +195,6 @@ void APlayerCharacter::HandleRMBRelease()
 
 void APlayerCharacter::HandleLMBPress()
 {
+	UE_LOG(LogTemp, Warning, TEXT("LMBPresse Called"));
+	CharacterLocation = FVector(CursorLocation.X,CursorLocation.Y,50.0f);
 }
