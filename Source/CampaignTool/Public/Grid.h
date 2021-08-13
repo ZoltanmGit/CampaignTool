@@ -87,9 +87,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		void SpawnInstance(const int row, const int column);
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-		void ApplyTileMaterial(const int tileIndex, const float tileType);
 public:
 	virtual void OnConstruction(const FTransform& transform);
 };

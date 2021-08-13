@@ -63,6 +63,7 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 void ABaseCharacter::HandleTakeDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
 	CharacterHealth->HandleTakeDamage(Damage);
+	OnHealthChange();
 }
 
 UHealthComponent* ABaseCharacter::GetCharacterHealth() const

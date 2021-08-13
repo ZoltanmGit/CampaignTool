@@ -49,11 +49,6 @@ void AGrid::SpawnInstance(const int row, const int column)
 {
 }
 
-void AGrid::ApplyTileMaterial_Implementation(const int tileIndex, const float tileType)
-{
-
-}
-
 /// <summary>
 /// Called at every property change in the editor
 /// We use this to drag the grid in the editor
