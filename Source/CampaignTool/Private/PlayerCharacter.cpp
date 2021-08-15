@@ -40,7 +40,7 @@ APlayerCharacter::APlayerCharacter()
 
 void APlayerCharacter::BeginPlay()
 {
-	Super::BeginPlay();
+	
 
 	DefaultController = Cast<APlayerController>(GetController());
 	if (DefaultController != nullptr)
@@ -51,6 +51,8 @@ void APlayerCharacter::BeginPlay()
 	}
 	CharacterSpringArm->SetWorldLocation(FVector(50.0f, 50.0f, 50.0f));
 	CharacterLocation = GetActorLocation();
+
+	Super::BeginPlay();
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -280,9 +282,8 @@ void APlayerCharacter::ChangePossession(ABaseCharacter* newCharacter)
 	newPlayerCharacter->DefaultController = this->DefaultController;
 	this->DefaultController->UnPossess();
 	this->DefaultController->Possess(newPlayerCharacter);
+
+	//Cleanup this pawn
 	this->CharacterSpringArm->SetWorldLocation(this->GetActorLocation());
 	this->DefaultController = nullptr;
-
-
 }
-void APlayerCharacter::OnPossessionChange_Implementation() {}

@@ -72,8 +72,4 @@ protected:
 
 	void HandleLMBPress();
 	void ChangePossession(class ABaseCharacter* newCharacter);
-
-	//Event
-	UFUNCTION(BlueprintNativeEvent)
-		void OnPossessionChange();
 };
