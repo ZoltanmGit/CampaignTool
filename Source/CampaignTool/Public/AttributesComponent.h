@@ -156,9 +156,11 @@ protected:
 public:
 	//General
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
-	int32 level;
+		FString CharacterName;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
-	int32 proficiencyBonus;
+		int32 level;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+		int32 proficiencyBonus;
 	
 	//Character Attributes
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)

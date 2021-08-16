@@ -10,11 +10,15 @@
 UENUM(BlueprintType)
 enum TerrainType
 {
+	Void  UMETA(DisplayName = "Void"),  //-1
 	Grass UMETA(DisplayName = "Grass"), //0
 	Water UMETA(DisplayName = "Water"), //1
-	Wood  UMETA(DisplayName = "Wood"),  //2
-	Dirt  UMETA(DisplayName = "Dirt"),  //3
-	Rock  UMETA(DisplayName = "Rock")   //4
+	DeepWater UMETA(DisplayName = "DeepWater"), //2
+	Wood  UMETA(DisplayName = "Wood"),  //3
+	Dirt  UMETA(DisplayName = "Dirt"),  //4
+	Rock  UMETA(DisplayName = "Rock")   //5
+
+
 };
 UENUM(BlueprintType)
 enum LightType
@@ -57,15 +61,15 @@ protected:
 	virtual void BeginPlay() override;
 
 	int tempMatrix[100] = { 0,0,0,0,1,1,0,0,0,0,
-							0,0,0,0,1,1,0,0,0,0,
-							0,0,0,2,2,2,2,0,0,0,
-							0,0,0,2,2,2,2,0,0,0,
-							0,0,0,2,2,2,2,0,0,0,
-							0,0,0,0,1,1,0,0,0,0,
-							0,0,0,0,1,1,0,0,0,0,
-							0,0,0,0,1,1,0,0,0,0,
+							0,0,4,4,1,1,4,4,0,0,
+							0,0,4,3,3,3,3,4,0,0,
+							0,0,4,3,3,3,3,4,0,0,
+							0,0,4,3,3,3,3,4,0,0,
+							0,0,4,4,1,1,4,4,0,0,
+							-1,-1,-1,-1,1,1,-1,-1,-1,-1,
+							5,5,5,5,1,1,5,5,5,5,
 							1,1,1,1,1,1,1,1,1,1,
-							1,1,1,1,1,1,1,1,1,1
+							2,2,2,2,2,2,2,2,2,2
 	};
 	
 public:	

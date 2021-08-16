@@ -21,7 +21,7 @@ AGrid::AGrid()
 		UHierarchicalInstancedStaticMeshComponent* newHISMC = CreateDefaultSubobject<UHierarchicalInstancedStaticMeshComponent>(newHISMCName);
 		newHISMC->SetCollisionEnabled(ECollisionEnabled::QueryOnly); //Does not react to physics, only overlaps, traces , etc...
 		newHISMC->SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECollisionResponse::ECR_Block); // Only blocks the selection channel
-		newHISMC->SetCollisionResponseToChannel(ECC_Camera, ECollisionResponse::ECR_Overlap);
+		newHISMC->SetCollisionResponseToChannel(ECC_Camera, ECollisionResponse::ECR_Overlap); //Overlap so the camera springarm doesn't shorten itself with strange collision
 		newHISMC->SetMobility(EComponentMobility::Static);
 		newHISMC->bCastContactShadow = false;
 		newHISMC->CastShadow = false;
@@ -57,7 +57,7 @@ void AGrid::SpawnInstance(const int row, const int column)
 /// <param name="Transform">An FTransform as parameter</param>
 void AGrid::OnConstruction(const FTransform& Transform) {
 	bool bValid = true; 
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 7; i++)
 	{
 		if (!HISMC_GridArray[i] || !HISMC_GridArray[i]->GetStaticMesh())
 		{
@@ -79,7 +79,7 @@ void AGrid::OnConstruction(const FTransform& Transform) {
 		{
 			for (int j = 0; j < MapSize; j++)
 			{
-				if (tempMatrix[((i * MapSize) + j)] >= 0)
+				if (tempMatrix[((i * MapSize) + j)] >= -1)
 				{
 					FTransform newInstanceTransform;
 					newInstanceTransform.SetLocation(FVector((i * fieldSize) + (fieldSize / 2), (j * fieldSize) + (fieldSize / 2), 0));
@@ -92,6 +92,12 @@ void AGrid::OnConstruction(const FTransform& Transform) {
 					newTileData.LightType = LightType::Bright;
 					switch (tempMatrix[((i * 10) + j)])
 					{
+					case -1:
+						newTileData.TerrainType = TerrainType::Void;
+						newTileData.bIsObscured = true;
+						newTileData.bIsOccupied = true;
+						// There is no instance when the terrain is void aka missing
+						break;
 					case 0:
 						newTileData.TerrainType = TerrainType::Grass;
 						HISMC_GridArray[0]->AddInstance(newInstanceTransform);
@@ -101,16 +107,24 @@ void AGrid::OnConstruction(const FTransform& Transform) {
 						HISMC_GridArray[1]->AddInstance(newInstanceTransform);
 						break;
 					case 2:
-						newTileData.TerrainType = TerrainType::Wood;
+						newTileData.TerrainType = TerrainType::DeepWater;
 						HISMC_GridArray[2]->AddInstance(newInstanceTransform);
 						break;
 					case 3:
-						newTileData.TerrainType = TerrainType::Grass;
-						//HISMC_GridArray[0]->AddInstance(newInstanceTransform);
+						newTileData.TerrainType = TerrainType::Wood;
+						HISMC_GridArray[3]->AddInstance(newInstanceTransform);
 						break;
 					case 4:
+						newTileData.TerrainType = TerrainType::Dirt;
+						HISMC_GridArray[4]->AddInstance(newInstanceTransform);
+						break;
+					case 5:
+						newTileData.TerrainType = TerrainType::Rock;
+						HISMC_GridArray[5]->AddInstance(newInstanceTransform);
+						break;
+					case 6:
 						newTileData.TerrainType = TerrainType::Grass;
-						//HISMC_GridArray[0]->AddInstance(newInstanceTransform);
+						HISMC_GridArray[6]->AddInstance(newInstanceTransform);
 						break;
 					default:
 						break;
