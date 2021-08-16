@@ -74,6 +74,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//Line traces and Selection
 	if ((DefaultController != nullptr && bCastMouseLineTrace && PlayerCursorState == CursorState::OverGameWorld))
 	{
 
@@ -152,7 +153,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 		}
 	}
 	//Movement
-	if (this->GetActorLocation() != CharacterLocation)
+	/*if (this->GetActorLocation() != CharacterLocation)
 	{
 		
 		this->SetActorLocation(FVector(FMath::VInterpTo(this->GetActorLocation(), CharacterLocation, DeltaTime, 10.0f).X, FMath::VInterpTo(this->GetActorLocation(), CharacterLocation, DeltaTime, 10.0f).Y,50.0f));
@@ -166,7 +167,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 	{
 		GEngine->AddOnScreenDebugMessage(-8, 0.0, FColor::Red, FString::Printf(TEXT("ActorLocation: %s"), *GetActorLocation().ToString()));
 		GEngine->AddOnScreenDebugMessage(-9, 0.0, FColor::Red, FString::Printf(TEXT("CharacterLocation: %s"), *CharacterLocation.ToString()));
-	}
+	}*/
 }
 
 void APlayerCharacter::HandleTestAction()
