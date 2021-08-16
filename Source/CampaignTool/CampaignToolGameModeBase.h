@@ -13,5 +13,7 @@ UCLASS()
 class CAMPAIGNTOOL_API ACampaignToolGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-	
+public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Init)
+		TSubclassOf<class AMovementController> MovementController;
 };
