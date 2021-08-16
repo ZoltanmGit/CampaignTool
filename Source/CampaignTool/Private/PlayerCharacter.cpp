@@ -37,11 +37,11 @@ APlayerCharacter::APlayerCharacter()
 	PlayerCursorState = CursorState::OverGameWorld;
 	CharacterType = CharacterType::Ally;
 }
-
+/// <summary>
+/// Beginplay is called when the game starts or when the actor is spawned
+/// </summary>
 void APlayerCharacter::BeginPlay()
 {
-	
-
 	DefaultController = Cast<APlayerController>(GetController());
 	if (DefaultController != nullptr)
 	{
@@ -54,7 +54,10 @@ void APlayerCharacter::BeginPlay()
 
 	Super::BeginPlay();
 }
-
+/// <summary>
+/// Sets up the player inputs
+/// </summary>
+/// <param name="PlayerInputComponent">The component through which the setup is handled</param>
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -69,7 +72,10 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction("RMBAction", IE_Released, this, &APlayerCharacter::HandleRMBRelease);
 	PlayerInputComponent->BindAction("LMBAction", IE_Pressed, this, &APlayerCharacter::HandleLMBPress);
 }
-
+/// <summary>
+/// The Tick function gets called every frame
+/// </summary>
+/// <param name="DeltaTime">The DeltaTime for this tick</param>
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -152,42 +158,32 @@ void APlayerCharacter::Tick(float DeltaTime)
 			CursorLocation = this->GetActorLocation();
 		}
 	}
-	//Movement
-	/*if (this->GetActorLocation() != CharacterLocation)
-	{
-		
-		this->SetActorLocation(FVector(FMath::VInterpTo(this->GetActorLocation(), CharacterLocation, DeltaTime, 10.0f).X, FMath::VInterpTo(this->GetActorLocation(), CharacterLocation, DeltaTime, 10.0f).Y,50.0f));
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(-7, 0.0, FColor::Emerald,TEXT("Interpolating..."));
-		}
-	}
-
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-8, 0.0, FColor::Red, FString::Printf(TEXT("ActorLocation: %s"), *GetActorLocation().ToString()));
-		GEngine->AddOnScreenDebugMessage(-9, 0.0, FColor::Red, FString::Printf(TEXT("CharacterLocation: %s"), *CharacterLocation.ToString()));
-	}*/
 }
-
+/// <summary>
+/// Test action that is bound to the "T" letter
+/// </summary>
 void APlayerCharacter::HandleTestAction()
 {
 	UGameplayStatics::ApplyDamage(this, 5, nullptr, this, nullptr);
 
 	CharacterSpringArm->SetWorldLocation(this->GetActorLocation());
 }
-
+/// <summary>
+/// Moves the camera in a forward and backward direction relative to its current rotation
+/// </summary>
+/// <param name="value">The value that drives the movement</param>
 void APlayerCharacter::CameraForward(float value)
 {
 	if (value != 0 && CharacterCamera != nullptr && CharacterSpringArm != nullptr)
 	{
 		FVector newVector = FVector(CharacterSpringArm->GetForwardVector().X, CharacterSpringArm->GetForwardVector().Y, 0.0f);
 		CharacterSpringArm->SetWorldLocation(CharacterSpringArm->GetComponentLocation() - (newVector * (value * 10)));
-
-		//UE_LOG(LogTemp, Warning, TEXT("CameraForward() called"));
 	}
 }
-
+/// <summary>
+/// Moves the camera in the right and left direction relative to its current rotation
+/// </summary>
+/// <param name="value">The value that drives the movement</param>
 void APlayerCharacter::CameraRight(float value)
 {
 	if (value != 0 && CharacterCamera != nullptr && CharacterSpringArm != nullptr)
@@ -198,7 +194,10 @@ void APlayerCharacter::CameraRight(float value)
 		//UE_LOG(LogTemp, Warning, TEXT("CameraRight() called"));
 	}
 }
-
+/// <summary>
+/// Turns the Actor's Spring Arm and with it the camera that is attached to it
+/// </summary>
+/// <param name="value">The value that drives the rotation</param>
 void APlayerCharacter::CameraTurn(float value)
 {
 	if (value != 0 && CharacterCamera != nullptr && CharacterSpringArm != nullptr && bIsRightMouseDown)
@@ -208,7 +207,9 @@ void APlayerCharacter::CameraTurn(float value)
 		//UE_LOG(LogTemp, Warning, TEXT("CameraTurn() called"));
 	}
 }
-
+/// <summary>
+/// Handles the behaviour of the right mouse button being pressed down
+/// </summary>
 void APlayerCharacter::HandleRMBPress()
 {
 	if (!bIsRightMouseDown && PlayerCursorState == CursorState::OverGameWorld)
@@ -235,7 +236,9 @@ void APlayerCharacter::HandleRMBPress()
 		}
 	}
 }
-
+/// <summary>
+/// Handles the behaviour of the right mouse button being released
+/// </summary>
 void APlayerCharacter::HandleRMBRelease()
 {
 	if (bIsRightMouseDown && PlayerCursorState == CursorState::Turning)
@@ -254,10 +257,11 @@ void APlayerCharacter::HandleRMBRelease()
 		}
 	}
 }
-
+/// <summary>
+/// Handles the behaviour of the Left Mouse Button being pressed down
+/// </summary>
 void APlayerCharacter::HandleLMBPress()
 {
-	UE_LOG(LogTemp, Warning, TEXT("LMBPressed() Called"));
 	if (TargetedTile != nullptr && bIsValidMove)
 	{
 		CharacterLocation = FVector(CursorLocation.X, CursorLocation.Y, 50.0f);
@@ -266,15 +270,14 @@ void APlayerCharacter::HandleLMBPress()
 	{
 		if (TargetedCharacter != this)
 		{
-			/*APlayerCharacter* ptr = Cast<APlayerCharacter>(TargetedCharacter);
-			ptr->DefaultController = this->DefaultController;
-			DefaultController->UnPossess();
-			DefaultController->Possess(TargetedCharacter);
-			this->DefaultController = nullptr;*/
 			ChangePossession(TargetedCharacter);
 		}
 	}
 }
+/// <summary>
+/// Changes the possession of the playerController and clears some values for the previous possession
+/// </summary>
+/// <param name="newCharacter">The character which is next to be possessed</param>
 void APlayerCharacter::ChangePossession(ABaseCharacter* newCharacter)
 {
 	APlayerCharacter* newPlayerCharacter = Cast<APlayerCharacter>(newCharacter);
