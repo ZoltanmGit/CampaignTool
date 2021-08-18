@@ -19,6 +19,18 @@ protected:
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Init)
 		TSubclassOf<class AMovementController> MovementController;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Init)
+		TSubclassOf<class AGrid> Grid;
+
+	//Character Blueprints
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Init)
+		TSubclassOf<class APlayerCharacter> FighterClass;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Init)
+		TSubclassOf<class APlayerCharacter> RogueClass;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Init)
+		TSubclassOf<class APlayerCharacter> WizardClass;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Init)
+		class APlayerController* UserController;
 protected:
 	void InitializeGrid();
 	void InitializeCharacters();

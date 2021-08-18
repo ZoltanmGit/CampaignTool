@@ -48,7 +48,7 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
 		TEnumAsByte<Race> Race;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Attributes)
 		TEnumAsByte<Class> Class;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
 		TEnumAsByte<Alignment> Alignment;

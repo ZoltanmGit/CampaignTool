@@ -22,6 +22,7 @@ AGrid::AGrid()
 		newHISMC->SetCollisionEnabled(ECollisionEnabled::QueryOnly); //Does not react to physics, only overlaps, traces , etc...
 		newHISMC->SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECollisionResponse::ECR_Block); // Only blocks the selection channel
 		newHISMC->SetCollisionResponseToChannel(ECC_Camera, ECollisionResponse::ECR_Overlap); //Overlap so the camera springarm doesn't shorten itself with strange collision
+		newHISMC->SetCollisionResponseToChannel(ECC_Pawn, ECollisionResponse::ECR_Overlap);
 		newHISMC->SetMobility(EComponentMobility::Static);
 		newHISMC->bCastContactShadow = false;
 		newHISMC->CastShadow = false;

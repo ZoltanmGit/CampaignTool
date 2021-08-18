@@ -17,6 +17,7 @@ ABaseCharacter::ABaseCharacter()
 	CharacterMesh->SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECollisionResponse::ECR_Block);
 	CharacterMesh->SetCollisionObjectType(ECollisionChannel::ECC_Pawn);
 	CharacterMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Overlap);
+	CharacterMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap); // I Set this so 
 	RootComponent = CharacterMesh; //Set Mesh as the RootComponent
 
 	//Health and Attributes

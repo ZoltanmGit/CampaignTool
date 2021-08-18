@@ -46,6 +46,8 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		class ABaseCharacter* TargetedCharacter;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		bool bIsPossessed;
 protected:
 	//values
 
@@ -53,7 +55,6 @@ protected:
 	bool bIsRightMouseDown;
 	bool bCastMouseLineTrace;
 	bool bIsValidMove;
-	bool bIsPossessed;
 
 	FHitResult UnderCursorHitResult;
 

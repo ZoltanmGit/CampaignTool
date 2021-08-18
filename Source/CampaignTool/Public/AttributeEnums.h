@@ -68,6 +68,7 @@ enum Size
 UENUM(BlueprintType)
 enum Race
 {
+	UndefinedRace UMETA(DisplayName = "UndefinedRace"),
 	Dragonborn UMETA(DisplayName = "Dragonborn"),
 	Dwarf UMETA(DisplayName = "Dwarf"),
 	Elf UMETA(DisplayName = "Elf"),
@@ -82,12 +83,12 @@ enum Race
 UENUM(BlueprintType)
 enum Class
 {
+	UndefinedClass UMETA(DisplayName = "UndefinedClass"),
 	Barbarian UMETA(DisplayName = "Barbarian"),
 	Bard UMETA(DisplayName = "Bard"),
 	Cleric UMETA(DisplayName = "Cleric"),
 	Druid UMETA(DisplayName = "Druid"),
 	Fighter UMETA(DisplayName = "Fighter"),
-	Monk UMETA(DisplayName = "Monk"),
 	Paladin UMETA(DisplayName = "Paladin"),
 	Ranger UMETA(DisplayName = "Ranger"),
 	Rogue UMETA(DisplayName = "Rogue"),

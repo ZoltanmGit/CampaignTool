@@ -34,6 +34,7 @@ APlayerCharacter::APlayerCharacter()
 	bIsRightMouseDown = false;
 	bCastMouseLineTrace = true;
 	bIsValidMove = true;
+	bIsPossessed = false;
 	PlayerCursorState = CursorState::OverGameWorld;
 	CharacterType = CharacterType::Ally;
 }
@@ -81,7 +82,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	//Line traces and Selection
-	if ((DefaultController != nullptr && bCastMouseLineTrace && PlayerCursorState == CursorState::OverGameWorld))
+	if ((DefaultController != nullptr && bCastMouseLineTrace && PlayerCursorState == CursorState::OverGameWorld && bIsPossessed))
 	{
 
 		if (DefaultController->GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel1), true, UnderCursorHitResult))
@@ -124,7 +125,6 @@ void APlayerCharacter::Tick(float DeltaTime)
 					if (TargetedCharacter != UnderCursorHitResult.Actor) //Only cast if it's not already targeted
 					{
 						TargetedCharacter = Cast<ABaseCharacter>(UnderCursorHitResult.Actor);
-						UE_LOG(LogTemp, Warning, TEXT("Character Cast."));
 					}
 					if (TargetedCharacter != nullptr)
 					{
@@ -285,7 +285,9 @@ void APlayerCharacter::ChangePossession(ABaseCharacter* newCharacter)
 	newPlayerCharacter->CharacterSpringArm->SetWorldLocation(newPlayerCharacter->GetActorLocation());
 	newPlayerCharacter->DefaultController = this->DefaultController;
 	this->DefaultController->UnPossess();
+	this->bIsPossessed = false;
 	this->DefaultController->Possess(newPlayerCharacter);
+	newPlayerCharacter->bIsPossessed = true;
 
 	//Cleanup this pawn
 	this->CharacterSpringArm->SetWorldLocation(this->GetActorLocation());
