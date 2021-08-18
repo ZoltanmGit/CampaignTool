@@ -13,7 +13,14 @@ UCLASS()
 class CAMPAIGNTOOL_API ACampaignToolGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
+
+protected:
+	virtual void BeginPlay() override;
 public:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Init)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Init)
 		TSubclassOf<class AMovementController> MovementController;
+protected:
+	void InitializeGrid();
+	void InitializeCharacters();
+	void InitializeMovementController();
 };
