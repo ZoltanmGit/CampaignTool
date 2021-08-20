@@ -44,6 +44,13 @@ void AGrid::BeginPlay()
 FTileProperties AGrid::GetTilePropertiesFromTransform(const FTransform tileTransform, int32& OutIndex)
 {
 	int32 index = (((tileTransform.GetLocation().X - 50) / fieldSize) * MapSize) + ((tileTransform.GetLocation().Y - 50) / fieldSize);
+	OutIndex = index;
+	return GridDataArray[index];
+}
+
+FTileProperties AGrid::GetTilePropertiesFromIndex(int32 Row, int32 Column)
+{
+	int32 index = (Row * MapSize) + Column;
 	return GridDataArray[index];
 }
 

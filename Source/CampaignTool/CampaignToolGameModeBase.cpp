@@ -35,7 +35,7 @@ void ACampaignToolGameModeBase::InitializeGrid()
 		FActorSpawnParameters SpawnParams;
 		FTransform TransformParams;
 		TransformParams.SetLocation(FVector(0.0f, 0.0f, 0.0f));
-		GetWorld()->SpawnActor<AGrid>(Grid, TransformParams, SpawnParams);
+		AGrid* tempGrid = GetWorld()->SpawnActor<AGrid>(Grid, TransformParams, SpawnParams);
 		UE_LOG(LogTemp, Warning, TEXT("Grid initialized."));
 	}
 }
@@ -53,7 +53,7 @@ void ACampaignToolGameModeBase::InitializeCharacters()
 		newCharacter->bIsPossessed = true;
 		UE_LOG(LogTemp, Warning, TEXT("Fighter spawned. (And possessed)"));
 	}
-	if (RogueClass)
+	/*if (RogueClass)
 	{
 		FTransform TransformParams;
 		TransformParams.SetLocation(FVector(150.0f, 50.0f, 50.0f));
@@ -66,7 +66,7 @@ void ACampaignToolGameModeBase::InitializeCharacters()
 		TransformParams.SetLocation(FVector(250.0f, 50.0f, 50.0f));
 		APlayerCharacter* newCharacter = GetWorld()->SpawnActor<APlayerCharacter>(WizardClass, TransformParams, SpawnParams);
 		UE_LOG(LogTemp, Warning, TEXT("Wizard spawned."));
-	}
+	}*/
 }
 
 void ACampaignToolGameModeBase::InitializeMovementController()

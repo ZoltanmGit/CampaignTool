@@ -4,6 +4,7 @@
 #include "BaseCharacter.h"
 #include "../Public/HealthComponent.h"
 #include "../Public/AttributesComponent.h"
+#include "../Public/PathfinderComponent.h"
 #include "../Public/Grid.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -23,6 +24,8 @@ ABaseCharacter::ABaseCharacter()
 	//Health and Attributes
 	CharacterHealth = CreateDefaultSubobject<UHealthComponent>(TEXT("CharacterHealth"));
 	CharacterAttributes = CreateDefaultSubobject<UAttributesComponent>(TEXT("CharacterAttributes"));
+	Pathfinder = CreateDefaultSubobject<UPathfinderComponent>(TEXT("PathFinder"));
+
 
 	Grid = nullptr;
 
@@ -43,11 +46,15 @@ void ABaseCharacter::BeginPlay()
 	Grid = Cast<AGrid>(UGameplayStatics::GetActorOfClass(GetWorld(), AGrid::StaticClass()));
 	if (Grid)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Found Grid"));
+		Pathfinder->MapSize = Grid->MapSize;
+
+		UE_LOG(LogTemp, Warning, TEXT("Found grid."));
+		BeginTurn();//DELETE LATER;
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Didn't find Grid"));
+
+		UE_LOG(LogTemp, Warning, TEXT("Didn't find Grid."));
 	}
 }
 
@@ -69,6 +76,13 @@ void ABaseCharacter::HandleTakeDamage(AActor* DamagedActor, float Damage, const 
 {
 	CharacterHealth->HandleTakeDamage(Damage);
 	OnHealthChange();
+}
+
+void ABaseCharacter::BeginTurn()
+{
+	int32 index;
+	FTileProperties tile = Grid->GetTilePropertiesFromTransform(this->GetActorTransform(), index);
+	Pathfinder->GetValidMovementIndexes(tile.Row,tile.Column,3);
 }
 
 UHealthComponent* ABaseCharacter::GetCharacterHealth() const

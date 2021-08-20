@@ -48,6 +48,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		FTileProperties GetTilePropertiesFromTransform(const FTransform tileTransform, int32 &OutIndex);
+	UFUNCTION(BlueprintCallable)
+		FTileProperties GetTilePropertiesFromIndex(int32 Row, int32 Column);
 
 	UFUNCTION(BlueprintCallable)
 		void SpawnInstance(const int row, const int column);

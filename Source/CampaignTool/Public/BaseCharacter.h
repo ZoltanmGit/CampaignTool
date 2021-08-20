@@ -41,6 +41,8 @@ public:
 		class UHealthComponent* CharacterHealth; //Component that manages the health of the character
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
 		class UAttributesComponent* CharacterAttributes;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Pathfinding)
+		class UPathfinderComponent* Pathfinder;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Mesh)
 		class UStaticMeshComponent* CharacterMesh; //The Mesh that represents the character in-game
 
@@ -49,7 +51,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		FVector CursorLocation; // The location of the tile the cursor is on
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		TEnumAsByte<CharacterType> CharacterType; // The location of the tile the cursor is on
+		TEnumAsByte<CharacterType> CharacterType;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Grid)
 		class AGrid* Grid;
@@ -57,6 +59,8 @@ public:
 	//Function that handles changes in health
 	UFUNCTION()
 		void HandleTakeDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser);
+	UFUNCTION()
+		void BeginTurn();
 public:
 
 	//Getters
