@@ -49,7 +49,6 @@ void ABaseCharacter::BeginPlay()
 		Pathfinder->MapSize = Grid->MapSize;
 
 		UE_LOG(LogTemp, Warning, TEXT("Found grid."));
-		BeginTurn();//DELETE LATER;
 	}
 	else
 	{

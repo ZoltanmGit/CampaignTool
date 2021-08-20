@@ -164,9 +164,10 @@ void APlayerCharacter::Tick(float DeltaTime)
 /// </summary>
 void APlayerCharacter::HandleTestAction()
 {
-	UGameplayStatics::ApplyDamage(this, 5, nullptr, this, nullptr);
+	//UGameplayStatics::ApplyDamage(this, 5, nullptr, this, nullptr);
 
-	CharacterSpringArm->SetWorldLocation(this->GetActorLocation());
+	//CharacterSpringArm->SetWorldLocation(this->GetActorLocation());
+	this->BeginTurn();
 }
 /// <summary>
 /// Moves the camera in a forward and backward direction relative to its current rotation

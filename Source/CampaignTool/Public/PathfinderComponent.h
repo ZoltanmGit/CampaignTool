@@ -20,6 +20,7 @@ public:
 protected:
 	//Functions
 	int32 CoordToIndex(int32 x, int32 y);
+	void ProcessNode(int32 x, int32 y, int32 range);
 public:
 	//Properties
 	UPROPERTY(VisibleAnywhere, Category = Pathfinding)
@@ -27,8 +28,11 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = Pathfinding)
 		TArray<FDijkstraNode> DijkstraGrid;
 
-	TQueue<FDijkstraNode> DijkstraQ;
+	TQueue<TPair<int32, int32>> DijkstraQ;
+
+	UPROPERTY(VisibleAnywhere, Category = Pathfinding)
+		TArray<int32> ValidMovementArray;
 public:
 	UFUNCTION(BlueprintCallable)
-		TArray<int32> GetValidMovementIndexes(int32 x, int32 y, int32 range); //Returns the grid's dataArray indexes of valid movement points
+		void GetValidMovementIndexes(int32 x, int32 y, int32 range); //Returns the grid's dataArray indexes of valid movement points
 };
