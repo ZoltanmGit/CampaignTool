@@ -4,6 +4,7 @@
 #include "PlayerCharacter.h"
 #include "../Public/HealthComponent.h"
 #include "../Public/AttributesComponent.h"
+#include "../Public/PathfinderComponent.h"
 #include "../Public/Grid.h"
 #include "Components/WidgetComponent.h"
 #include "Components/StaticMeshComponent.h"
@@ -168,6 +169,17 @@ void APlayerCharacter::HandleTestAction()
 
 	//CharacterSpringArm->SetWorldLocation(this->GetActorLocation());
 	this->BeginTurn();
+	for (TPair<int32, float>& Kvp : Pathfinder->ValidIndexMap) //Source: https://docs.unrealengine.com/4.27/en-US/ProductionPipelines/DevelopmentSetup/CodingStandard/#range-basedfor
+	{
+		float i;
+		float j;
+		i = Kvp.Key / Grid->MapSize;
+		j = Kvp.Key % Grid->MapSize;
+		FTransform Transform;
+		Transform.SetLocation(FVector((i * Grid->fieldSize) + (Grid->fieldSize / 2), (j * Grid->fieldSize) + (Grid->fieldSize / 2), 0.0f));
+		OnPathfinding(Transform);
+	}
+	//OnPathfinding();
 }
 /// <summary>
 /// Moves the camera in a forward and backward direction relative to its current rotation
@@ -293,4 +305,9 @@ void APlayerCharacter::ChangePossession(ABaseCharacter* newCharacter)
 	//Cleanup this pawn
 	this->CharacterSpringArm->SetWorldLocation(this->GetActorLocation());
 	this->DefaultController = nullptr;
+}
+
+void APlayerCharacter::OnPathfinding_Implementation(const FTransform transform)
+{
+
 }

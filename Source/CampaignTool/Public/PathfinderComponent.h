@@ -30,8 +30,8 @@ public:
 
 	TQueue<TPair<int32, int32>> DijkstraQ;
 
-	UPROPERTY(VisibleAnywhere, Category = Pathfinding)
-		TArray<int32> ValidMovementArray;
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category = Pathfinding)
+		TMap<int32, float> ValidIndexMap;
 public:
 	UFUNCTION(BlueprintCallable)
 		void GetValidMovementIndexes(int32 x, int32 y, int32 range); //Returns the grid's dataArray indexes of valid movement points

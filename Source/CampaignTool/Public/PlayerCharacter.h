@@ -73,4 +73,7 @@ protected:
 
 	void HandleLMBPress();
 	void ChangePossession(class ABaseCharacter* newCharacter);
+public:
+	UFUNCTION(BlueprintNativeEvent)
+		void OnPathfinding(const FTransform transform);
 };

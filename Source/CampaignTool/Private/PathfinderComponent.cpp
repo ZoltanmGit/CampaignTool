@@ -94,7 +94,7 @@ void UPathfinderComponent::ProcessNode(int32 x, int32 y, int32 range)
 		if (DijkstraGrid[CoordToIndex(x + 1, y-1)].NodeValue > CurrentNode.NodeValue + 1.5f && DijkstraGrid[CoordToIndex(x + 1, y - 1)].bIsValidTerrain && !DijkstraGrid[CoordToIndex(x + 1, y - 1)].bWasProcessed)
 		{
 			DijkstraGrid[CoordToIndex(x + 1, y-1)].NodeValue = CurrentNode.NodeValue + 1.5f;
-			if (bQueueNeighbors && CurrentNode.NodeValue + 1.5f < range)
+			if (bQueueNeighbors && CurrentNode.NodeValue + 1.5f <= range)
 			{
 				TPair<int32, int32> pair = TPair<int32, int32>(x + 1, y-1);
 				DijkstraQ.Enqueue(pair);
@@ -109,7 +109,7 @@ void UPathfinderComponent::ProcessNode(int32 x, int32 y, int32 range)
 		if (DijkstraGrid[CoordToIndex(x + 1, y + 1)].NodeValue > CurrentNode.NodeValue + 1.5f&& DijkstraGrid[CoordToIndex(x + 1, y + 1)].bIsValidTerrain && !DijkstraGrid[CoordToIndex(x + 1, y + 1)].bWasProcessed)
 		{
 			DijkstraGrid[CoordToIndex(x + 1, y + 1)].NodeValue = CurrentNode.NodeValue + 1.5f;
-			if (bQueueNeighbors && CurrentNode.NodeValue + 1.5f < range)
+			if (bQueueNeighbors && CurrentNode.NodeValue + 1.5f <= range)
 			{
 				TPair<int32, int32> pair = TPair<int32, int32>(x + 1, y+1);
 				DijkstraQ.Enqueue(pair);
@@ -124,7 +124,7 @@ void UPathfinderComponent::ProcessNode(int32 x, int32 y, int32 range)
 		if (DijkstraGrid[CoordToIndex(x - 1, y - 1)].NodeValue > CurrentNode.NodeValue + 1.5f&& DijkstraGrid[CoordToIndex(x - 1, y - 1)].bIsValidTerrain &&!DijkstraGrid[CoordToIndex(x - 1, y - 1)].bWasProcessed)
 		{
 			DijkstraGrid[CoordToIndex(x - 1, y - 1)].NodeValue = CurrentNode.NodeValue + 1.5f;
-			if (bQueueNeighbors && CurrentNode.NodeValue + 1.5f < range)
+			if (bQueueNeighbors && CurrentNode.NodeValue + 1.5f <= range)
 			{
 				TPair<int32, int32> pair = TPair<int32, int32>(x - 1, y-1);
 				DijkstraQ.Enqueue(pair);
@@ -138,7 +138,7 @@ void UPathfinderComponent::ProcessNode(int32 x, int32 y, int32 range)
 		if (DijkstraGrid[CoordToIndex(x - 1, y + 1)].NodeValue > CurrentNode.NodeValue + 1.5f&& DijkstraGrid[CoordToIndex(x - 1, y + 1)].bIsValidTerrain && !DijkstraGrid[CoordToIndex(x - 1, y + 1)].bWasProcessed)
 		{
 			DijkstraGrid[CoordToIndex(x - 1, y + 1)].NodeValue = CurrentNode.NodeValue + 1.5f;
-			if (bQueueNeighbors && CurrentNode.NodeValue + 1.5f < range)
+			if (bQueueNeighbors && CurrentNode.NodeValue + 1.5f <= range)
 			{
 				TPair<int32, int32> pair = TPair<int32, int32>(x - 1, y+1);
 				DijkstraQ.Enqueue(pair);
@@ -146,7 +146,7 @@ void UPathfinderComponent::ProcessNode(int32 x, int32 y, int32 range)
 		}
 	}
 	DijkstraGrid[CoordToIndex(x, y)].bWasProcessed = true;
-	ValidMovementArray.Add(CoordToIndex(x, y));
+	ValidIndexMap.Add(CoordToIndex(x, y), DijkstraGrid[CoordToIndex(x, y)].NodeValue);
 }
 
 void UPathfinderComponent::GetValidMovementIndexes(int32 x, int32 y, int32 range)
@@ -156,7 +156,7 @@ void UPathfinderComponent::GetValidMovementIndexes(int32 x, int32 y, int32 range
 	if (Owner != nullptr)
 	{
 		DijkstraGrid.Empty();
-		ValidMovementArray.Empty();
+		ValidIndexMap.Empty();
 
 		for (int32 i = 0; i < MapSize; i++)
 		{
@@ -194,12 +194,7 @@ void UPathfinderComponent::GetValidMovementIndexes(int32 x, int32 y, int32 range
 			DijkstraQ.Dequeue(pair);
 			ProcessNode(pair.Key,pair.Value, range);
 		}
-		/*TPair<int32, int32> pair;
-		DijkstraQ.Dequeue(pair);
-		ProcessNode(pair.Key, pair.Value, range);*/
-
-
-		//UE_LOG(LogTemp, Warning, TEXT("Finished pathfinding"));
+		ValidIndexMap.Remove(CoordToIndex(x, y)); //Remove the current position
 	}
 	else
 	{
