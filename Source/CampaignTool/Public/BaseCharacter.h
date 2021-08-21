@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "CharacterStruct.h"
 #include "BaseCharacter.generated.h"
 
 UENUM(BlueprintType)
@@ -52,15 +53,41 @@ public:
 		FVector CursorLocation; // The location of the tile the cursor is on
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		TEnumAsByte<CharacterType> CharacterType;
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		bool bIsCharacterActive;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Pathfinding)
+		float CurrentSpeed;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Grid)
 		class AGrid* Grid;
 
-	//Function that handles changes in health
+
+	//Properties not exposed to the editor
+	bool bCanMove;
+	bool bCanAct;
+	/// <summary>
+	/// Function that handles changes in health, healing and damage both
+	/// </summary>
 	UFUNCTION()
 		void HandleTakeDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser);
+	/// <summary>
+	/// Initiates pathfinding, resets actions and advances cooldowns
+	/// </summary>
 	UFUNCTION()
 		void BeginTurn();
+	/// <summary>
+	/// Ends the turn for the character
+	/// </summary>
+	UFUNCTION()
+		void EndTurn();
+	/// <summary>
+	/// Changes the supposed location of the character, which then gets moved by the MovementController
+	/// </summary>
+	UFUNCTION()
+		void ChangeLocation(FVector newLocation);
+	UFUNCTION()
+		void RefreshPathfinding();
+	UFUNCTION()
+		void InitializeCharacter(FCharacterStruct Character);
 public:
 
 	//Getters
@@ -72,4 +99,9 @@ public:
 	//Public Events
 	UFUNCTION(BlueprintNativeEvent)
 		void OnHealthChange(); //Event that notifies the Widget to reflect value changes
+
+	UFUNCTION(BlueprintNativeEvent)
+		void OnPathfinding(const FTransform transform);
+	UFUNCTION(BlueprintNativeEvent)
+		void CleanupPathfinding();
 };

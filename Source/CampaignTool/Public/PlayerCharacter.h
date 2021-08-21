@@ -54,7 +54,6 @@ protected:
 	FVector2D savedMousePosition; // We save the mouse location and reset it when turning
 	bool bIsRightMouseDown;
 	bool bCastMouseLineTrace;
-	bool bIsValidMove;
 
 	FHitResult UnderCursorHitResult;
 
@@ -74,6 +73,5 @@ protected:
 	void HandleLMBPress();
 	void ChangePossession(class ABaseCharacter* newCharacter);
 public:
-	UFUNCTION(BlueprintNativeEvent)
-		void OnPathfinding(const FTransform transform);
+	
 };

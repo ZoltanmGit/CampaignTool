@@ -18,15 +18,15 @@ int32 UPathfinderComponent::CoordToIndex(int32 x, int32 y)
 	return (x * MapSize) + y;
 }
 
-void UPathfinderComponent::ProcessNode(int32 x, int32 y, int32 range)
+void UPathfinderComponent::ProcessNode(int32 x, int32 y, float range)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Processing %i and %i"), x, y);
+	//UE_LOG(LogTemp, Warning, TEXT("Processing %i and %i"), x, y);
 	FDijkstraNode CurrentNode = DijkstraGrid[CoordToIndex(x, y)];
 	bool bQueueNeighbors = true;
 	if (FMath::CeilToFloat(CurrentNode.NodeValue) == range)
 	{
 		bQueueNeighbors = false;
-		UE_LOG(LogTemp, Warning, TEXT("x:%i  y:%i don't queue neighbours"), CurrentNode.x,CurrentNode.y);
+		//UE_LOG(LogTemp, Warning, TEXT("x:%i  y:%i don't queue neighbours range:%f"), CurrentNode.x,CurrentNode.y, range);
 	}
 	//Left
 	if (y - 1 >= 0)
@@ -149,7 +149,7 @@ void UPathfinderComponent::ProcessNode(int32 x, int32 y, int32 range)
 	ValidIndexMap.Add(CoordToIndex(x, y), DijkstraGrid[CoordToIndex(x, y)].NodeValue);
 }
 
-void UPathfinderComponent::GetValidMovementIndexes(int32 x, int32 y, int32 range)
+void UPathfinderComponent::GetValidMovementIndexes(int32 x, int32 y, float range)
 {
 	//Get the grid from the parent
 	ABaseCharacter* Owner = Cast<ABaseCharacter>(this->GetOwner());
@@ -199,6 +199,22 @@ void UPathfinderComponent::GetValidMovementIndexes(int32 x, int32 y, int32 range
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Pathfinder didn't find owner."));
+	}
+}
+
+void UPathfinderComponent::EmptyProperties()
+{
+	if (!DijkstraQ.IsEmpty())
+	{
+		DijkstraQ.Empty();
+	}
+	if (DijkstraGrid.Num() > 0)
+	{
+		DijkstraGrid.Empty();
+	}
+	if (ValidIndexMap.Num() > 0)
+	{
+		ValidIndexMap.Empty();
 	}
 }
 

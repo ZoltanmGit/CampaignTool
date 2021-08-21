@@ -28,6 +28,7 @@ ABaseCharacter::ABaseCharacter()
 
 
 	Grid = nullptr;
+	bIsCharacterActive = false;
 
 	// Subscribe to HandleTakeDamage to OnTakeAnyDamage event
 	OnTakeAnyDamage.AddDynamic(this, &ABaseCharacter::HandleTakeDamage);
@@ -79,9 +80,71 @@ void ABaseCharacter::HandleTakeDamage(AActor* DamagedActor, float Damage, const 
 
 void ABaseCharacter::BeginTurn()
 {
+	bIsCharacterActive = true;
+	bCanMove = true;
+	bCanAct = true;
+	CurrentSpeed = CharacterAttributes->Stats.Speed / 5.0f; //We divide by five because 1 square is supposed to be 5ft so 25ft is 5 tiles
+	RefreshPathfinding();
+}
+
+void ABaseCharacter::EndTurn()
+{
+	bIsCharacterActive = false;
+}
+
+void ABaseCharacter::ChangeLocation(FVector newLocation)
+{
+	
+	bool bValidMovement = false;
+	FTransform transform;
+	transform.SetLocation(newLocation);
+	int32 index;
+	Grid->GetTilePropertiesFromTransform(transform, index);
+	if (newLocation != CharacterLocation && Pathfinder->ValidIndexMap.Contains(index))
+	{
+		CleanupPathfinding(); //PLACEHOLDER 
+		CurrentSpeed = CurrentSpeed - *Pathfinder->ValidIndexMap.Find(index);
+		UE_LOG(LogTemp, Warning, TEXT("Speed is %f"), CurrentSpeed);
+		Grid->GridDataArray[index].bIsOccupied = true;
+		transform.SetLocation(this->GetActorLocation());
+		Grid->GetTilePropertiesFromTransform(transform, index);
+		Grid->GridDataArray[index].bIsOccupied = false;
+		CharacterLocation = newLocation;
+
+	}
+}
+
+void ABaseCharacter::RefreshPathfinding()
+{
 	int32 index;
 	FTileProperties tile = Grid->GetTilePropertiesFromTransform(this->GetActorTransform(), index);
-	Pathfinder->GetValidMovementIndexes(tile.Row,tile.Column,3);
+	Pathfinder->GetValidMovementIndexes(tile.Row, tile.Column, CurrentSpeed);
+	UE_LOG(LogTemp, Warning, TEXT("Pathfinding is refreshed"));
+
+
+	//PLACEHOLDER
+	for (TPair<int32, float>& Kvp : Pathfinder->ValidIndexMap) //Source: https://docs.unrealengine.com/4.27/en-US/ProductionPipelines/DevelopmentSetup/CodingStandard/#range-basedfor
+	{
+		float i;
+		float j;
+		i = Kvp.Key / Grid->MapSize;
+		j = Kvp.Key % Grid->MapSize;
+		FTransform Transform;
+		Transform.SetLocation(FVector((i * Grid->fieldSize) + (Grid->fieldSize / 2), (j * Grid->fieldSize) + (Grid->fieldSize / 2), 0.0f));
+		OnPathfinding(Transform);
+	}
+}
+
+void ABaseCharacter::InitializeCharacter(FCharacterStruct Character)
+{
+	if (CharacterAttributes)
+	{
+		CharacterAttributes->InitComponent(Character);
+		if (CharacterHealth)
+		{
+
+		}
+	}
 }
 
 UHealthComponent* ABaseCharacter::GetCharacterHealth() const
@@ -95,6 +158,15 @@ UAttributesComponent* ABaseCharacter::GetCharacterAttributes() const
 }
 
 void ABaseCharacter::OnHealthChange_Implementation()
+{
+
+}
+
+void ABaseCharacter::OnPathfinding_Implementation(const FTransform transform)
+{
+
+}
+void ABaseCharacter::CleanupPathfinding_Implementation()
 {
 
 }

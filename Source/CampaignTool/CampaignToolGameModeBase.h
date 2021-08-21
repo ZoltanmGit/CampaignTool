@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "Public/CharacterStruct.h"
 #include "CampaignToolGameModeBase.generated.h"
 
 /**
@@ -14,6 +15,8 @@ class CAMPAIGNTOOL_API ACampaignToolGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 
+public:
+	ACampaignToolGameModeBase();
 protected:
 	virtual void BeginPlay() override;
 public:
@@ -21,6 +24,7 @@ public:
 		TSubclassOf<class AMovementController> MovementController;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Init)
 		TSubclassOf<class AGrid> Grid;
+	class AGrid* Gridptr;
 
 	//Character Blueprints
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Init)
@@ -31,8 +35,14 @@ public:
 		TSubclassOf<class APlayerCharacter> WizardClass;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Init)
 		class APlayerController* UserController;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Characters)
+		TArray<class ABaseCharacter*> Characters;
 protected:
 	void InitializeGrid();
 	void InitializeCharacters();
 	void InitializeMovementController();
+	void SpawnCharacter(FCharacterStruct character, int32 x, int32 y);
+protected:
+	FCharacterStruct TestFighter;
+	FCharacterStruct TestRogue;
 };

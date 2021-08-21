@@ -34,7 +34,6 @@ APlayerCharacter::APlayerCharacter()
 	TargetedTile = nullptr;
 	bIsRightMouseDown = false;
 	bCastMouseLineTrace = true;
-	bIsValidMove = true;
 	bIsPossessed = false;
 	PlayerCursorState = CursorState::OverGameWorld;
 	CharacterType = CharacterType::Ally;
@@ -168,18 +167,6 @@ void APlayerCharacter::HandleTestAction()
 	//UGameplayStatics::ApplyDamage(this, 5, nullptr, this, nullptr);
 
 	//CharacterSpringArm->SetWorldLocation(this->GetActorLocation());
-	this->BeginTurn();
-	for (TPair<int32, float>& Kvp : Pathfinder->ValidIndexMap) //Source: https://docs.unrealengine.com/4.27/en-US/ProductionPipelines/DevelopmentSetup/CodingStandard/#range-basedfor
-	{
-		float i;
-		float j;
-		i = Kvp.Key / Grid->MapSize;
-		j = Kvp.Key % Grid->MapSize;
-		FTransform Transform;
-		Transform.SetLocation(FVector((i * Grid->fieldSize) + (Grid->fieldSize / 2), (j * Grid->fieldSize) + (Grid->fieldSize / 2), 0.0f));
-		OnPathfinding(Transform);
-	}
-	//OnPathfinding();
 }
 /// <summary>
 /// Moves the camera in a forward and backward direction relative to its current rotation
@@ -274,10 +261,10 @@ void APlayerCharacter::HandleRMBRelease()
 /// Handles the behaviour of the Left Mouse Button being pressed down
 /// </summary>
 void APlayerCharacter::HandleLMBPress()
-{
-	if (TargetedTile != nullptr && bIsValidMove)
+{	
+	if (TargetedTile != nullptr && bCanMove)
 	{
-		CharacterLocation = FVector(CursorLocation.X, CursorLocation.Y, 50.0f);
+		this->ChangeLocation(FVector(CursorLocation.X, CursorLocation.Y, 50.0f));
 	}
 	else if (TargetedCharacter != nullptr)
 	{
@@ -293,6 +280,7 @@ void APlayerCharacter::HandleLMBPress()
 /// <param name="newCharacter">The character which is next to be possessed</param>
 void APlayerCharacter::ChangePossession(ABaseCharacter* newCharacter)
 {
+	CleanupPathfinding(); // PLACEHOLDER
 	APlayerCharacter* newPlayerCharacter = Cast<APlayerCharacter>(newCharacter);
 	newPlayerCharacter->CharacterSpringArm->SetWorldRotation(this->CharacterSpringArm->GetComponentRotation());
 	newPlayerCharacter->CharacterSpringArm->SetWorldLocation(newPlayerCharacter->GetActorLocation());
@@ -301,13 +289,10 @@ void APlayerCharacter::ChangePossession(ABaseCharacter* newCharacter)
 	this->bIsPossessed = false;
 	this->DefaultController->Possess(newPlayerCharacter);
 	newPlayerCharacter->bIsPossessed = true;
+	newPlayerCharacter->BeginTurn();
 
 	//Cleanup this pawn
 	this->CharacterSpringArm->SetWorldLocation(this->GetActorLocation());
 	this->DefaultController = nullptr;
 }
 
-void APlayerCharacter::OnPathfinding_Implementation(const FTransform transform)
-{
-
-}

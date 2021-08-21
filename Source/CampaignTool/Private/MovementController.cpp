@@ -5,6 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "EngineUtils.h"
 #include "../Public/BaseCharacter.h"
+#include "../Public/PathfinderComponent.h"
 
 // Sets default values
 AMovementController::AMovementController()
@@ -40,7 +41,19 @@ void AMovementController::Tick(float DeltaTime)
 	{
 		if (Characters[i]->GetActorLocation() != Characters[i]->CharacterLocation)
 		{
-			Characters[i]->SetActorLocation(FVector(FMath::VInterpTo(Characters[i]->GetActorLocation(), Characters[i]->CharacterLocation, DeltaTime, 10.0f).X, FMath::VInterpTo(Characters[i]->GetActorLocation(), Characters[i]->CharacterLocation, DeltaTime, 10.0f).Y, 50.0f));
+			if (Characters[i]->bCanMove)
+			{
+				Characters[i]->bCanMove = false;
+			}
+			Characters[i]->SetActorLocation(FVector(FMath::VInterpTo(Characters[i]->GetActorLocation(), Characters[i]->CharacterLocation, DeltaTime,10.0f).X, FMath::VInterpTo(Characters[i]->GetActorLocation(), Characters[i]->CharacterLocation, DeltaTime, 10.0f).Y, 50.0f));
+		}
+		else if (Characters[i]->bIsCharacterActive && Characters[i]->CurrentSpeed >= 1.0f && !Characters[i]->bCanMove)
+		{
+			Characters[i]->bCanMove = true;
+			Characters[i]->RefreshPathfinding();
+		}
+		else
+		{
 		}
 	}
 }
