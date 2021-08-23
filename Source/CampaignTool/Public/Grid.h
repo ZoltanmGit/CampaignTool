@@ -47,6 +47,12 @@ public:
 
 	void InitializeGrid(int argRows,int argColumns,int argGrid[]);
 private:
+	/// <summary>
+	/// This function is used to get a valid TerrainType from an integer
+	/// It clamps the value between -1 and the number of initialized tiles
+	/// </summary>
+	/// <param name="value"></param>
+	/// <returns></returns>
 	TerrainType GetTerrainTypeFromInt(int value);
 public:
 	virtual void OnConstruction(const FTransform& transform);

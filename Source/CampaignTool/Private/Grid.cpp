@@ -96,10 +96,9 @@ void AGrid::InitializeGrid(int argRows, int argColumns, int argGrid[])
 		}
 	}
 }
-
 TerrainType AGrid::GetTerrainTypeFromInt(int value)
 {
-	switch (value)
+	switch (FMath::Clamp(value,-1,this->HISMC_GridArray.Num()))
 	{
 	case 0:
 		return TerrainType::Grass;
@@ -133,110 +132,7 @@ TerrainType AGrid::GetTerrainTypeFromInt(int value)
 /// We use this to drag the grid in the editor
 /// </summary>
 /// <param name="Transform">An FTransform as parameter</param>
-void AGrid::OnConstruction(const FTransform& Transform) {
-	/*bool bValid = true; 
-	for (int i = 0; i < 7; i++)
-	{
-		if (!HISMC_GridArray[i] || !HISMC_GridArray[i]->GetStaticMesh())
-		{
-			bValid = false;
-		}
-		else
-		{
-			HISMC_GridArray[i]->ClearInstances();
-		}
-	}
-
-	GridDataArray.Empty();
-
-	if (bValid)
-	{
-		RegisterAllComponents();
-
-		for (int i = 0; i < MapSize; i++)
-		{
-			for (int j = 0; j < MapSize; j++)
-			{
-				if (tempMatrix[((i * MapSize) + j)] >= -1)
-				{
-					FTransform newInstanceTransform;
-					newInstanceTransform.SetLocation(FVector((i * fieldSize) + (fieldSize / 2), (j * fieldSize) + (fieldSize / 2), 0));
-
-					FTileProperties newTileData = FTileProperties();
-					newTileData.bIsObscured = false;
-					newTileData.bIsOccupied = false;
-					newTileData.Row = i;
-					newTileData.Column = j;
-					newTileData.LightType = LightType::Bright;
-					switch (tempMatrix[((i * 10) + j)])
-					{
-					case -1:
-						newTileData.TerrainType = TerrainType::Void;
-						newTileData.bIsObscured = true;
-						newTileData.bIsOccupied = true;
-						// There is no instance when the terrain is void aka missing
-						break;
-					case 0:
-						newTileData.TerrainType = TerrainType::Grass;
-						HISMC_GridArray[0]->AddInstance(newInstanceTransform);
-						break;
-					case 1:
-						newTileData.TerrainType = TerrainType::Water;
-						HISMC_GridArray[1]->AddInstance(newInstanceTransform);
-						break;
-					case 2:
-						newTileData.TerrainType = TerrainType::DeepWater;
-						HISMC_GridArray[2]->AddInstance(newInstanceTransform);
-						break;
-					case 3:
-						newTileData.TerrainType = TerrainType::Wood;
-						HISMC_GridArray[3]->AddInstance(newInstanceTransform);
-						break;
-					case 4:
-						newTileData.TerrainType = TerrainType::Dirt;
-						HISMC_GridArray[4]->AddInstance(newInstanceTransform);
-						break;
-					case 5:
-						newTileData.TerrainType = TerrainType::Rock;
-						HISMC_GridArray[5]->AddInstance(newInstanceTransform);
-						break;
-					case 6:
-						newTileData.TerrainType = TerrainType::Grass;
-						HISMC_GridArray[6]->AddInstance(newInstanceTransform);
-						break;
-					default:
-						break;
-					}
-					GridDataArray.Add(newTileData);
-				}
-			}
-		}
-
-	}
-
-	/*if (HISMC_Grid && HISMC_Grid->GetStaticMesh())
-	{
-		
-		RegisterAllComponents(); //Register all of the components - we register components if they are dynamically created at runtime
-		
-		this->HISMC_Grid->ClearInstances(); //Clear instances and remake them
-		this->GridDataArray.Empty();
-
-		for (int i = 0; i < Rows; i++)
-		{
-			for (int j = 0; j < Columns; j++)
-			{
-				FTransform newInstanceTransform;
-				newInstanceTransform.SetLocation(FVector((i*fieldSize)+(fieldSize/2), (j * fieldSize) + (fieldSize / 2), 0));
-				FTileProperties newTileData = FTileProperties();
-				newTileData.bIsObscured = true;
-				newTileData.TerrainType = TerrainType::Dirt;
-				newTileData.LightType = LightType::Bright;
-				newTileData.Row = i;
-				newTileData.Column = j;
-				GridDataArray.Add(newTileData);
-				HISMC_Grid->AddInstance(newInstanceTransform);
-			}
-		}
-	}*/
+void AGrid::OnConstruction(const FTransform& Transform) 
+{
+	
 }

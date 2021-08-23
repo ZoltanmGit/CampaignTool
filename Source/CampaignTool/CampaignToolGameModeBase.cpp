@@ -69,6 +69,7 @@ void ACampaignToolGameModeBase::BeginPlay()
 
 void ACampaignToolGameModeBase::InitializeGrid()
 {
+	// 10 x 10
 	int tempMatrix[100] = { 0,0,0,0,1,1,0,0,0,0,
 							0,0,4,4,1,1,4,4,0,0,
 							0,0,4,3,3,3,3,4,0,0,
@@ -80,6 +81,7 @@ void ACampaignToolGameModeBase::InitializeGrid()
 							1,1,1,1,1,1,1,1,1,1,
 							2,2,2,2,2,2,2,2,2,2
 	};
+	//15 x 15
 	int tempMatrix2[225] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 							1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,
 							0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
@@ -96,10 +98,21 @@ void ACampaignToolGameModeBase::InitializeGrid()
 							0,0,0,1,1,1,1,0,0,1,1,0,1,1,1,
 							0,0,0,0,0,0,0,0,0,1,1,0,0,0,0
 	};
+	//4 x 13
 	int tempMatrix3[52] = { 4,-1, 4, 4, 4,-1, 4, 4, 4,-1, 4, 4, 4,
 							4,-1, 4,-1, 4,-1, 4,-1, 4,-1, 4,-1, 4,
 							4,-1, 4,-1, 4,-1, 4,-1, 4,-1, 4,-1, 4,
 							4, 4, 4,-1, 4, 4, 4,-1, 4, 4, 4,-1, 4
+	};
+	//10 x 10
+	int tempMatrix4[100] = { 4,4,4,4,4,4,4,4,4,4,
+							0,0,0,0,0,0,0,0,0,0,
+							4,4,4,4,4,4,4,4,4,4,
+							0,0,0,0,0,0,0,0,0,0,
+							4,4,4,4,4,4,4,4,4,4,
+							0,0,0,0,0,0,0,0,0,0,
+							4,4,4,4,4,4,4,4,4,4,
+							0,0,0,0,0,0,0,0,0,0,
 	};
 	if (Grid)
 	{
@@ -107,7 +120,7 @@ void ACampaignToolGameModeBase::InitializeGrid()
 		FTransform TransformParams;
 		TransformParams.SetLocation(FVector(0.0f, 0.0f, 0.0f));
 		Gridptr = GetWorld()->SpawnActor<AGrid>(Grid, TransformParams, SpawnParams);
-		Gridptr->InitializeGrid(4, 13, tempMatrix3);
+		Gridptr->InitializeGrid(10, 10, tempMatrix4);
 		UE_LOG(LogTemp, Warning, TEXT("Grid initialized..."));
 	}
 }
@@ -116,9 +129,6 @@ void ACampaignToolGameModeBase::InitializeCharacters()
 {
 	SpawnCharacter(TestFighter, 0, 0);
 	SpawnCharacter(TestRogue, 1, 0);
-	/*SpawnCharacter(TestFighter, 2, 5);
-	SpawnCharacter(TestFighter, 3, 5);
-	SpawnCharacter(TestFighter, 4, 5);*/
 
 
 	if (Characters[0] != nullptr)
