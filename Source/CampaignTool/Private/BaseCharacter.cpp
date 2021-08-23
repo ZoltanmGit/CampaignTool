@@ -44,18 +44,6 @@ void ABaseCharacter::BeginPlay()
 		CharacterHealth->SetCurrentHealth(CharacterHealth->GetFullHealth());
 		OnHealthChange();
 	}
-	Grid = Cast<AGrid>(UGameplayStatics::GetActorOfClass(GetWorld(), AGrid::StaticClass()));
-	if (Grid)
-	{
-		Pathfinder->MapSize = Grid->MapSize;
-
-		UE_LOG(LogTemp, Warning, TEXT("Found grid."));
-	}
-	else
-	{
-
-		UE_LOG(LogTemp, Warning, TEXT("Didn't find Grid."));
-	}
 }
 
 // Called every frame
@@ -74,17 +62,23 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 void ABaseCharacter::HandleTakeDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
 {
-	CharacterHealth->HandleTakeDamage(Damage);
-	OnHealthChange();
+	if (CharacterHealth)
+	{
+		CharacterHealth->HandleTakeDamage(Damage);
+		OnHealthChange();
+	}
 }
 
 void ABaseCharacter::BeginTurn()
 {
-	bIsCharacterActive = true;
-	bCanMove = true;
-	bCanAct = true;
-	CurrentSpeed = CharacterAttributes->Stats.Speed / 5.0f; //We divide by five because 1 square is supposed to be 5ft so 25ft is 5 tiles
-	RefreshPathfinding();
+	if (Grid != nullptr && CharacterAttributes != nullptr)
+	{
+		bIsCharacterActive = true;
+		bCanMove = true;
+		bCanAct = true;
+		CurrentSpeed = CharacterAttributes->Stats.Speed / 5.0f; //We divide by five because 1 square is supposed to be 5ft so 25ft is 5 tiles
+		RefreshPathfinding();
+	}
 }
 
 void ABaseCharacter::EndTurn()
@@ -94,49 +88,58 @@ void ABaseCharacter::EndTurn()
 
 void ABaseCharacter::ChangeLocation(FVector newLocation)
 {
-	
-	bool bValidMovement = false;
-	FTransform transform;
-	transform.SetLocation(newLocation);
-	int32 index;
-	Grid->GetTilePropertiesFromTransform(transform, index);
-	if (newLocation != CharacterLocation && Pathfinder->ValidIndexMap.Contains(index))
+	if (Grid && Pathfinder)
 	{
-		CleanupPathfinding(); //PLACEHOLDER 
-		CurrentSpeed = CurrentSpeed - *Pathfinder->ValidIndexMap.Find(index);
-		UE_LOG(LogTemp, Warning, TEXT("Speed is %f"), CurrentSpeed);
-		Grid->GridDataArray[index].bIsOccupied = true;
-		transform.SetLocation(this->GetActorLocation());
+		bool bValidMovement = false;
+		FTransform transform;
+		transform.SetLocation(newLocation);
+		int32 index;
 		Grid->GetTilePropertiesFromTransform(transform, index);
-		Grid->GridDataArray[index].bIsOccupied = false;
-		CharacterLocation = newLocation;
-
+		if (newLocation != CharacterLocation && Pathfinder->ValidIndexMap.Contains(index))
+		{
+			CleanupPathfinding(); //PLACEHOLDER 
+			CurrentSpeed = CurrentSpeed - *Pathfinder->ValidIndexMap.Find(index);
+			UE_LOG(LogTemp, Warning, TEXT("Speed is %f"), CurrentSpeed);
+			Grid->GridDataArray[index].bIsOccupied = true;
+			transform.SetLocation(this->GetActorLocation());
+			Grid->GetTilePropertiesFromTransform(transform, index);
+			Grid->GridDataArray[index].bIsOccupied = false;
+			CharacterLocation = newLocation;
+		}
 	}
+	
 }
 
 void ABaseCharacter::RefreshPathfinding()
 {
-	int32 index;
-	FTileProperties tile = Grid->GetTilePropertiesFromTransform(this->GetActorTransform(), index);
-	Pathfinder->GetValidMovementIndexes(tile.Row, tile.Column, CurrentSpeed);
-	UE_LOG(LogTemp, Warning, TEXT("Pathfinding is refreshed"));
-
-
-	//PLACEHOLDER
-	for (TPair<int32, float>& Kvp : Pathfinder->ValidIndexMap) //Source: https://docs.unrealengine.com/4.27/en-US/ProductionPipelines/DevelopmentSetup/CodingStandard/#range-basedfor
+	if (Pathfinder)
 	{
-		float i;
-		float j;
-		i = Kvp.Key / Grid->MapSize;
-		j = Kvp.Key % Grid->MapSize;
-		FTransform Transform;
-		Transform.SetLocation(FVector((i * Grid->fieldSize) + (Grid->fieldSize / 2), (j * Grid->fieldSize) + (Grid->fieldSize / 2), 0.0f));
-		OnPathfinding(Transform);
+		int32 index;//Unused
+		FTileProperties tile = Grid->GetTilePropertiesFromTransform(this->GetActorTransform(), index);
+		Pathfinder->GetValidMovementIndexes(tile.Row, tile.Column, CurrentSpeed);
+		UE_LOG(LogTemp, Warning, TEXT("Pathfinding is refreshed"));
+
+
+		//PLACEHOLDER
+		for (TPair<int32, float>& Kvp : Pathfinder->ValidIndexMap) //Source: https://docs.unrealengine.com/4.27/en-US/ProductionPipelines/DevelopmentSetup/CodingStandard/#range-basedfor
+		{
+			float i;
+			float j;
+			i = Kvp.Key / Grid->Columns;
+			j = Kvp.Key % Grid->Columns;
+			FTransform Transform;
+			Transform.SetLocation(FVector((i * Grid->fieldSize) + (Grid->fieldSize / 2), (j * Grid->fieldSize) + (Grid->fieldSize / 2), 5.0f));
+			OnPathfinding(Transform);
+		}
 	}
 }
 
-void ABaseCharacter::InitializeCharacter(FCharacterStruct Character)
+void ABaseCharacter::InitializeCharacter(FCharacterStruct Character, AGrid* ArgGrid)
 {
+	Grid = ArgGrid;
+	Pathfinder->Rows = Grid->Rows;
+	Pathfinder->Columns = Grid->Columns;
+	//Pathfinder->MapSize = Grid->MapSize;
 	if (CharacterAttributes)
 	{
 		CharacterAttributes->InitComponent(Character);
@@ -149,12 +152,26 @@ void ABaseCharacter::InitializeCharacter(FCharacterStruct Character)
 
 UHealthComponent* ABaseCharacter::GetCharacterHealth() const
 {
-	return CharacterHealth;
+	if (CharacterHealth)
+	{
+		return CharacterHealth;
+	}
+	else
+	{
+		return nullptr;
+	}
 }
 
 UAttributesComponent* ABaseCharacter::GetCharacterAttributes() const
 {
-	return CharacterAttributes;
+	if (CharacterAttributes)
+	{
+		return CharacterAttributes;
+	}
+	else
+	{
+		return nullptr;
+	}
 }
 
 void ABaseCharacter::OnHealthChange_Implementation()

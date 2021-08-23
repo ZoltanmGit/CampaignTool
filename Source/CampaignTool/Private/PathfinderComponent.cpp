@@ -15,7 +15,7 @@ UPathfinderComponent::UPathfinderComponent()
 }
 int32 UPathfinderComponent::CoordToIndex(int32 x, int32 y)
 {
-	return (x * MapSize) + y;
+	return (x * Columns) + y;
 }
 
 void UPathfinderComponent::ProcessNode(int32 x, int32 y, float range)
@@ -43,7 +43,7 @@ void UPathfinderComponent::ProcessNode(int32 x, int32 y, float range)
 		}
 	}
 	//Right
-	if (y + 1  <= MapSize-1)
+	if (y + 1  <= Columns-1)
 	{
 		
 		if (DijkstraGrid[CoordToIndex(x, y + 1)].NodeValue > CurrentNode.NodeValue + 1.0f && DijkstraGrid[CoordToIndex(x, y + 1)].bIsValidTerrain && !DijkstraGrid[CoordToIndex(x, y + 1)].bWasProcessed)
@@ -58,7 +58,7 @@ void UPathfinderComponent::ProcessNode(int32 x, int32 y, float range)
 	}
 
 	// Top
-	if (x + 1 <= MapSize - 1)
+	if (x + 1 <= Rows - 1)
 	{
 		
 		if (DijkstraGrid[CoordToIndex(x+1, y)].NodeValue > CurrentNode.NodeValue + 1.0f && DijkstraGrid[CoordToIndex(x + 1, y)].bIsValidTerrain && !DijkstraGrid[CoordToIndex(x + 1, y)].bWasProcessed)
@@ -88,7 +88,7 @@ void UPathfinderComponent::ProcessNode(int32 x, int32 y, float range)
 	}
 
 	// Top-Left
-	if (x + 1 <= MapSize - 1 && y-1 >= 0)
+	if (x + 1 <= Rows - 1 && y-1 >= 0)
 	{
 		
 		if (DijkstraGrid[CoordToIndex(x + 1, y-1)].NodeValue > CurrentNode.NodeValue + 1.5f && DijkstraGrid[CoordToIndex(x + 1, y - 1)].bIsValidTerrain && !DijkstraGrid[CoordToIndex(x + 1, y - 1)].bWasProcessed)
@@ -103,7 +103,7 @@ void UPathfinderComponent::ProcessNode(int32 x, int32 y, float range)
 	}
 
 	// Top-Right
-	if (x + 1 <= MapSize - 1 && y + 1 <= MapSize - 1)
+	if (x + 1 <= Rows - 1 && y + 1 <= Columns - 1)
 	{
 		
 		if (DijkstraGrid[CoordToIndex(x + 1, y + 1)].NodeValue > CurrentNode.NodeValue + 1.5f&& DijkstraGrid[CoordToIndex(x + 1, y + 1)].bIsValidTerrain && !DijkstraGrid[CoordToIndex(x + 1, y + 1)].bWasProcessed)
@@ -132,7 +132,7 @@ void UPathfinderComponent::ProcessNode(int32 x, int32 y, float range)
 		}
 	}
 	// Bottom-Right
-	if (x - 1 >= 0 && y + 1 <= MapSize -1)
+	if (x - 1 >= 0 && y + 1 <= Columns -1)
 	{
 		
 		if (DijkstraGrid[CoordToIndex(x - 1, y + 1)].NodeValue > CurrentNode.NodeValue + 1.5f&& DijkstraGrid[CoordToIndex(x - 1, y + 1)].bIsValidTerrain && !DijkstraGrid[CoordToIndex(x - 1, y + 1)].bWasProcessed)
@@ -158,9 +158,9 @@ void UPathfinderComponent::GetValidMovementIndexes(int32 x, int32 y, float range
 		DijkstraGrid.Empty();
 		ValidIndexMap.Empty();
 
-		for (int32 i = 0; i < MapSize; i++)
+		for (int32 i = 0; i < Rows; i++)
 		{
-			for (int32 j = 0; j < MapSize; j++)
+			for (int32 j = 0; j < Columns; j++)
 			{
 				FDijkstraNode node;
 				node.x = i;
@@ -181,7 +181,7 @@ void UPathfinderComponent::GetValidMovementIndexes(int32 x, int32 y, float range
 				}
 				else
 				{
-					node.NodeValue = MapSize * MapSize + 1;
+					node.NodeValue = Rows * Columns + 1;
 				}
 				DijkstraGrid.Add(node);
 			}

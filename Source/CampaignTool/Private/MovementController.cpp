@@ -23,13 +23,12 @@ void AMovementController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	for (TActorIterator<ABaseCharacter> CharacterItr(GetWorld()); CharacterItr; ++CharacterItr)
+	/*for (TActorIterator<ABaseCharacter> CharacterItr(GetWorld()); CharacterItr; ++CharacterItr)
 	{
 		ABaseCharacter* Character = *CharacterItr;
 		UE_LOG(LogTemp, Warning, TEXT("Found Character."));
 		Characters.Add(Character);
-	}
-
+	}*/
 }
 
 // Called every frame

@@ -24,7 +24,9 @@ protected:
 public:
 	//Properties
 	UPROPERTY(VisibleAnywhere, Category = Pathfinding)
-		int32 MapSize;
+		int32 Rows;
+	UPROPERTY(VisibleAnywhere, Category = Pathfinding)
+		int32 Columns;
 	UPROPERTY(VisibleAnywhere, Category = Pathfinding)
 		TArray<FDijkstraNode> DijkstraGrid;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Pathfinding)

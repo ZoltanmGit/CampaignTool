@@ -87,7 +87,14 @@ public:
 	UFUNCTION()
 		void RefreshPathfinding();
 	UFUNCTION()
-		void InitializeCharacter(FCharacterStruct Character);
+		/// <summary>
+		/// Initializes the attributes of a character
+		/// Passes a pointer of the grid to the character
+		/// Tells the pathfinder how large the grid is
+		/// </summary>
+		/// <param name="Character"></param>
+		/// <param name="ArgGrid"></param>
+		void InitializeCharacter(FCharacterStruct Character, class AGrid* ArgGrid);
 public:
 
 	//Getters

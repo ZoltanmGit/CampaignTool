@@ -22,7 +22,7 @@ APlayerCharacter::APlayerCharacter()
 	CharacterSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CharacterSpringArm"));
 	CharacterSpringArm->TargetArmLength = 700.0f;
 	CharacterSpringArm->bEnableCameraLag = true;
-	CharacterSpringArm->SetRelativeRotation(FRotator(-40.0f, 0.0f, 0.0f));
+	CharacterSpringArm->SetRelativeRotation(FRotator(-70.0f, 0.0f, 0.0f));
 	CharacterSpringArm->SetUsingAbsoluteLocation(true);
 	//CharacterSpringArm->SetupAttachment(RootComponent);
 
@@ -109,6 +109,8 @@ void APlayerCharacter::Tick(float DeltaTime)
 					//DEBUG
 					if (GEngine)
 					{
+
+						GEngine->AddOnScreenDebugMessage(-1, 0.0, FColor::Emerald, FString::Printf(TEXT("Tile Index: %i"), tileIndex));
 						GEngine->AddOnScreenDebugMessage(-2, 0.0, FColor::Emerald, FString::Printf(TEXT("Tile Location: %s"), *TileTransform.GetLocation().ToString()));
 						GEngine->AddOnScreenDebugMessage(-3, 0.0, FColor::Emerald, FString::Printf(TEXT("Tile TerrainType: %i"), hitTileProperties.TerrainType));
 						GEngine->AddOnScreenDebugMessage(-4, 0.0, FColor::Emerald, FString::Printf(TEXT("Tile LightType: %i"), hitTileProperties.LightType));
@@ -177,7 +179,7 @@ void APlayerCharacter::CameraForward(float value)
 	if (value != 0 && CharacterCamera != nullptr && CharacterSpringArm != nullptr)
 	{
 		FVector newVector = FVector(CharacterSpringArm->GetForwardVector().X, CharacterSpringArm->GetForwardVector().Y, 0.0f);
-		CharacterSpringArm->SetWorldLocation(CharacterSpringArm->GetComponentLocation() - (newVector * (value * 10)));
+		CharacterSpringArm->SetWorldLocation(CharacterSpringArm->GetComponentLocation() - (newVector * (value * 20)));
 	}
 }
 /// <summary>

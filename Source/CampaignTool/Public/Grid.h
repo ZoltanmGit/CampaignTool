@@ -19,18 +19,6 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-	int tempMatrix[100] = { 0,0,0,0,1,1,0,0,0,0,
-							0,0,4,4,1,1,4,4,0,0,
-							0,0,4,3,3,3,3,4,0,0,
-							0,0,4,3,3,3,3,4,0,0,
-							0,0,4,3,3,3,3,4,0,0,
-							0,0,4,4,1,1,4,4,0,0,
-							-1,-1,-1,-1,1,1,-1,-1,-1,-1,
-							5,5,5,5,1,1,5,5,5,5,
-							1,1,1,1,1,1,1,1,1,1,
-							2,2,2,2,2,2,2,2,2,2
-	};
 	
 public:	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
@@ -43,16 +31,23 @@ public:
 		TArray<FTileProperties> GridDataArray;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = GridProperties)
 		int32 fieldSize;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = GridProperties)
-		int32 MapSize;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = GridProperties)
+		int32 Rows;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = GridProperties)
+		int32 Columns;
+
+public:
 	UFUNCTION(BlueprintCallable)
 		FTileProperties GetTilePropertiesFromTransform(const FTransform tileTransform, int32 &OutIndex);
 	UFUNCTION(BlueprintCallable)
 		FTileProperties GetTilePropertiesFromIndex(int32 Row, int32 Column);
 
-	UFUNCTION(BlueprintCallable)
-		void SpawnInstance(const int row, const int column);
+	void SpawnInstance(int x, int y, int TerrainInt);
+
+	void InitializeGrid(int argRows,int argColumns,int argGrid[]);
+private:
+	TerrainType GetTerrainTypeFromInt(int value);
 public:
 	virtual void OnConstruction(const FTransform& transform);
 };

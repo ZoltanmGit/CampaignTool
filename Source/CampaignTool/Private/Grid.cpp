@@ -30,7 +30,6 @@ AGrid::AGrid()
 		HISMC_GridArray.Add(newHISMC);
 	}
 	fieldSize = 100;
-	MapSize = 10;
 }
 
 /// <summary>
@@ -43,19 +42,90 @@ void AGrid::BeginPlay()
 
 FTileProperties AGrid::GetTilePropertiesFromTransform(const FTransform tileTransform, int32& OutIndex)
 {
-	int32 index = (((tileTransform.GetLocation().X - 50) / fieldSize) * MapSize) + ((tileTransform.GetLocation().Y - 50) / fieldSize);
-	OutIndex = index;
-	return GridDataArray[index];
+	OutIndex = (((tileTransform.GetLocation().X - 50) / fieldSize) * Columns) + ((tileTransform.GetLocation().Y - 50) / fieldSize);;
+	return GridDataArray[OutIndex];
 }
 
 FTileProperties AGrid::GetTilePropertiesFromIndex(int32 Row, int32 Column)
 {
-	int32 index = (Row * MapSize) + Column;
+	int32 index = (Row * Columns) + Column;
 	return GridDataArray[index];
 }
 
-void AGrid::SpawnInstance(const int row, const int column)
+void AGrid::SpawnInstance(int x, int y, int TerrainInt)
 {
+
+	//UE_LOG(LogTemp, Warning, TEXT("SpawnInstance: x:%i y:%i Type:%i"), x, y, TerrainInt);
+	FTileProperties newTileData = FTileProperties();
+	newTileData.Row = x;
+	newTileData.Column = y;
+	newTileData.LightType = LightType::Bright;
+	newTileData.bIsObscured = false;
+	newTileData.bIsOccupied = false;
+
+	if (TerrainInt > -1)
+	{
+		FTransform newInstanceTransform;
+		newInstanceTransform.SetLocation(FVector((x * fieldSize) + (fieldSize / 2), (y * fieldSize) + (fieldSize / 2), 0.0f));
+		if (HISMC_GridArray[TerrainInt] && HISMC_GridArray[TerrainInt]->GetStaticMesh())
+		{
+
+			newTileData.TerrainType = GetTerrainTypeFromInt(TerrainInt);
+			HISMC_GridArray[TerrainInt]->AddInstance(newInstanceTransform);
+		}
+	}
+	else if (TerrainInt == -1)
+	{
+		newTileData.TerrainType = TerrainType::Void;
+	}
+	GridDataArray.Add(newTileData);
+}
+
+void AGrid::InitializeGrid(int argRows, int argColumns, int argGrid[])
+{
+	if(argRows > 0 && argColumns > 0 && argGrid != nullptr)
+	{
+		Rows = argRows;
+		Columns = argColumns;
+		for (int i = 0; i < Rows; i++)
+		{
+			for (int j = 0; j < Columns; j++)
+			{
+				SpawnInstance(i,j,argGrid[(i*Columns)+j]);
+			}
+		}
+	}
+}
+
+TerrainType AGrid::GetTerrainTypeFromInt(int value)
+{
+	switch (value)
+	{
+	case 0:
+		return TerrainType::Grass;
+		break;
+	case 1:
+		return TerrainType::Water;
+		break;
+	case 2:
+		return TerrainType::DeepWater;
+		break;
+	case 3:
+		return TerrainType::Wood;
+		break;
+	case 4:
+		return TerrainType::Dirt;
+		break;
+	case 5:
+		return TerrainType::Rock;
+		break;
+	case 6 :
+		return TerrainType::Grass;
+		break;
+	default:
+		return TerrainType::Void;
+		break;
+	};
 }
 
 /// <summary>
@@ -64,7 +134,7 @@ void AGrid::SpawnInstance(const int row, const int column)
 /// </summary>
 /// <param name="Transform">An FTransform as parameter</param>
 void AGrid::OnConstruction(const FTransform& Transform) {
-	bool bValid = true; 
+	/*bool bValid = true; 
 	for (int i = 0; i < 7; i++)
 	{
 		if (!HISMC_GridArray[i] || !HISMC_GridArray[i]->GetStaticMesh())
@@ -138,7 +208,6 @@ void AGrid::OnConstruction(const FTransform& Transform) {
 						break;
 					}
 					GridDataArray.Add(newTileData);
-
 				}
 			}
 		}

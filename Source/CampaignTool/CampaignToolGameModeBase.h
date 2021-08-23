@@ -22,6 +22,7 @@ protected:
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Init)
 		TSubclassOf<class AMovementController> MovementController;
+	class AMovementController* MovementControllerptr;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Init)
 		TSubclassOf<class AGrid> Grid;
 	class AGrid* Gridptr;

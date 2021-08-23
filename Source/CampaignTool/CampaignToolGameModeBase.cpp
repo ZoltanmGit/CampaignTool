@@ -69,23 +69,56 @@ void ACampaignToolGameModeBase::BeginPlay()
 
 void ACampaignToolGameModeBase::InitializeGrid()
 {
+	int tempMatrix[100] = { 0,0,0,0,1,1,0,0,0,0,
+							0,0,4,4,1,1,4,4,0,0,
+							0,0,4,3,3,3,3,4,0,0,
+							0,0,4,3,3,3,3,4,0,0,
+							0,0,4,3,3,3,3,4,0,0,
+							0,0,4,4,1,1,4,4,0,0,
+							-1,-1,-1,-1,1,1,-1,-1,-1,-1,
+							5,5,5,5,1,1,5,5,5,5,
+							1,1,1,1,1,1,1,1,1,1,
+							2,2,2,2,2,2,2,2,2,2
+	};
+	int tempMatrix2[225] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+							1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,
+							0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+							1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,
+							2,2,2,2,2,2,1,0,0,0,0,0,0,0,0,
+							1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,
+							0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+							0,0,0,0,0,1,1,0,1,1,0,0,0,0,0,
+							0,0,0,0,0,1,1,0,1,1,0,0,0,0,0,
+							1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,
+							0,0,0,0,0,1,1,0,1,1,0,0,0,0,0,
+							0,0,0,1,0,1,1,0,1,1,1,0,1,1,0,
+							0,0,0,1,0,0,0,0,0,1,1,0,1,0,0,
+							0,0,0,1,1,1,1,0,0,1,1,0,1,1,1,
+							0,0,0,0,0,0,0,0,0,1,1,0,0,0,0
+	};
+	int tempMatrix3[52] = { 4,-1, 4, 4, 4,-1, 4, 4, 4,-1, 4, 4, 4,
+							4,-1, 4,-1, 4,-1, 4,-1, 4,-1, 4,-1, 4,
+							4,-1, 4,-1, 4,-1, 4,-1, 4,-1, 4,-1, 4,
+							4, 4, 4,-1, 4, 4, 4,-1, 4, 4, 4,-1, 4
+	};
 	if (Grid)
 	{
 		FActorSpawnParameters SpawnParams;
 		FTransform TransformParams;
 		TransformParams.SetLocation(FVector(0.0f, 0.0f, 0.0f));
 		Gridptr = GetWorld()->SpawnActor<AGrid>(Grid, TransformParams, SpawnParams);
-		UE_LOG(LogTemp, Warning, TEXT("Grid initialized."));
+		Gridptr->InitializeGrid(4, 13, tempMatrix3);
+		UE_LOG(LogTemp, Warning, TEXT("Grid initialized..."));
 	}
 }
 
 void ACampaignToolGameModeBase::InitializeCharacters()
 {
 	SpawnCharacter(TestFighter, 0, 0);
-	SpawnCharacter(TestRogue, 2, 2);
-	SpawnCharacter(TestFighter, 2, 5);
+	SpawnCharacter(TestRogue, 1, 0);
+	/*SpawnCharacter(TestFighter, 2, 5);
 	SpawnCharacter(TestFighter, 3, 5);
-	SpawnCharacter(TestFighter, 4, 5);
+	SpawnCharacter(TestFighter, 4, 5);*/
 
 
 	if (Characters[0] != nullptr)
@@ -96,32 +129,6 @@ void ACampaignToolGameModeBase::InitializeCharacters()
 		character->bIsPossessed = true;
 		character->BeginTurn();
 	}
-	/*FActorSpawnParameters SpawnParams;
-	if (FighterClass)
-	{
-		FTransform TransformParams;
-		TransformParams.SetLocation(FVector(50.0f, 50.0f, 50.0f));
-		APlayerCharacter* newCharacter = GetWorld()->SpawnActor<APlayerCharacter>(FighterClass, TransformParams, SpawnParams);
-		newCharacter->DefaultController = UserController;
-		UserController->Possess(newCharacter);
-		newCharacter->bIsPossessed = true;
-		newCharacter->BeginTurn();
-		UE_LOG(LogTemp, Warning, TEXT("Fighter spawned. (And possessed)"));
-	}
-	if (RogueClass)
-	{
-		FTransform TransformParams;
-		TransformParams.SetLocation(FVector(150.0f, 50.0f, 50.0f));
-		APlayerCharacter* newCharacter = GetWorld()->SpawnActor<APlayerCharacter>(RogueClass, TransformParams, SpawnParams);
-		UE_LOG(LogTemp, Warning, TEXT("Rogue spawned."));
-	}
-	/*if (WizardClass)
-	{
-		FTransform TransformParams;
-		TransformParams.SetLocation(FVector(250.0f, 50.0f, 50.0f));
-		APlayerCharacter* newCharacter = GetWorld()->SpawnActor<APlayerCharacter>(WizardClass, TransformParams, SpawnParams);
-		UE_LOG(LogTemp, Warning, TEXT("Wizard spawned."));
-	}*/
 }
 
 void ACampaignToolGameModeBase::InitializeMovementController()
@@ -131,7 +138,8 @@ void ACampaignToolGameModeBase::InitializeMovementController()
 		FActorSpawnParameters SpawnParams;
 		FTransform TransformParams;
 		TransformParams.SetLocation(FVector(-100.0f, -100.0f, 0.0f));
-		GetWorld()->SpawnActor<AMovementController>(MovementController,TransformParams,SpawnParams);
+		MovementControllerptr = GetWorld()->SpawnActor<AMovementController>(MovementController,TransformParams,SpawnParams);
+		MovementControllerptr->Characters = this->Characters;
 		UE_LOG(LogTemp, Warning, TEXT("MovementController initialized."));
 	}
 }
@@ -141,7 +149,7 @@ void ACampaignToolGameModeBase::SpawnCharacter(FCharacterStruct character, int32
 	FActorSpawnParameters SpawnParams;
 	FTransform TransformParams;
 	TransformParams.SetLocation(FVector((x*Gridptr->fieldSize)+(Gridptr->fieldSize/2), (y* Gridptr->fieldSize) + (Gridptr->fieldSize / 2), 50.0f));
-	Gridptr->GridDataArray[(x * Gridptr->MapSize) + y].bIsOccupied = true;
+	Gridptr->GridDataArray[(x * Gridptr->Columns) + y].bIsOccupied = true;
 	ABaseCharacter* newCharacter = nullptr;
 	switch (character.Class)
 	{
@@ -157,7 +165,7 @@ void ACampaignToolGameModeBase::SpawnCharacter(FCharacterStruct character, int32
 	}
 	if (newCharacter != nullptr)
 	{
-		newCharacter->InitializeCharacter(character);
+		newCharacter->InitializeCharacter(character,Gridptr);
 	}
 	Characters.Add(newCharacter);
 }
