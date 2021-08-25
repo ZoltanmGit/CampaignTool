@@ -46,6 +46,8 @@ public:
 		class UPathfinderComponent* Pathfinder;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Mesh)
 		class UStaticMeshComponent* CharacterMesh; //The Mesh that represents the character in-game
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Movement)
+		class USplineComponent* MovementSpline;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		FVector CharacterLocation; // The location the pawn is supposed to be at, not necessarily where he is.

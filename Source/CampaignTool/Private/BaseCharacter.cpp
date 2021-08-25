@@ -2,6 +2,7 @@
 
 
 #include "BaseCharacter.h"
+#include "Components/SplineComponent.h"
 #include "../Public/HealthComponent.h"
 #include "../Public/AttributesComponent.h"
 #include "../Public/PathfinderComponent.h"
@@ -21,6 +22,8 @@ ABaseCharacter::ABaseCharacter()
 	CharacterMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap); // I Set this so 
 	RootComponent = CharacterMesh; //Set Mesh as the RootComponent
 
+	//SplineComponent
+	MovementSpline = CreateDefaultSubobject<USplineComponent>(TEXT("MovementSpline"));
 	//Health and Attributes
 	CharacterHealth = CreateDefaultSubobject<UHealthComponent>(TEXT("CharacterHealth"));
 	CharacterAttributes = CreateDefaultSubobject<UAttributesComponent>(TEXT("CharacterAttributes"));
@@ -88,8 +91,12 @@ void ABaseCharacter::EndTurn()
 
 void ABaseCharacter::ChangeLocation(FVector newLocation)
 {
-	if (Grid && Pathfinder)
+	if (Grid && Pathfinder && MovementSpline)
 	{
+		if (MovementSpline->GetNumberOfSplinePoints() > 0)
+		{
+			MovementSpline->ClearSplinePoints();
+		}
 		bool bValidMovement = false;
 		FTransform transform;
 		transform.SetLocation(newLocation);
@@ -104,6 +111,16 @@ void ABaseCharacter::ChangeLocation(FVector newLocation)
 			transform.SetLocation(this->GetActorLocation());
 			Grid->GetTilePropertiesFromTransform(transform, index);
 			Grid->GridDataArray[index].bIsOccupied = false;
+
+			/*FVector halfvector = (newLocation - CharacterLocation) / 2 + CharacterLocation;
+			halfvector.Z = 200.0f;
+
+			FTransform tempTransform;
+			tempTransform.SetLocation(halfvector);
+			OnPathfinding(tempTransform);
+			MovementSpline->AddSplinePoint(CharacterLocation,ESplineCoordinateSpace::World);
+			MovementSpline->AddSplinePoint(halfvector, ESplineCoordinateSpace::World);
+			MovementSpline->AddSplinePoint(newLocation, ESplineCoordinateSpace::World);*/
 			CharacterLocation = newLocation;
 		}
 	}

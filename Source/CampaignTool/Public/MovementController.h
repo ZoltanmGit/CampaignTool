@@ -28,8 +28,6 @@ public:
 		float MovementDuration;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Root)
 		class USceneComponent* MovementRootComponent;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Movement)
-		class USplineComponent* MovementSpline;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Characters)
 		TArray<class ABaseCharacter*> Characters;
 
