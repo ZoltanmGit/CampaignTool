@@ -38,6 +38,9 @@ public:
 		class APlayerController* UserController;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Characters)
 		TArray<class ABaseCharacter*> Characters;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Init)
+		int32 MapChoice;
 protected:
 	void InitializeGrid();
 	void InitializeCharacters();

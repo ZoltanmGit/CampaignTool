@@ -5,6 +5,7 @@
 #include "../Public/HealthComponent.h"
 #include "../Public/AttributesComponent.h"
 #include "../Public/PathfinderComponent.h"
+#include "../Public/MoverComponent.h"
 #include "../Public/Grid.h"
 #include "Components/WidgetComponent.h"
 #include "Components/StaticMeshComponent.h"
@@ -34,7 +35,6 @@ APlayerCharacter::APlayerCharacter()
 	TargetedTile = nullptr;
 	bIsRightMouseDown = false;
 	bCastMouseLineTrace = true;
-	bIsPossessed = false;
 	PlayerCursorState = CursorState::OverGameWorld;
 	CharacterType = CharacterType::Ally;
 }
@@ -82,7 +82,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	//Line traces and Selection
-	if ((DefaultController != nullptr && bCastMouseLineTrace && PlayerCursorState == CursorState::OverGameWorld && bIsPossessed))
+	if ((DefaultController != nullptr && bCastMouseLineTrace && PlayerCursorState == CursorState::OverGameWorld && bIsActive))
 	{
 
 		if (DefaultController->GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel1), true, UnderCursorHitResult))
@@ -264,7 +264,7 @@ void APlayerCharacter::HandleRMBRelease()
 /// </summary>
 void APlayerCharacter::HandleLMBPress()
 {	
-	if (TargetedTile != nullptr && bCanMove)
+	if (TargetedTile != nullptr && bCanMove && Mover)
 	{
 		this->ChangeLocation(FVector(CursorLocation.X, CursorLocation.Y, 50.0f));
 	}
@@ -283,14 +283,13 @@ void APlayerCharacter::HandleLMBPress()
 void APlayerCharacter::ChangePossession(ABaseCharacter* newCharacter)
 {
 	CleanupPathfinding(); // PLACEHOLDER
+	EndTurn();
 	APlayerCharacter* newPlayerCharacter = Cast<APlayerCharacter>(newCharacter);
 	newPlayerCharacter->CharacterSpringArm->SetWorldRotation(this->CharacterSpringArm->GetComponentRotation());
 	newPlayerCharacter->CharacterSpringArm->SetWorldLocation(newPlayerCharacter->GetActorLocation());
 	newPlayerCharacter->DefaultController = this->DefaultController;
 	this->DefaultController->UnPossess();
-	this->bIsPossessed = false;
 	this->DefaultController->Possess(newPlayerCharacter);
-	newPlayerCharacter->bIsPossessed = true;
 	newPlayerCharacter->BeginTurn();
 
 	//Cleanup this pawn

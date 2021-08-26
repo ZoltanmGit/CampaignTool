@@ -16,12 +16,26 @@ AMovementController::AMovementController()
 
 	MovementRootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootSceneComponent"));
 	RootComponent = MovementRootComponent;
+
+	MovementDuration = 2.0f;
+
+	Timeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("TimelineComponent"));
+	Timeline->SetPlayRate(MovementDuration);
+	Timeline->SetLooping(false);
+
+	InterpFunction.BindUFunction(this, FName{ TEXT("TimelineFloatReturn") });
+	TimelineFinished.BindUFunction(this, FName{ TEXT("OnTimelineFinished") });
 }
 
 // Called when the game starts or when spawned
 void AMovementController::BeginPlay()
 {
 	Super::BeginPlay();
+	/*if (TimelineCurve != nullptr)
+	{
+		Timeline->AddInterpFloat(TimelineCurve, InterpFunction, FName{ TEXT("Alpha") }); // Connect the delegate to the curve
+		Timeline->SetTimelineFinishedFunc(TimelineFinished); // Connect the finish function
+	}*/
 }
 
 // Called every frame
@@ -29,11 +43,11 @@ void AMovementController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	for (int32 i = 0; i < Characters.Num(); i++)
+	/*for (int32 i = 0; i < Characters.Num(); i++)
 	{
-		if (Characters[i])
+		/*if (Characters[i])
 		{
-			if (Characters[i]->GetActorLocation() != Characters[i]->CharacterLocation)
+			/*if (Characters[i]->GetActorLocation() != Characters[i]->CharacterLocation)
 			{
 				if (Characters[i]->bCanMove)
 				{
@@ -48,11 +62,36 @@ void AMovementController::Tick(float DeltaTime)
 				Characters[i]->RefreshPathfinding();
 			}
 		}
-	}
+		if (Characters[i])
+		{
+			if (Characters[i]->bIsCharacterActive && Characters[i]->bCanMove && Characters[i]->GetActorLocation() != Characters[i]->CharacterLocation)
+			{
+				Characters[i]->bCanMove = false;
+				MoveCharacter(Characters[i]);
+			}
+		}
+	}*/
+		
 }
 
 void AMovementController::SubscribeToMovement(ABaseCharacter* character)
 {
 	Characters.Add(character);
+}
+
+
+void AMovementController::MoveCharacter(ABaseCharacter* charToMove)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Movement Started"));
+	Timeline->Play();
+}
+
+void AMovementController::TimelineFloatReturn(float value, ABaseCharacter* MovingCharacter)
+{
+	UE_LOG(LogTemp, Warning, TEXT("TimelineFloat is : %f"), value);
+}
+void AMovementController::OnTimelineFinished()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Movement Finished"));
 }
 

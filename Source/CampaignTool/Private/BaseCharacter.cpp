@@ -6,6 +6,7 @@
 #include "../Public/HealthComponent.h"
 #include "../Public/AttributesComponent.h"
 #include "../Public/PathfinderComponent.h"
+#include "../Public/MoverComponent.h"
 #include "../Public/Grid.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -21,9 +22,10 @@ ABaseCharacter::ABaseCharacter()
 	CharacterMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Overlap);
 	CharacterMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap); // I Set this so 
 	RootComponent = CharacterMesh; //Set Mesh as the RootComponent
-
+	//Mover
+	Mover = CreateDefaultSubobject<UMoverComponent>(TEXT("MoverComponent"));
 	//SplineComponent
-	MovementSpline = CreateDefaultSubobject<USplineComponent>(TEXT("MovementSpline"));
+	
 	//Health and Attributes
 	CharacterHealth = CreateDefaultSubobject<UHealthComponent>(TEXT("CharacterHealth"));
 	CharacterAttributes = CreateDefaultSubobject<UAttributesComponent>(TEXT("CharacterAttributes"));
@@ -31,7 +33,6 @@ ABaseCharacter::ABaseCharacter()
 
 
 	Grid = nullptr;
-	bIsCharacterActive = false;
 
 	// Subscribe to HandleTakeDamage to OnTakeAnyDamage event
 	OnTakeAnyDamage.AddDynamic(this, &ABaseCharacter::HandleTakeDamage);
@@ -74,24 +75,67 @@ void ABaseCharacter::HandleTakeDamage(AActor* DamagedActor, float Damage, const 
 
 void ABaseCharacter::BeginTurn()
 {
-	if (Grid != nullptr && CharacterAttributes != nullptr)
+	if (Grid && CharacterHealth && CharacterAttributes && Pathfinder && Mover && !bCanAct && !bCanMove && !bIsActive)
 	{
-		bIsCharacterActive = true;
-		bCanMove = true;
+		UE_LOG(LogTemp, Warning, TEXT("Components are valid at BeginTurn"));
 		bCanAct = true;
-		CurrentSpeed = CharacterAttributes->Stats.Speed / 5.0f; //We divide by five because 1 square is supposed to be 5ft so 25ft is 5 tiles
+		bCanMove = true;
+		bIsActive = true;
+		CurrentSpeed = CharacterAttributes->Stats.Speed / 5.0f;
 		RefreshPathfinding();
 	}
 }
 
 void ABaseCharacter::EndTurn()
 {
-	bIsCharacterActive = false;
+	bCanAct = false;
+	bCanMove = false;
+	bIsActive = false;
+	CleanupPathfinding();
+	UE_LOG(LogTemp, Warning, TEXT("Turn Ended"));
 }
 
 void ABaseCharacter::ChangeLocation(FVector newLocation)
 {
-	if (Grid && Pathfinder && MovementSpline)
+	if (Grid && Pathfinder && Mover && bCanMove)
+	{
+		bCanMove = false;
+		FTransform TempTransform;
+		TempTransform.SetLocation(newLocation);
+		int32 index;
+		Grid->GetTilePropertiesFromTransform(TempTransform, index);
+		if (Pathfinder->ValidIndexMap.Contains(index))
+		{
+			CurrentSpeed = CurrentSpeed - *Pathfinder->ValidIndexMap.Find(index);
+			UE_LOG(LogTemp, Warning, TEXT("Speed is %f"), CurrentSpeed);
+
+
+			int32 CurrentIndex;
+			FTileProperties CurrentTileData = Grid->GetTilePropertiesFromTransform(this->GetActorTransform(), CurrentIndex);
+			Grid->GridDataArray[CurrentIndex].bIsOccupied = false;
+			Grid->GridDataArray[CurrentIndex].ActorOnTile = nullptr;
+
+			int32 NewTileIndex;
+			FTileProperties NewLocationTileData = Grid->GetTilePropertiesFromTransform(TempTransform, NewTileIndex);
+			Grid->GridDataArray[NewTileIndex].bIsOccupied = true;
+			Grid->GridDataArray[NewTileIndex].ActorOnTile = this;
+
+			Mover->MoveCharacter(newLocation);
+			CharacterLocation = newLocation;
+		}
+		else
+		{
+			bCanMove = true;
+			UE_LOG(LogTemp, Warning, TEXT("Invalid movement change."));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Cannot move"));
+	}
+
+
+	/*if (Grid && Pathfinder && MovementSpline)
 	{
 		if (MovementSpline->GetNumberOfSplinePoints() > 0)
 		{
@@ -112,29 +156,35 @@ void ABaseCharacter::ChangeLocation(FVector newLocation)
 			Grid->GetTilePropertiesFromTransform(transform, index);
 			Grid->GridDataArray[index].bIsOccupied = false;
 
-			/*FVector halfvector = (newLocation - CharacterLocation) / 2 + CharacterLocation;
+			FVector halfvector = (newLocation - CharacterLocation) / 2 + CharacterLocation;
 			halfvector.Z = 200.0f;
 
-			FTransform tempTransform;
-			tempTransform.SetLocation(halfvector);
-			OnPathfinding(tempTransform);
 			MovementSpline->AddSplinePoint(CharacterLocation,ESplineCoordinateSpace::World);
 			MovementSpline->AddSplinePoint(halfvector, ESplineCoordinateSpace::World);
-			MovementSpline->AddSplinePoint(newLocation, ESplineCoordinateSpace::World);*/
+			MovementSpline->AddSplinePoint(newLocation, ESplineCoordinateSpace::World);
+
+			FTransform tempTransform;
+			tempTransform.SetLocation(CharacterLocation);
+			FTransform tempTransform1;
+			tempTransform1.SetLocation(halfvector);
+			FTransform tempTransform2;
+			tempTransform2.SetLocation(newLocation);
+			OnPathfinding(tempTransform);
+			OnPathfinding(tempTransform1);
+			OnPathfinding(tempTransform2);
 			CharacterLocation = newLocation;
 		}
-	}
+	}*/
 	
 }
 
 void ABaseCharacter::RefreshPathfinding()
 {
-	if (Pathfinder)
+	if (Pathfinder && Mover)
 	{
 		int32 index;//Unused
 		FTileProperties tile = Grid->GetTilePropertiesFromTransform(this->GetActorTransform(), index);
 		Pathfinder->GetValidMovementIndexes(tile.Row, tile.Column, CurrentSpeed);
-		UE_LOG(LogTemp, Warning, TEXT("Pathfinding is refreshed"));
 
 
 		//PLACEHOLDER
@@ -149,6 +199,10 @@ void ABaseCharacter::RefreshPathfinding()
 			OnPathfinding(Transform);
 		}
 	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Pathfinder is nullptr"));
+	}
 }
 
 void ABaseCharacter::InitializeCharacter(FCharacterStruct Character, AGrid* ArgGrid)
@@ -156,13 +210,12 @@ void ABaseCharacter::InitializeCharacter(FCharacterStruct Character, AGrid* ArgG
 	Grid = ArgGrid;
 	Pathfinder->Rows = Grid->Rows;
 	Pathfinder->Columns = Grid->Columns;
-	//Pathfinder->MapSize = Grid->MapSize;
 	if (CharacterAttributes)
 	{
 		CharacterAttributes->InitComponent(Character);
 		if (CharacterHealth)
 		{
-
+			//TODO
 		}
 	}
 }
@@ -195,7 +248,6 @@ void ABaseCharacter::OnHealthChange_Implementation()
 {
 
 }
-
 void ABaseCharacter::OnPathfinding_Implementation(const FTransform transform)
 {
 

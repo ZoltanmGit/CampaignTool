@@ -3,50 +3,49 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/ActorComponent.h"
 #include "Components/TimelineComponent.h"
-#include "GameFramework/Actor.h"
-#include "MovementController.generated.h"
+#include "MoverComponent.generated.h"
 
-UCLASS()
-class CAMPAIGNTOOL_API AMovementController : public AActor
+
+UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+class CAMPAIGNTOOL_API UMoverComponent : public UActorComponent
 {
 	GENERATED_BODY()
-	
+
 public:	
-	// Sets default values for this actor's properties
-	AMovementController();
+	// Sets default values for this component's properties
+	UMoverComponent();
 
 protected:
-	// Called when the game starts or when spawned
+	// Called when the game starts
 	virtual void BeginPlay() override;
 
 public:	
 	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-public:
+	
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = MovementParameters)
 		float MovementDuration;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Root)
-		class USceneComponent* MovementRootComponent;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Characters)
-		TArray<class ABaseCharacter*> Characters;
-
-	UFUNCTION(BlueprintCallable)
-		void SubscribeToMovement(class ABaseCharacter* character);
-	UFUNCTION()
-		void MoveCharacter(class ABaseCharacter* charToMove);
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = MovementParameters)
 		class UTimelineComponent* Timeline;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = MovementParameters)
 		UCurveFloat* TimelineCurve;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = MovementParamteres)
+		class ABaseCharacter* OwnerCharacter;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Movement)
+		class USplineComponent* MovementSpline;
+
+	UFUNCTION(BlueprintCallable)
+		void MoveCharacter(FVector newLocation);
 	UFUNCTION()
-		void TimelineFloatReturn(float value, class ABaseCharacter* MovingCharacter);
+		void TimelineFloatReturn(float value);
 	UFUNCTION()
 		void OnTimelineFinished();
+
 protected:
 	FOnTimelineFloat InterpFunction{}; //Delegate for timeline update
 	FOnTimelineEvent TimelineFinished{}; //Delegate for timeline finished
-
 };

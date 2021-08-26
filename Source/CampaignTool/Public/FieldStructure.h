@@ -42,4 +42,6 @@ public:
 		int32 Row;
 	UPROPERTY(VisibleAnywhere)
 		int32 Column;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		AActor* ActorOnTile;
 };

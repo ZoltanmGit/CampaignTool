@@ -62,6 +62,7 @@ void AGrid::SpawnInstance(int x, int y, int TerrainInt)
 	newTileData.LightType = LightType::Bright;
 	newTileData.bIsObscured = false;
 	newTileData.bIsOccupied = false;
+	newTileData.ActorOnTile = nullptr;
 
 	if (TerrainInt > -1)
 	{

@@ -44,6 +44,8 @@ ACampaignToolGameModeBase::ACampaignToolGameModeBase()
 	TestRogue.ProficiencyArray.Add(Proficiency::ThievesTools);
 	TestRogue.LanguageArray.Add(Language::Common);
 	TestRogue.LanguageArray.Add(Language::Dwarvish);
+
+	MapChoice = 4;
 }
 
 void ACampaignToolGameModeBase::BeginPlay()
@@ -59,7 +61,7 @@ void ACampaignToolGameModeBase::BeginPlay()
 		//Spawn Characters
 		InitializeCharacters();
 		//Spawn MovementController
-		InitializeMovementController();
+		//InitializeMovementController();
 	}
 	else
 	{
@@ -113,6 +115,8 @@ void ACampaignToolGameModeBase::InitializeGrid()
 							0,0,0,0,0,0,0,0,0,0,
 							4,4,4,4,4,4,4,4,4,4,
 							0,0,0,0,0,0,0,0,0,0,
+							4,4,4,4,4,4,4,4,4,4,
+							0,0,0,0,0,0,0,0,0,0
 	};
 	if (Grid)
 	{
@@ -120,7 +124,28 @@ void ACampaignToolGameModeBase::InitializeGrid()
 		FTransform TransformParams;
 		TransformParams.SetLocation(FVector(0.0f, 0.0f, 0.0f));
 		Gridptr = GetWorld()->SpawnActor<AGrid>(Grid, TransformParams, SpawnParams);
-		Gridptr->InitializeGrid(10, 10, tempMatrix4);
+
+		MapChoice = FMath::Clamp(MapChoice, 1, 4);
+
+		switch (MapChoice)
+		{
+		case 1:
+			Gridptr->InitializeGrid(10, 10, tempMatrix);
+			break;
+		case 2:
+			Gridptr->InitializeGrid(15, 15, tempMatrix2);
+			break;
+		case 3:
+			Gridptr->InitializeGrid(4, 13, tempMatrix3);
+			break;
+		case 4:
+			Gridptr->InitializeGrid(10, 10, tempMatrix4);
+			break;
+		default:
+			break;
+		}
+
+		//Gridptr->InitializeGrid(10, 10, tempMatrix4);
 		UE_LOG(LogTemp, Warning, TEXT("Grid initialized..."));
 	}
 }
@@ -136,7 +161,6 @@ void ACampaignToolGameModeBase::InitializeCharacters()
 		APlayerCharacter* character = Cast<APlayerCharacter>(Characters[0]);
 		character->DefaultController = UserController; 
 		UserController->Possess(Characters[0]);
-		character->bIsPossessed = true;
 		character->BeginTurn();
 	}
 }
@@ -175,6 +199,7 @@ void ACampaignToolGameModeBase::SpawnCharacter(FCharacterStruct character, int32
 	}
 	if (newCharacter != nullptr)
 	{
+		Gridptr->GridDataArray[(x * Gridptr->Columns) + y].ActorOnTile = newCharacter;
 		newCharacter->InitializeCharacter(character,Gridptr);
 	}
 	Characters.Add(newCharacter);

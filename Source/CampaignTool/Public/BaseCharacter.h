@@ -23,7 +23,6 @@ class CAMPAIGNTOOL_API ABaseCharacter : public APawn
 public:
 	// Sets default values for this pawn's properties
 	ABaseCharacter();
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -44,10 +43,10 @@ public:
 		class UAttributesComponent* CharacterAttributes;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Pathfinding)
 		class UPathfinderComponent* Pathfinder;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Movement)
+		class UMoverComponent* Mover;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Mesh)
 		class UStaticMeshComponent* CharacterMesh; //The Mesh that represents the character in-game
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Movement)
-		class USplineComponent* MovementSpline;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		FVector CharacterLocation; // The location the pawn is supposed to be at, not necessarily where he is.
@@ -55,8 +54,6 @@ public:
 		FVector CursorLocation; // The location of the tile the cursor is on
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		TEnumAsByte<CharacterType> CharacterType;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-		bool bIsCharacterActive;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Pathfinding)
 		float CurrentSpeed;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Grid)
@@ -66,6 +63,7 @@ public:
 	//Properties not exposed to the editor
 	bool bCanMove;
 	bool bCanAct;
+	bool bIsActive;
 	/// <summary>
 	/// Function that handles changes in health, healing and damage both
 	/// </summary>
@@ -79,7 +77,7 @@ public:
 	/// <summary>
 	/// Ends the turn for the character
 	/// </summary>
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 		void EndTurn();
 	/// <summary>
 	/// Changes the supposed location of the character, which then gets moved by the MovementController
