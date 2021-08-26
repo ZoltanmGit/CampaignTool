@@ -178,9 +178,6 @@ void APlayerCharacter::CameraForward(float value)
 {
 	if (value != 0.0f && CharacterCamera && CharacterSpringArm)
 	{
-		/*FVector newVector = FVector(CharacterSpringArm->GetForwardVector().X, CharacterSpringArm->GetForwardVector().Y, 0.0f);
-		CharacterSpringArm->SetWorldLocation(CharacterSpringArm->GetComponentLocation() - (newVector * (value * 30.f)*GetWorld()->GetDeltaSeconds()));*/
-
 		FVector newLocation = CharacterSpringArm->GetComponentLocation();
 		newLocation += FRotator(0.0f, CharacterCamera->GetComponentRotation().Yaw, 0.0f).Vector() * GetWorld()->GetDeltaSeconds() * 700.0f * value;
 		CharacterSpringArm->SetWorldLocation(newLocation);
@@ -194,11 +191,8 @@ void APlayerCharacter::CameraRight(float value)
 {
 	if (value != 0.0f && CharacterCamera != nullptr && CharacterSpringArm != nullptr)
 	{
-		/*FVector newVector = FVector(CharacterSpringArm->GetRightVector().X, CharacterSpringArm->GetRightVector().Y, 0.0f);
-		CharacterSpringArm->SetWorldLocation(CharacterSpringArm->GetComponentLocation() - (newVector * (value * 15.0f)));*/
-
 		FVector newLocation = CharacterSpringArm->GetComponentLocation();
-		newLocation += FRotator(0.0f, CharacterCamera->GetComponentRotation().Yaw+90.0f, 0.0f).Vector() * GetWorld()->GetDeltaSeconds() * 700 * value;
+		newLocation += FRotator(0.0f, CharacterCamera->GetComponentRotation().Yaw+90.0f, 0.0f).Vector() * GetWorld()->GetDeltaSeconds() * 700.0f * value;
 		CharacterSpringArm->SetWorldLocation(newLocation);
 	}
 }
@@ -211,8 +205,6 @@ void APlayerCharacter::CameraTurn(float value)
 	if (value != 0 && CharacterCamera != nullptr && CharacterSpringArm != nullptr && bIsRightMouseDown)
 	{
 		CharacterSpringArm->SetRelativeRotation(FRotator(CharacterSpringArm->GetRelativeRotation().Pitch, CharacterSpringArm->GetRelativeRotation().Yaw + value, CharacterSpringArm->GetRelativeRotation().Roll));
-
-		//UE_LOG(LogTemp, Warning, TEXT("CameraTurn() called"));
 	}
 }
 /// <summary>
