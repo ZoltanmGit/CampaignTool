@@ -176,10 +176,14 @@ void APlayerCharacter::HandleTestAction()
 /// <param name="value">The value that drives the movement</param>
 void APlayerCharacter::CameraForward(float value)
 {
-	if (value != 0 && CharacterCamera != nullptr && CharacterSpringArm != nullptr)
+	if (value != 0.0f && CharacterCamera && CharacterSpringArm)
 	{
-		FVector newVector = FVector(CharacterSpringArm->GetForwardVector().X, CharacterSpringArm->GetForwardVector().Y, 0.0f);
-		CharacterSpringArm->SetWorldLocation(CharacterSpringArm->GetComponentLocation() - (newVector * (value * 20)));
+		/*FVector newVector = FVector(CharacterSpringArm->GetForwardVector().X, CharacterSpringArm->GetForwardVector().Y, 0.0f);
+		CharacterSpringArm->SetWorldLocation(CharacterSpringArm->GetComponentLocation() - (newVector * (value * 30.f)*GetWorld()->GetDeltaSeconds()));*/
+
+		FVector newLocation = CharacterSpringArm->GetComponentLocation();
+		newLocation += FRotator(0.0f, CharacterCamera->GetComponentRotation().Yaw, 0.0f).Vector() * GetWorld()->GetDeltaSeconds() * 700.0f * value;
+		CharacterSpringArm->SetWorldLocation(newLocation);
 	}
 }
 /// <summary>
@@ -188,12 +192,14 @@ void APlayerCharacter::CameraForward(float value)
 /// <param name="value">The value that drives the movement</param>
 void APlayerCharacter::CameraRight(float value)
 {
-	if (value != 0 && CharacterCamera != nullptr && CharacterSpringArm != nullptr)
+	if (value != 0.0f && CharacterCamera != nullptr && CharacterSpringArm != nullptr)
 	{
-		FVector newVector = FVector(CharacterSpringArm->GetRightVector().X, CharacterSpringArm->GetRightVector().Y, 0.0f);
-		CharacterSpringArm->SetWorldLocation(CharacterSpringArm->GetComponentLocation() - (newVector * (-1 * value * 10)));
+		/*FVector newVector = FVector(CharacterSpringArm->GetRightVector().X, CharacterSpringArm->GetRightVector().Y, 0.0f);
+		CharacterSpringArm->SetWorldLocation(CharacterSpringArm->GetComponentLocation() - (newVector * (value * 15.0f)));*/
 
-		//UE_LOG(LogTemp, Warning, TEXT("CameraRight() called"));
+		FVector newLocation = CharacterSpringArm->GetComponentLocation();
+		newLocation += FRotator(0.0f, CharacterCamera->GetComponentRotation().Yaw+90.0f, 0.0f).Vector() * GetWorld()->GetDeltaSeconds() * 700 * value;
+		CharacterSpringArm->SetWorldLocation(newLocation);
 	}
 }
 /// <summary>

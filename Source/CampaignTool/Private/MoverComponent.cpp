@@ -53,6 +53,10 @@ void UMoverComponent::MoveCharacter(FVector newLocation)
 		MovementSpline->AddSplinePoint(halfvector, ESplineCoordinateSpace::World);
 		MovementSpline->AddSplinePoint(newLocation, ESplineCoordinateSpace::World);
 
+		UE_LOG(LogTemp, Warning, TEXT("Start: %s"),*OwnerCharacter->CharacterLocation.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("Half: %s"), *halfvector.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("Finish: %s"), *newLocation.ToString());
+
 		FTransform tempTransform;
 		tempTransform.SetLocation(OwnerCharacter->CharacterLocation);
 		FTransform tempTransform1;
@@ -83,7 +87,7 @@ void UMoverComponent::TimelineFloatReturn(float value)
 		NewLocation.Z = FMath::Clamp(NewLocation.Z, 0.0f, 200.0f);
 
 		OwnerCharacter->SetActorLocation(NewLocation);
-		UE_LOG(LogTemp, Warning, TEXT("NewLocation: %s"), *NewLocation.ToString());
+		//UE_LOG(LogTemp, Warning, TEXT("NewLocation: %s"), *NewLocation.ToString());
 	}
 }
 
