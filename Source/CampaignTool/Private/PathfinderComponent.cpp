@@ -20,7 +20,6 @@ int32 UPathfinderComponent::CoordToIndex(int32 x, int32 y)
 
 void UPathfinderComponent::ProcessNode(int32 x, int32 y, float range)
 {
-	//UE_LOG(LogTemp, Warning, TEXT("Processing %i and %i"), x, y);
 	FDijkstraNode CurrentNode = DijkstraGrid[CoordToIndex(x, y)];
 	bool bQueueNeighbors = true;
 	if (FMath::CeilToFloat(CurrentNode.NodeValue) == range)
@@ -31,7 +30,6 @@ void UPathfinderComponent::ProcessNode(int32 x, int32 y, float range)
 	//Left
 	if (y - 1 >= 0)
 	{
-		
 		if (DijkstraGrid[CoordToIndex(x, y - 1)].NodeValue > CurrentNode.NodeValue + 1.0f && DijkstraGrid[CoordToIndex(x, y - 1)].bIsValidTerrain && !DijkstraGrid[CoordToIndex(x, y - 1)].bWasProcessed)
 		{
 			DijkstraGrid[CoordToIndex(x, y - 1)].NodeValue = CurrentNode.NodeValue + 1.0f;
@@ -45,7 +43,6 @@ void UPathfinderComponent::ProcessNode(int32 x, int32 y, float range)
 	//Right
 	if (y + 1  <= Columns-1)
 	{
-		
 		if (DijkstraGrid[CoordToIndex(x, y + 1)].NodeValue > CurrentNode.NodeValue + 1.0f && DijkstraGrid[CoordToIndex(x, y + 1)].bIsValidTerrain && !DijkstraGrid[CoordToIndex(x, y + 1)].bWasProcessed)
 		{
 			DijkstraGrid[CoordToIndex(x, y + 1)].NodeValue = CurrentNode.NodeValue + 1.0f;
@@ -60,13 +57,12 @@ void UPathfinderComponent::ProcessNode(int32 x, int32 y, float range)
 	// Top
 	if (x + 1 <= Rows - 1)
 	{
-		
-		if (DijkstraGrid[CoordToIndex(x+1, y)].NodeValue > CurrentNode.NodeValue + 1.0f && DijkstraGrid[CoordToIndex(x + 1, y)].bIsValidTerrain && !DijkstraGrid[CoordToIndex(x + 1, y)].bWasProcessed)
+		if (DijkstraGrid[CoordToIndex(x + 1, y)].NodeValue > CurrentNode.NodeValue + 1.0f && DijkstraGrid[CoordToIndex(x + 1, y)].bIsValidTerrain && !DijkstraGrid[CoordToIndex(x + 1, y)].bWasProcessed)
 		{
-			DijkstraGrid[CoordToIndex(x+1, y)].NodeValue = CurrentNode.NodeValue + 1.0f;
+			DijkstraGrid[CoordToIndex(x + 1, y)].NodeValue = CurrentNode.NodeValue + 1.0f;
 			if (bQueueNeighbors && CurrentNode.NodeValue + 1.0f <= range)
 			{
-				TPair<int32, int32> pair = TPair<int32, int32>(x+1, y);
+				TPair<int32, int32> pair = TPair<int32, int32>(x + 1, y);
 				DijkstraQ.Enqueue(pair);
 			}
 		}
@@ -75,7 +71,6 @@ void UPathfinderComponent::ProcessNode(int32 x, int32 y, float range)
 	// Bottom
 	if (x - 1 >= 0)
 	{
-		
 		if (DijkstraGrid[CoordToIndex(x - 1, y)].NodeValue > CurrentNode.NodeValue + 1.0f && DijkstraGrid[CoordToIndex(x - 1, y)].bIsValidTerrain && !DijkstraGrid[CoordToIndex(x - 1, y)].bWasProcessed)
 		{
 			DijkstraGrid[CoordToIndex(x - 1, y)].NodeValue = CurrentNode.NodeValue + 1.0f;
@@ -90,13 +85,12 @@ void UPathfinderComponent::ProcessNode(int32 x, int32 y, float range)
 	// Top-Left
 	if (x + 1 <= Rows - 1 && y-1 >= 0)
 	{
-		
-		if (DijkstraGrid[CoordToIndex(x + 1, y-1)].NodeValue > CurrentNode.NodeValue + 1.5f && DijkstraGrid[CoordToIndex(x + 1, y - 1)].bIsValidTerrain && !DijkstraGrid[CoordToIndex(x + 1, y - 1)].bWasProcessed)
+		if (DijkstraGrid[CoordToIndex(x + 1, y - 1)].NodeValue > CurrentNode.NodeValue + 1.5f && DijkstraGrid[CoordToIndex(x + 1, y - 1)].bIsValidTerrain && !DijkstraGrid[CoordToIndex(x + 1, y - 1)].bWasProcessed)
 		{
-			DijkstraGrid[CoordToIndex(x + 1, y-1)].NodeValue = CurrentNode.NodeValue + 1.5f;
+			DijkstraGrid[CoordToIndex(x + 1, y - 1)].NodeValue = CurrentNode.NodeValue + 1.5f;
 			if (bQueueNeighbors && CurrentNode.NodeValue + 1.5f <= range)
 			{
-				TPair<int32, int32> pair = TPair<int32, int32>(x + 1, y-1);
+				TPair<int32, int32> pair = TPair<int32, int32>(x + 1, y - 1);
 				DijkstraQ.Enqueue(pair);
 			}
 		}
@@ -105,13 +99,12 @@ void UPathfinderComponent::ProcessNode(int32 x, int32 y, float range)
 	// Top-Right
 	if (x + 1 <= Rows - 1 && y + 1 <= Columns - 1)
 	{
-		
-		if (DijkstraGrid[CoordToIndex(x + 1, y + 1)].NodeValue > CurrentNode.NodeValue + 1.5f&& DijkstraGrid[CoordToIndex(x + 1, y + 1)].bIsValidTerrain && !DijkstraGrid[CoordToIndex(x + 1, y + 1)].bWasProcessed)
+		if (DijkstraGrid[CoordToIndex(x + 1, y + 1)].NodeValue > CurrentNode.NodeValue + 1.5f && DijkstraGrid[CoordToIndex(x + 1, y + 1)].bIsValidTerrain && !DijkstraGrid[CoordToIndex(x + 1, y + 1)].bWasProcessed)
 		{
 			DijkstraGrid[CoordToIndex(x + 1, y + 1)].NodeValue = CurrentNode.NodeValue + 1.5f;
 			if (bQueueNeighbors && CurrentNode.NodeValue + 1.5f <= range)
 			{
-				TPair<int32, int32> pair = TPair<int32, int32>(x + 1, y+1);
+				TPair<int32, int32> pair = TPair<int32, int32>(x + 1, y + 1);
 				DijkstraQ.Enqueue(pair);
 			}
 		}
@@ -120,13 +113,12 @@ void UPathfinderComponent::ProcessNode(int32 x, int32 y, float range)
 	// Bottom-Left
 	if (x - 1 >=0 && y - 1 >= 0)
 	{
-		
-		if (DijkstraGrid[CoordToIndex(x - 1, y - 1)].NodeValue > CurrentNode.NodeValue + 1.5f&& DijkstraGrid[CoordToIndex(x - 1, y - 1)].bIsValidTerrain &&!DijkstraGrid[CoordToIndex(x - 1, y - 1)].bWasProcessed)
+		if (DijkstraGrid[CoordToIndex(x - 1, y - 1)].NodeValue > CurrentNode.NodeValue + 1.5f && DijkstraGrid[CoordToIndex(x - 1, y - 1)].bIsValidTerrain && !DijkstraGrid[CoordToIndex(x - 1, y - 1)].bWasProcessed)
 		{
 			DijkstraGrid[CoordToIndex(x - 1, y - 1)].NodeValue = CurrentNode.NodeValue + 1.5f;
 			if (bQueueNeighbors && CurrentNode.NodeValue + 1.5f <= range)
 			{
-				TPair<int32, int32> pair = TPair<int32, int32>(x - 1, y-1);
+				TPair<int32, int32> pair = TPair<int32, int32>(x - 1, y - 1);
 				DijkstraQ.Enqueue(pair);
 			}
 		}
@@ -135,18 +127,109 @@ void UPathfinderComponent::ProcessNode(int32 x, int32 y, float range)
 	if (x - 1 >= 0 && y + 1 <= Columns -1)
 	{
 		
-		if (DijkstraGrid[CoordToIndex(x - 1, y + 1)].NodeValue > CurrentNode.NodeValue + 1.5f&& DijkstraGrid[CoordToIndex(x - 1, y + 1)].bIsValidTerrain && !DijkstraGrid[CoordToIndex(x - 1, y + 1)].bWasProcessed)
+		if (DijkstraGrid[CoordToIndex(x - 1, y + 1)].NodeValue > CurrentNode.NodeValue + 1.5f && DijkstraGrid[CoordToIndex(x - 1, y + 1)].bIsValidTerrain && !DijkstraGrid[CoordToIndex(x - 1, y + 1)].bWasProcessed)
 		{
 			DijkstraGrid[CoordToIndex(x - 1, y + 1)].NodeValue = CurrentNode.NodeValue + 1.5f;
 			if (bQueueNeighbors && CurrentNode.NodeValue + 1.5f <= range)
 			{
-				TPair<int32, int32> pair = TPair<int32, int32>(x - 1, y+1);
+				TPair<int32, int32> pair = TPair<int32, int32>(x - 1, y + 1);
 				DijkstraQ.Enqueue(pair);
 			}
 		}
 	}
 	DijkstraGrid[CoordToIndex(x, y)].bWasProcessed = true;
 	ValidIndexMap.Add(CoordToIndex(x, y), DijkstraGrid[CoordToIndex(x, y)].NodeValue);
+	
+}
+
+void UPathfinderComponent::ProcessNodeForRoute(int32 x, int32 y)
+{
+	FDijkstraNode CurrenetNode = DijkstraGrid[CoordToIndex(x, y)];
+	TPair<int32, int32> Coord = TPair<int32, int32>();
+	Coord.Key = x;
+	Coord.Value = y;
+	//Left
+	if (y - 1 >= 0)
+	{
+		if (DijkstraGrid[CoordToIndex(x, y - 1)].NodeValue < DijkstraGrid[CoordToIndex(Coord.Key, Coord.Value)].NodeValue)
+		{
+			Coord.Key = x;
+			Coord.Value = y - 1;
+		}
+	}
+	//Right
+	if (y + 1 <= Columns - 1)
+	{
+		if (DijkstraGrid[CoordToIndex(x, y + 1)].NodeValue < DijkstraGrid[CoordToIndex(Coord.Key, Coord.Value)].NodeValue)
+		{
+			Coord.Key = x;
+			Coord.Value = y + 1;
+		}
+	}
+
+	// Top
+	if (x + 1 <= Rows - 1)
+	{
+		if (DijkstraGrid[CoordToIndex(x+1, y)].NodeValue < DijkstraGrid[CoordToIndex(Coord.Key, Coord.Value)].NodeValue)
+		{
+			Coord.Key = x+1;
+			Coord.Value = y;
+		}
+	}
+
+	// Bottom
+	if (x - 1 >= 0)
+	{
+		if (DijkstraGrid[CoordToIndex(x - 1, y)].NodeValue < DijkstraGrid[CoordToIndex(Coord.Key, Coord.Value)].NodeValue)
+		{
+			Coord.Key = x - 1;
+			Coord.Value = y;
+		}
+	}
+
+	// Top-Left
+	if (x + 1 <= Rows - 1 && y - 1 >= 0)
+	{
+		if (DijkstraGrid[CoordToIndex(x + 1, y-1)].NodeValue < DijkstraGrid[CoordToIndex(Coord.Key, Coord.Value)].NodeValue)
+		{
+			Coord.Key = x + 1;
+			Coord.Value = y - 1;
+		}
+	}
+
+	// Top-Right
+	if (x + 1 <= Rows - 1 && y + 1 <= Columns - 1)
+	{
+		if (DijkstraGrid[CoordToIndex(x + 1, y + 1)].NodeValue < DijkstraGrid[CoordToIndex(Coord.Key, Coord.Value)].NodeValue)
+		{
+			Coord.Key = x + 1;
+			Coord.Value = y + 1;
+		}
+	}
+
+	// Bottom-Left
+	if (x - 1 >= 0 && y - 1 >= 0)
+	{
+		if (DijkstraGrid[CoordToIndex(x - 1 , y - 1)].NodeValue < DijkstraGrid[CoordToIndex(Coord.Key, Coord.Value)].NodeValue)
+		{
+			Coord.Key = x - 1;
+			Coord.Value = y - 1;
+		}
+	}
+	// Bottom-Right
+	if (x - 1 >= 0 && y + 1 <= Columns - 1)
+	{
+		if (DijkstraGrid[CoordToIndex(x - 1, y + 1)].NodeValue < DijkstraGrid[CoordToIndex(Coord.Key, Coord.Value)].NodeValue)
+		{
+			Coord.Key = x - 1;
+			Coord.Value = y + 1;
+		}
+	}
+	Route.Add(CoordToIndex(Coord.Key, Coord.Value));
+	if (DijkstraGrid[CoordToIndex(Coord.Key, Coord.Value)].NodeValue != 0.0f)
+	{
+		ProcessNodeForRoute(Coord.Key, Coord.Value);
+	}
 }
 
 void UPathfinderComponent::GetValidMovementIndexes(int32 x, int32 y, float range)
@@ -200,6 +283,17 @@ void UPathfinderComponent::GetValidMovementIndexes(int32 x, int32 y, float range
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Pathfinder didn't find owner."));
 	}
+}
+
+TArray<int32> UPathfinderComponent::GetRouteFromIndexes(int32 x, int32 y)
+{
+	if (Route.Num() > 0)
+	{
+		Route.Empty();
+	}
+	Route.Add(CoordToIndex(x, y));
+	ProcessNodeForRoute(x, y);
+	return Route;
 }
 
 void UPathfinderComponent::EmptyProperties()

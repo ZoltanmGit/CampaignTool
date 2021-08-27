@@ -20,7 +20,9 @@ public:
 protected:
 	//Functions
 	int32 CoordToIndex(int32 x, int32 y);
+	
 	void ProcessNode(int32 x, int32 y, float range);
+	void ProcessNodeForRoute(int32 x, int32 y);
 public:
 	//Properties
 	UPROPERTY(VisibleAnywhere, Category = Pathfinding)
@@ -33,9 +35,12 @@ public:
 		TMap<int32, float> ValidIndexMap;
 
 	TQueue<TPair<int32, int32>> DijkstraQ;
+	TArray<int32> Route;
 
 public:
 	UFUNCTION(BlueprintCallable)
 		void GetValidMovementIndexes(int32 x, int32 y, float range); //Returns the grid's dataArray indexes of valid movement points
+	UFUNCTION(BlueprintCallable)
+		TArray<int32> GetRouteFromIndexes(int32 x, int32 y);
 	void EmptyProperties();
 };

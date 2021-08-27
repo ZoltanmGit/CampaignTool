@@ -104,9 +104,10 @@ void ABaseCharacter::ChangeLocation(FVector newLocation)
 		TempTransform.SetLocation(newLocation);
 		int32 index;
 		Grid->GetTilePropertiesFromTransform(TempTransform, index);
-		if (Pathfinder->ValidIndexMap.Contains(index))
+		if (Pathfinder->ValidIndexMap.Contains(index) && Mover->Timeline)
 		{
-			CurrentSpeed = CurrentSpeed - *Pathfinder->ValidIndexMap.Find(index);
+			float minusSpeed = *Pathfinder->ValidIndexMap.Find(index);
+			CurrentSpeed = CurrentSpeed - minusSpeed;
 			UE_LOG(LogTemp, Warning, TEXT("Speed is %f"), CurrentSpeed);
 
 
@@ -119,7 +120,9 @@ void ABaseCharacter::ChangeLocation(FVector newLocation)
 			FTileProperties NewLocationTileData = Grid->GetTilePropertiesFromTransform(TempTransform, NewTileIndex);
 			Grid->GridDataArray[NewTileIndex].bIsOccupied = true;
 			Grid->GridDataArray[NewTileIndex].ActorOnTile = this;
-
+			
+			UE_LOG(LogTemp, Warning, TEXT("Speed: %f"),(1/minusSpeed)*4);
+			Mover->Timeline->SetPlayRate((1/minusSpeed)*4);
 			Mover->MoveCharacter(newLocation);
 			CharacterLocation = newLocation;
 		}

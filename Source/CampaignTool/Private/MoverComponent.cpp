@@ -3,7 +3,10 @@
 
 #include "MoverComponent.h"
 #include "../Public/BaseCharacter.h"
+#include "../Public/PathfinderComponent.h"
+#include "../Public/Grid.h"
 #include "Components/SplineComponent.h"
+#include "Components/SplineMeshComponent.h"
 
 // Sets default values for this component's properties
 UMoverComponent::UMoverComponent()
@@ -46,30 +49,12 @@ void UMoverComponent::MoveCharacter(FVector newLocation)
 {
 	if (Timeline && MovementSpline && TimelineCurve)
 	{
-		FVector halfvector = (newLocation - OwnerCharacter->CharacterLocation) / 2 + OwnerCharacter->CharacterLocation;
-		halfvector.Z = 140.0f;
-
-		MovementSpline->AddSplinePoint(OwnerCharacter->CharacterLocation, ESplineCoordinateSpace::World);
-		MovementSpline->AddSplinePoint(halfvector, ESplineCoordinateSpace::World);
-		MovementSpline->AddSplinePoint(newLocation, ESplineCoordinateSpace::World);
-
-		UE_LOG(LogTemp, Warning, TEXT("Start: %s"),*OwnerCharacter->CharacterLocation.ToString());
-		UE_LOG(LogTemp, Warning, TEXT("Half: %s"), *halfvector.ToString());
-		UE_LOG(LogTemp, Warning, TEXT("Finish: %s"), *newLocation.ToString());
-
-		FTransform tempTransform;
-		tempTransform.SetLocation(OwnerCharacter->CharacterLocation);
-		FTransform tempTransform1;
-		tempTransform1.SetLocation(halfvector);
-		FTransform tempTransform2;
-		tempTransform2.SetLocation(newLocation);
-		OwnerCharacter->OnPathfinding(tempTransform);
-		OwnerCharacter->OnPathfinding(tempTransform1);
-		OwnerCharacter->OnPathfinding(tempTransform2);
-
-
-		OwnerCharacter->CleanupPathfinding();
-		Timeline->PlayFromStart();
+		if (MovementSpline->GetNumberOfSplinePoints() > 1)
+		{
+			CleanupSplineMesh();
+			OwnerCharacter->CleanupPathfinding();
+			Timeline->PlayFromStart();
+		}
 	}
 	else
 	{
@@ -102,6 +87,70 @@ void UMoverComponent::OnTimelineFinished()
 	MovementSpline->ClearSplinePoints();
 	UE_LOG(LogTemp, Warning, TEXT("Movement is finished."));
 }
+
+void UMoverComponent::RefreshSpline()
+{
+	if (MovementSpline && OwnerCharacter && OwnerCharacter->Pathfinder && OwnerCharacter->Grid)
+	{
+		if (MovementSpline->GetNumberOfSplinePoints() > 0)
+		{
+			MovementSpline->ClearSplinePoints();
+		}
+
+		for (int32 i = OwnerCharacter->Pathfinder->Route.Num()-1; i >= 0; i--)
+		{
+			FVector splinePointLocation;
+			int32 Row = OwnerCharacter->Pathfinder->Route[i] / OwnerCharacter->Grid->Columns;
+			int32 Column = OwnerCharacter->Pathfinder->Route[i] % OwnerCharacter->Grid->Columns;
+
+			splinePointLocation = FVector((Row * OwnerCharacter->Grid->fieldSize) + (OwnerCharacter->Grid->fieldSize / 2), (Column * OwnerCharacter->Grid->fieldSize) + (OwnerCharacter->Grid->fieldSize / 2), 50.0f);
+			MovementSpline->AddSplinePoint(splinePointLocation, ESplineCoordinateSpace::World, true);
+		}
+		RefreshSplineMesh();
+		UE_LOG(LogTemp, Warning, TEXT("SplineMeshes: %i"),MovementSplineMeshArray.Num());
+	}
+}
+
+void UMoverComponent::RefreshSplineMesh()
+{
+	if (MovementSpline)
+	{
+		if (MovementSplineMeshArray.Num()>0)
+		{
+			for (int32 i = 0; i < MovementSplineMeshArray.Num(); i++)
+			{
+				MovementSplineMeshArray[i]->DestroyComponent();
+			}
+			MovementSplineMeshArray.Empty();
+		}
+		for (int32 i = 0; i < MovementSpline->GetNumberOfSplinePoints()-1; i++)
+		{
+			USplineMeshComponent* newSplineMesh = NewObject<USplineMeshComponent>(this,SplineMesh);
+			newSplineMesh->RegisterComponentWithWorld(OwnerCharacter->GetWorld());
+			FVector startPos = MovementSpline->GetLocationAtSplinePoint(i,ESplineCoordinateSpace::World);
+			FVector startTan = MovementSpline->GetTangentAtSplinePoint(i,ESplineCoordinateSpace::World);
+			FVector endPos = MovementSpline->GetLocationAtSplinePoint(i + 1, ESplineCoordinateSpace::World);
+			FVector endTan = MovementSpline->GetTangentAtSplinePoint(i + 1, ESplineCoordinateSpace::World);
+
+			newSplineMesh->SetStartAndEnd(startPos, startTan, endPos, endTan);
+			MovementSplineMeshArray.Add(newSplineMesh);
+		}
+	}
+}
+
+void UMoverComponent::CleanupSplineMesh()
+{
+	if (MovementSplineMeshArray.Num() > 0)
+	{
+		for (int32 i = 0; i < MovementSplineMeshArray.Num(); i++)
+		{
+			MovementSplineMeshArray[i]->DestroyComponent();
+		}
+		MovementSplineMeshArray.Empty();
+	}
+}
+
+
 
 
 // Called every frame

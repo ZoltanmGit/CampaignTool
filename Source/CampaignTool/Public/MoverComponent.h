@@ -35,8 +35,13 @@ public:
 		UCurveFloat* TimelineCurve;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = MovementParamteres)
 		class ABaseCharacter* OwnerCharacter;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Movement)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Spline)
 		class USplineComponent* MovementSpline;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Spline)
+		TSubclassOf<class USplineMeshComponent> SplineMesh;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Spline)
+		TArray<class USplineMeshComponent*> MovementSplineMeshArray;
 
 	UFUNCTION(BlueprintCallable)
 		void MoveCharacter(FVector newLocation);
@@ -44,6 +49,12 @@ public:
 		void TimelineFloatReturn(float value);
 	UFUNCTION()
 		void OnTimelineFinished();
+	UFUNCTION()
+		void RefreshSpline();
+	UFUNCTION()
+		void RefreshSplineMesh();
+	UFUNCTION()
+		void CleanupSplineMesh();
 
 protected:
 	FOnTimelineFloat InterpFunction{}; //Delegate for timeline update

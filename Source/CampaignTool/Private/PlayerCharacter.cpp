@@ -105,7 +105,25 @@ void APlayerCharacter::Tick(float DeltaTime)
 					int32 tileIndex;
 					FTileProperties hitTileProperties = Grid->GetTilePropertiesFromTransform(TileTransform, tileIndex);
 					
-					CursorLocation = TileTransform.GetLocation();
+					
+					if (CursorLocation != TileTransform.GetLocation() && bCanMove)
+					{
+						UE_LOG(LogTemp, Warning, TEXT("New CursorLocation"));
+						CursorLocation = TileTransform.GetLocation();
+						if (Pathfinder->ValidIndexMap.Contains(hitTileProperties.Row*Grid->Columns + hitTileProperties.Column))
+						{
+							UE_LOG(LogTemp, Warning, TEXT("New CursorLocation is Valid Movement"));
+							TArray<int32> Path = Pathfinder->GetRouteFromIndexes(hitTileProperties.Row, hitTileProperties.Column);
+							Mover->RefreshSpline();
+						}
+						else
+						{
+							if (Mover->MovementSplineMeshArray.Num() > 0)
+							{
+								Mover->CleanupSplineMesh();
+							}
+						}
+					}
 					//DEBUG
 					if (GEngine)
 					{
@@ -155,6 +173,13 @@ void APlayerCharacter::Tick(float DeltaTime)
 			if (TargetedTile != nullptr)
 			{
 				TargetedTile = nullptr;
+			}
+			if (Mover)
+			{
+				if (Mover->MovementSplineMeshArray.Num() > 0)
+				{
+					Mover->CleanupSplineMesh();
+				}
 			}
 			GEngine->AddOnScreenDebugMessage(-2, 0.0, FColor::Emerald, TEXT("Trace didn't hit"));
 			CursorLocation = this->GetActorLocation();
