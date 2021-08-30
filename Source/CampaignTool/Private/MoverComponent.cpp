@@ -105,6 +105,7 @@ void UMoverComponent::RefreshSpline()
 
 			splinePointLocation = FVector((Row * OwnerCharacter->Grid->fieldSize) + (OwnerCharacter->Grid->fieldSize / 2), (Column * OwnerCharacter->Grid->fieldSize) + (OwnerCharacter->Grid->fieldSize / 2), 50.0f);
 			MovementSpline->AddSplinePoint(splinePointLocation, ESplineCoordinateSpace::World, true);
+			MovementSpline->SetSplinePointType(i, ESplinePointType::Linear); //Make tangents 0,0,0 vectors TODO
 		}
 		RefreshSplineMesh();
 		UE_LOG(LogTemp, Warning, TEXT("SplineMeshes: %i"),MovementSplineMeshArray.Num());
