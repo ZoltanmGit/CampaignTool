@@ -106,6 +106,7 @@ void UMoverComponent::RefreshSpline()
 			splinePointLocation = FVector((Row * OwnerCharacter->Grid->fieldSize) + (OwnerCharacter->Grid->fieldSize / 2), (Column * OwnerCharacter->Grid->fieldSize) + (OwnerCharacter->Grid->fieldSize / 2), 50.0f);
 			MovementSpline->AddSplinePoint(splinePointLocation, ESplineCoordinateSpace::World, true);
 			MovementSpline->SetSplinePointType(i, ESplinePointType::Linear); //Make tangents 0,0,0 vectors TODO
+			MovementSpline->SetTangentsAtSplinePoint(i, FVector(0, 0, 0), FVector(0, 0, 0), ESplineCoordinateSpace::Local);
 		}
 		RefreshSplineMesh();
 		UE_LOG(LogTemp, Warning, TEXT("SplineMeshes: %i"),MovementSplineMeshArray.Num());
@@ -129,11 +130,13 @@ void UMoverComponent::RefreshSplineMesh()
 			USplineMeshComponent* newSplineMesh = NewObject<USplineMeshComponent>(this,SplineMesh);
 			newSplineMesh->RegisterComponentWithWorld(OwnerCharacter->GetWorld());
 			FVector startPos = MovementSpline->GetLocationAtSplinePoint(i,ESplineCoordinateSpace::World);
-			FVector startTan = MovementSpline->GetTangentAtSplinePoint(i,ESplineCoordinateSpace::World);
+			startPos.Z = 20.0f;
+			//FVector startTan = MovementSpline->GetTangentAtSplinePoint(i,ESplineCoordinateSpace::World);
 			FVector endPos = MovementSpline->GetLocationAtSplinePoint(i + 1, ESplineCoordinateSpace::World);
-			FVector endTan = MovementSpline->GetTangentAtSplinePoint(i + 1, ESplineCoordinateSpace::World);
+			endPos.Z = 20.0f;
+			//FVector endTan = MovementSpline->GetTangentAtSplinePoint(i + 1, ESplineCoordinateSpace::World);
 
-			newSplineMesh->SetStartAndEnd(startPos, startTan, endPos, endTan);
+			newSplineMesh->SetStartAndEnd(startPos, FVector(0,0,0), endPos, FVector(0,0,0));
 			MovementSplineMeshArray.Add(newSplineMesh);
 		}
 	}
