@@ -72,7 +72,7 @@ void UMoverComponent::TimelineFloatReturn(float value)
 		NewLocation.Z = FMath::Clamp(NewLocation.Z, 0.0f, 200.0f);
 
 		OwnerCharacter->SetActorLocation(NewLocation);
-		//UE_LOG(LogTemp, Warning, TEXT("NewLocation: %s"), *NewLocation.ToString());
+		UE_LOG(LogTemp, Warning, TEXT("NewLocation: %s"), *NewLocation.ToString());
 	}
 }
 

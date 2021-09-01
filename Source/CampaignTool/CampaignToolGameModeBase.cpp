@@ -12,7 +12,7 @@ ACampaignToolGameModeBase::ACampaignToolGameModeBase()
 	TestFighter.CharacterName = FString("FighterBoy");
 	TestFighter.Level = 1;
 	TestFighter.ProficiencyBonus = 2;
-	TestFighter.Speed = 25.0f;
+	TestFighter.Speed = 15.0f; // divided by 5
 	TestFighter.HitDie = 12;
 	TestFighter.Strength = 12;
 	TestFighter.Dexterity = 14;
@@ -29,7 +29,7 @@ ACampaignToolGameModeBase::ACampaignToolGameModeBase()
 	TestRogue.CharacterName = FString("McRogue");
 	TestRogue.Level = 1;
 	TestRogue.ProficiencyBonus = 2;
-	TestRogue.Speed = 30.0f;
+	TestRogue.Speed = 25.0f; // 5 tiles
 	TestRogue.HitDie = 8;
 	TestRogue.Strength = 8;
 	TestRogue.Dexterity = 18;

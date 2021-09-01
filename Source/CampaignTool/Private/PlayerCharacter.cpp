@@ -141,6 +141,14 @@ void APlayerCharacter::Tick(float DeltaTime)
 					if (TargetedTile != nullptr) //If a character is targeted then a tile should not be selected
 					{
 						TargetedTile = nullptr;
+						CursorLocation = this->GetActorLocation(); // And we set the cursor to the characters location
+					}
+					if (Mover) //this fires if the cursor moves from a valid tile to directly onto a character
+					{
+						if (Mover->MovementSplineMeshArray.Num() > 0)
+						{
+							Mover->CleanupSplineMesh();
+						}
 					}
 					if (TargetedCharacter != UnderCursorHitResult.Actor) //Only cast if it's not already targeted
 					{
