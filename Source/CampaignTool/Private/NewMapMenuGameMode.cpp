@@ -41,6 +41,7 @@ void ANewMapMenuGameMode::ResizeRow(int32 NewRow)
 			}
 		}
 		Rows = NewRow;
+		OnGridChange();
 	}
 }
 
@@ -64,8 +65,8 @@ void ANewMapMenuGameMode::ResizeColumn(int32 NewColumn)
 		{
 			for (int32 i = 0; i < Rows*NewColumn; i++)
 			{
-				TileMatrix[i] = TileMatrix[i + (i / Rows) * (Columns - NewColumn)];
-				UE_LOG(LogTemp, Warning, TEXT("%i := %i"), i, i + (i / Rows) * (Columns - NewColumn));
+				TileMatrix[i] = TileMatrix[i+(i/NewColumn)];
+				UE_LOG(LogTemp, Warning, TEXT("%i := %i"), i, i + i/NewColumn);
 			}
 			for (int32 i = 0; i < (Columns-NewColumn)*Rows; i++)
 			{
@@ -74,5 +75,10 @@ void ANewMapMenuGameMode::ResizeColumn(int32 NewColumn)
 			}
 		}
 		Columns = NewColumn;
+		OnGridChange();
 	}
+}
+void ANewMapMenuGameMode::OnGridChange_Implementation()
+{
+	UE_LOG(LogTemp, Warning, TEXT("OnGridChange()"));
 }

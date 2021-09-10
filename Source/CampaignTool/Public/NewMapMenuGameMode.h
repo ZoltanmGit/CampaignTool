@@ -32,4 +32,8 @@ public:
 		void ResizeRow(int32 argNewRow);
 	UFUNCTION(BlueprintCallable)
 		void ResizeColumn(int32 argNewColumn);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+		void OnGridChange();
+
 };
