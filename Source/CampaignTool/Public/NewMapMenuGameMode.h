@@ -27,6 +27,10 @@ public:
 		int32 Rows;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Map)
 		int32 Columns;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Map)
+		int32 SelectedTile;
+	UPROPERTY(visibleAnywhere, BlueprintReadWrite, Category = Map)
+		int32 SelectedObject;
 
 	UFUNCTION(BlueprintCallable)
 		void ResizeRow(int32 argNewRow);

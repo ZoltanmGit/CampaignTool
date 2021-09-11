@@ -7,7 +7,10 @@ ANewMapMenuGameMode::ANewMapMenuGameMode()
 {
 	Rows = 1;
 	Columns = 1;
+	SelectedTile = -2;
+	SelectedObject = -2;
 }
+
 void ANewMapMenuGameMode::BeginPlay()
 {
 	TileMatrix.Add(-1);
@@ -16,9 +19,6 @@ void ANewMapMenuGameMode::BeginPlay()
 
 void ANewMapMenuGameMode::ResizeRow(int32 NewRow)
 {
-
-	//int32 NewRow = FCString::Atoi(*NewRowInString);
-
 	UE_LOG(LogTemp, Warning, TEXT("RowSize commited"))
 	if (NewRow != Rows)
 	{
@@ -47,7 +47,6 @@ void ANewMapMenuGameMode::ResizeRow(int32 NewRow)
 
 void ANewMapMenuGameMode::ResizeColumn(int32 NewColumn)
 {
-	//int32 NewColumn = FCString::Atoi(*NewColumnInString);
 	UE_LOG(LogTemp, Warning, TEXT("Column size commited"))
 	if (NewColumn != Columns)
 	{
