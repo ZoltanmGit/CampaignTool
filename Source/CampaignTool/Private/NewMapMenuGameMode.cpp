@@ -9,6 +9,7 @@ ANewMapMenuGameMode::ANewMapMenuGameMode()
 	Columns = 1;
 	SelectedTile = -2;
 	SelectedObject = -2;
+	bIsSelectionActive = false;
 }
 
 void ANewMapMenuGameMode::BeginPlay()
