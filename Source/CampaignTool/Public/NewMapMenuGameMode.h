@@ -31,8 +31,6 @@ public:
 		int32 SelectedTile;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Map)
 		int32 SelectedObject;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Map)
-		bool bIsSelectionActive;
 
 
 	UFUNCTION(BlueprintCallable)
