@@ -5,6 +5,7 @@
 #include "Public/MovementController.h"
 #include "Public/Grid.h"
 #include "Public/PlayerCharacter.h"
+#include "Public/MapSaveObject.h"
 #include <Runtime/Engine/Classes/Kismet/GameplayStatics.h>
 
 ACampaignToolGameModeBase::ACampaignToolGameModeBase()
@@ -59,7 +60,7 @@ void ACampaignToolGameModeBase::BeginPlay()
 		//Spawn Grid
 		InitializeGrid();
 		//Spawn Characters
-		InitializeCharacters();
+		//InitializeCharacters();
 		//Spawn MovementController
 		//InitializeMovementController();
 	}
@@ -72,7 +73,7 @@ void ACampaignToolGameModeBase::BeginPlay()
 void ACampaignToolGameModeBase::InitializeGrid()
 {
 	// 10 x 10
-	int tempMatrix[100] = { 0,0,0,0,1,1,0,0,0,0,
+	/*int tempMatrix[100] = { 0,0,0,0,1,1,0,0,0,0,
 							0,0,4,4,1,1,4,4,0,0,
 							0,0,4,3,3,3,3,4,0,0,
 							0,0,4,3,3,3,3,4,0,0,
@@ -117,37 +118,26 @@ void ACampaignToolGameModeBase::InitializeGrid()
 							5,5,5,5,5,5,5,5,5,5,
 							5,5,5,5,5,5,5,5,5,5,
 							5,5,5,5,5,5,5,5,5,5
-	};
-	if (Grid)
+	};*/
+
+	if (UMapSaveObject* LoadObject = Cast<UMapSaveObject>(UGameplayStatics::LoadGameFromSlot(TEXT("TestMap01"), 0)))
 	{
-		FActorSpawnParameters SpawnParams;
-		FTransform TransformParams;
-		TransformParams.SetLocation(FVector(0.0f, 0.0f, 0.0f));
-		Gridptr = GetWorld()->SpawnActor<AGrid>(Grid, TransformParams, SpawnParams);
-
-		MapChoice = FMath::Clamp(MapChoice, 1, 4);
-
-		switch (MapChoice)
+		UE_LOG(LogTemp, Warning, TEXT("Map Loaded from Save"));
+		if (Grid)
 		{
-		case 1:
-			Gridptr->InitializeGrid(10, 10, tempMatrix);
-			break;
-		case 2:
-			Gridptr->InitializeGrid(15, 15, tempMatrix2);
-			break;
-		case 3:
-			Gridptr->InitializeGrid(4, 13, tempMatrix3);
-			break;
-		case 4:
-			Gridptr->InitializeGrid(10, 10, tempMatrix4);
-			break;
-		default:
-			break;
+			FActorSpawnParameters SpawnParams;
+			FTransform TransformParams;
+			TransformParams.SetLocation(FVector(0.0f, 0.0f, 0.0f));
+			Gridptr = GetWorld()->SpawnActor<AGrid>(Grid, TransformParams, SpawnParams);
+			if (Gridptr)
+			{
+				Gridptr->InitializeGrid(LoadObject->Rows, LoadObject->Columns, LoadObject->TileMatrix);
+				UE_LOG(LogTemp, Warning, TEXT("Grid initialized..."));
+			}
 		}
-
-		//Gridptr->InitializeGrid(10, 10, tempMatrix4);
-		UE_LOG(LogTemp, Warning, TEXT("Grid initialized..."));
 	}
+
+	
 }
 
 void ACampaignToolGameModeBase::InitializeCharacters()

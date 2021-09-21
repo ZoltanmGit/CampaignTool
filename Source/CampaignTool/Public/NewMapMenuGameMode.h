@@ -31,14 +31,21 @@ public:
 		int32 SelectedTile;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Map)
 		int32 SelectedObject;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Map)
+		FName MapName;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Persistence)
+		class UMapSaveObject* SaveObject;
 
 
 	UFUNCTION(BlueprintCallable)
 		void ResizeRow(int32 argNewRow);
 	UFUNCTION(BlueprintCallable)
 		void ResizeColumn(int32 argNewColumn);
-
+	UFUNCTION(BlueprintCallable)
+		void SaveMap();
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 		void OnGridChange();
+
 
 };

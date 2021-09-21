@@ -43,9 +43,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 		FTileProperties GetTilePropertiesFromIndex(int32 Row, int32 Column);
 
-	void SpawnInstance(int x, int y, int TerrainInt);
+	void SpawnInstance(int32 x, int32 y, int32 TerrainInt);
 
-	void InitializeGrid(int argRows,int argColumns,int argGrid[]);
+	void InitializeGrid(int32 argRows,int32 argColumns,TArray<int32> Array);
 private:
 	/// <summary>
 	/// This function is used to get a valid TerrainType from an integer

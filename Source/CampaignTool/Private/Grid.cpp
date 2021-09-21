@@ -52,7 +52,7 @@ FTileProperties AGrid::GetTilePropertiesFromIndex(int32 Row, int32 Column)
 	return GridDataArray[index];
 }
 
-void AGrid::SpawnInstance(int x, int y, int TerrainInt)
+void AGrid::SpawnInstance(int32 x, int32 y, int32 TerrainInt)
 {
 
 	//UE_LOG(LogTemp, Warning, TEXT("SpawnInstance: x:%i y:%i Type:%i"), x, y, TerrainInt);
@@ -82,9 +82,9 @@ void AGrid::SpawnInstance(int x, int y, int TerrainInt)
 	GridDataArray.Add(newTileData);
 }
 
-void AGrid::InitializeGrid(int argRows, int argColumns, int argGrid[])
+void AGrid::InitializeGrid(int32 argRows, int32 argColumns, TArray<int32> argGrid)
 {
-	if(argRows > 0 && argColumns > 0 && argGrid != nullptr)
+	if(argRows > 0 && argColumns > 0)
 	{
 		Rows = argRows;
 		Columns = argColumns;

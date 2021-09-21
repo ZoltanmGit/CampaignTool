@@ -2,19 +2,23 @@
 
 
 #include "NewMapMenuGameMode.h"
+#include "Kismet/GameplayStatics.h"
+#include "../Public/MapSaveObject.h"
 
 ANewMapMenuGameMode::ANewMapMenuGameMode()
 {
 	Rows = 1;
 	Columns = 1;
-	SelectedTile = -2;
-	SelectedObject = -2;
+	SelectedTile = -1;
+	SelectedObject = -1;
 }
 
 void ANewMapMenuGameMode::BeginPlay()
 {
 	TileMatrix.Add(-1);
 	ObjectMatrix.Add(-1);
+
+	SaveObject = Cast<UMapSaveObject>(UGameplayStatics::CreateSaveGameObject(UMapSaveObject::StaticClass()));
 }
 
 void ANewMapMenuGameMode::ResizeRow(int32 NewRow)
@@ -75,6 +79,20 @@ void ANewMapMenuGameMode::ResizeColumn(int32 NewColumn)
 		}
 		Columns = NewColumn;
 		OnGridChange();
+	}
+}
+void ANewMapMenuGameMode::SaveMap()
+{
+	if (SaveObject != nullptr)
+	{
+		SaveObject->TileMatrix = TileMatrix;
+		SaveObject->MapName = TEXT("Placeholdername");
+		SaveObject->Rows = Rows;
+		SaveObject->Columns = Columns;
+		if (UGameplayStatics::SaveGameToSlot(SaveObject, TEXT("TestMap01"), 0))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Saved the map"));
+		}
 	}
 }
 void ANewMapMenuGameMode::OnGridChange_Implementation()
