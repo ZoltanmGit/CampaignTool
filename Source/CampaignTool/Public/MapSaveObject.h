@@ -22,5 +22,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = PersistentData)
 		int32 Columns;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = PersistentData)
-		FName MapName;
+		FString MapName;
+
 };

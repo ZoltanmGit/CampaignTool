@@ -4,6 +4,7 @@
 #include "NewMapMenuGameMode.h"
 #include "Kismet/GameplayStatics.h"
 #include "../Public/MapSaveObject.h"
+#include "../Public/PersistenceSaveObject.h"
 
 ANewMapMenuGameMode::ANewMapMenuGameMode()
 {
@@ -85,13 +86,30 @@ void ANewMapMenuGameMode::SaveMap()
 {
 	if (SaveObject != nullptr)
 	{
+		UPersistenceSaveObject* Persist = Cast<UPersistenceSaveObject>(UGameplayStatics::LoadGameFromSlot(TEXT("PersistentDataSlot"), 0));
+		if (!Persist)
+		{
+			Persist = Cast<UPersistenceSaveObject>(UGameplayStatics::CreateSaveGameObject(UPersistenceSaveObject::StaticClass())); // If there is no Persistence yet then we create one
+			UE_LOG(LogTemp, Warning, TEXT("Created new persistence"));
+		}
+
+		//Save the persistent values of a map
 		SaveObject->TileMatrix = TileMatrix;
 		SaveObject->MapName = TEXT("Placeholdername");
 		SaveObject->Rows = Rows;
 		SaveObject->Columns = Columns;
-		if (UGameplayStatics::SaveGameToSlot(SaveObject, TEXT("TestMap01"), 0))
+
+		
+		FString SlotName = "MapSave"+FString::FromInt(Persist->SavedMapNum+1);
+
+		if (UGameplayStatics::SaveGameToSlot(SaveObject, SlotName, 0))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Saved the map"));
+			UE_LOG(LogTemp, Warning, TEXT("Saved the map to %s"), *SlotName);
+		}
+		Persist->SavedMapNum++;
+		if (UGameplayStatics::SaveGameToSlot(Persist, TEXT("PersistentDataSlot"), 0))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Saved Persistence"));
 		}
 	}
 }

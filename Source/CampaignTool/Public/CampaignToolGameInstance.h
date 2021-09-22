@@ -13,5 +13,7 @@ UCLASS()
 class CAMPAIGNTOOL_API UCampaignToolGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
-	
+public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = MetaData)
+		FString SelectedMap;
 };

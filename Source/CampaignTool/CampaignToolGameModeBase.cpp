@@ -2,7 +2,6 @@
 
 
 #include "CampaignToolGameModeBase.h"
-#include "Public/MovementController.h"
 #include "Public/Grid.h"
 #include "Public/PlayerCharacter.h"
 #include "Public/MapSaveObject.h"
@@ -72,54 +71,6 @@ void ACampaignToolGameModeBase::BeginPlay()
 
 void ACampaignToolGameModeBase::InitializeGrid()
 {
-	// 10 x 10
-	/*int tempMatrix[100] = { 0,0,0,0,1,1,0,0,0,0,
-							0,0,4,4,1,1,4,4,0,0,
-							0,0,4,3,3,3,3,4,0,0,
-							0,0,4,3,3,3,3,4,0,0,
-							0,0,4,3,3,3,3,4,0,0,
-							0,0,4,4,1,1,4,4,0,0,
-							-1,-1,-1,-1,1,1,-1,-1,-1,-1,
-							5,5,5,5,1,1,5,5,5,5,
-							1,1,1,1,1,1,1,1,1,1,
-							2,2,2,2,2,2,2,2,2,2
-	};
-	//15 x 15
-	int tempMatrix2[225] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-							1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,
-							0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
-							1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,
-							2,2,2,2,2,2,1,0,0,0,0,0,0,0,0,
-							1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,
-							0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-							0,0,0,0,0,1,1,0,1,1,0,0,0,0,0,
-							0,0,0,0,0,1,1,0,1,1,0,0,0,0,0,
-							1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,
-							0,0,0,0,0,1,1,0,1,1,0,0,0,0,0,
-							0,0,0,1,0,1,1,0,1,1,1,0,1,1,0,
-							0,0,0,1,0,0,0,0,0,1,1,0,1,0,0,
-							0,0,0,1,1,1,1,0,0,1,1,0,1,1,1,
-							0,0,0,0,0,0,0,0,0,1,1,0,0,0,0
-	};
-	//4 x 13
-	int tempMatrix3[52] = { 4,-1, 4, 4, 4,-1, 4, 4, 4,-1, 4, 4, 4,
-							4,-1, 4,-1, 4,-1, 4,-1, 4,-1, 4,-1, 4,
-							4,-1, 4,-1, 4,-1, 4,-1, 4,-1, 4,-1, 4,
-							4, 4, 4,-1, 4, 4, 4,-1, 4, 4, 4,-1, 4
-	};
-	//10 x 10
-	int tempMatrix4[100] = { 5,5,5,5,5,5,5,5,5,5,
-							5,5,5,5,5,5,5,5,5,5,
-							5,5,5,5,5,5,5,5,5,5,
-							5,5,5,5,5,5,5,5,5,5,
-							5,5,5,5,5,5,5,5,5,5,
-							5,5,5,5,5,5,5,5,5,5,
-							5,5,5,5,5,5,5,5,5,5,
-							5,5,5,5,5,5,5,5,5,5,
-							5,5,5,5,5,5,5,5,5,5,
-							5,5,5,5,5,5,5,5,5,5
-	};*/
-
 	if (UMapSaveObject* LoadObject = Cast<UMapSaveObject>(UGameplayStatics::LoadGameFromSlot(TEXT("TestMap01"), 0)))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Map Loaded from Save"));
@@ -136,8 +87,6 @@ void ACampaignToolGameModeBase::InitializeGrid()
 			}
 		}
 	}
-
-	
 }
 
 void ACampaignToolGameModeBase::InitializeCharacters()
@@ -145,26 +94,12 @@ void ACampaignToolGameModeBase::InitializeCharacters()
 	SpawnCharacter(TestFighter, 0, 0);
 	SpawnCharacter(TestRogue, 1, 0);
 
-
 	if (Characters[0] != nullptr)
 	{
 		APlayerCharacter* character = Cast<APlayerCharacter>(Characters[0]);
 		character->DefaultController = UserController; 
 		UserController->Possess(Characters[0]);
 		character->BeginTurn();
-	}
-}
-
-void ACampaignToolGameModeBase::InitializeMovementController()
-{
-	if (MovementController)
-	{
-		FActorSpawnParameters SpawnParams;
-		FTransform TransformParams;
-		TransformParams.SetLocation(FVector(-100.0f, -100.0f, 0.0f));
-		MovementControllerptr = GetWorld()->SpawnActor<AMovementController>(MovementController,TransformParams,SpawnParams);
-		MovementControllerptr->Characters = this->Characters;
-		UE_LOG(LogTemp, Warning, TEXT("MovementController initialized."));
 	}
 }
 

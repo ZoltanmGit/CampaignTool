@@ -21,9 +21,6 @@ protected:
 	virtual void BeginPlay() override;
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Init)
-		TSubclassOf<class AMovementController> MovementController;
-	class AMovementController* MovementControllerptr;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Init)
 		TSubclassOf<class AGrid> Grid;
 	class AGrid* Gridptr;
 
@@ -44,7 +41,6 @@ public:
 protected:
 	void InitializeGrid();
 	void InitializeCharacters();
-	void InitializeMovementController();
 	void SpawnCharacter(FCharacterStruct character, int32 x, int32 y);
 protected:
 	FCharacterStruct TestFighter;
