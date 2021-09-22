@@ -58,21 +58,29 @@ void ANewMapMenuGameMode::ResizeColumn(int32 NewColumn)
 		
 		if (Columns < NewColumn)
 		{
-			for (int32 i = 0; i < (NewColumn-Columns)*Rows; i++)
+			int32 delta = NewColumn-Columns;
+			for (int32 i = 0; i < delta * Rows; i++)
 			{
 				TileMatrix.Add(-1);
 				ObjectMatrix.Add(-1);
 			}
-
+			for (int i = Rows * NewColumn-1; i >= 0; i--)
+			{
+				TileMatrix[i] = TileMatrix[i - ((i / NewColumn) * delta)];
+				if (i % NewColumn > Columns - 1)
+				{
+					TileMatrix[i] = -1;
+				}
+			}
 		}
 		else // If smaller we rearrange values and shrink
 		{
-			for (int32 i = 0; i < Rows*NewColumn; i++)
+			int32 delta = Columns - NewColumn;
+			for (int i = 0; i < Rows*NewColumn; i++)
 			{
-				TileMatrix[i] = TileMatrix[i+(i/NewColumn)];
-				UE_LOG(LogTemp, Warning, TEXT("%i := %i"), i, i + i/NewColumn);
+				TileMatrix[i] = TileMatrix[i + ((i / NewColumn) * delta)];
 			}
-			for (int32 i = 0; i < (Columns-NewColumn)*Rows; i++)
+			for (int32 i = 0; i < delta*Rows; i++)
 			{
 				TileMatrix.RemoveAt(TileMatrix.Num() - 1);
 				ObjectMatrix.RemoveAt(ObjectMatrix.Num() - 1);
