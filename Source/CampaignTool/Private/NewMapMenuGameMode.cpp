@@ -12,6 +12,7 @@ ANewMapMenuGameMode::ANewMapMenuGameMode()
 	Columns = 1;
 	SelectedTile = -1;
 	SelectedObject = -1;
+	MapName = "";
 }
 
 void ANewMapMenuGameMode::BeginPlay()
@@ -103,7 +104,7 @@ void ANewMapMenuGameMode::SaveMap()
 
 		//Save the persistent values of a map
 		SaveObject->TileMatrix = TileMatrix;
-		SaveObject->MapName = TEXT("Placeholdername");
+		SaveObject->MapName = MapName;
 		SaveObject->Rows = Rows;
 		SaveObject->Columns = Columns;
 

@@ -32,7 +32,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Map)
 		int32 SelectedObject;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Map)
-		FName MapName;
+		FString MapName;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Persistence)
 		class UMapSaveObject* SaveObject;
