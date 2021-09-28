@@ -5,6 +5,7 @@
 #include "Public/Grid.h"
 #include "Public/PlayerCharacter.h"
 #include "Public/MapSaveObject.h"
+#include "Public/CampaignToolGameInstance.h"
 #include <Runtime/Engine/Classes/Kismet/GameplayStatics.h>
 
 ACampaignToolGameModeBase::ACampaignToolGameModeBase()
@@ -71,7 +72,8 @@ void ACampaignToolGameModeBase::BeginPlay()
 
 void ACampaignToolGameModeBase::InitializeGrid()
 {
-	if (UMapSaveObject* LoadObject = Cast<UMapSaveObject>(UGameplayStatics::LoadGameFromSlot(TEXT("TestMap01"), 0)))
+	UCampaignToolGameInstance* GameInstance = Cast<UCampaignToolGameInstance>(GetGameInstance());
+	if (UMapSaveObject* LoadObject = Cast<UMapSaveObject>(UGameplayStatics::LoadGameFromSlot(GameInstance->SelectedMapSlotName, 0)))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Map Loaded from Save"));
 		if (Grid)
@@ -80,9 +82,22 @@ void ACampaignToolGameModeBase::InitializeGrid()
 			FTransform TransformParams;
 			TransformParams.SetLocation(FVector(0.0f, 0.0f, 0.0f));
 			Gridptr = GetWorld()->SpawnActor<AGrid>(Grid, TransformParams, SpawnParams);
+			TArray<int32> MirroredTileMatrix = LoadObject->TileMatrix;
+
+			//Mirror the matrix on the X axis because of the UI inconsistency
+			for (int32 i = 0; i < (LoadObject->Rows * LoadObject->Columns) / 2; i++)
+			{
+				if (MirroredTileMatrix[i] != MirroredTileMatrix[(LoadObject->Rows * LoadObject->Columns) - (LoadObject->Columns - i % LoadObject->Columns) - ((i / LoadObject->Columns) * LoadObject->Columns)])
+				{
+					int32 TempIntForSwap = MirroredTileMatrix[i];
+					MirroredTileMatrix[i] = MirroredTileMatrix[(LoadObject->Rows * LoadObject->Columns) - (LoadObject->Columns - i % LoadObject->Columns) - ((i / LoadObject->Columns) * LoadObject->Columns)];
+					MirroredTileMatrix[(LoadObject->Rows * LoadObject->Columns) - (LoadObject->Columns - i % LoadObject->Columns) - ((i / LoadObject->Columns) * LoadObject->Columns)] = TempIntForSwap;
+				}
+			}
+
 			if (Gridptr)
 			{
-				Gridptr->InitializeGrid(LoadObject->Rows, LoadObject->Columns, LoadObject->TileMatrix);
+				Gridptr->InitializeGrid(LoadObject->Rows, LoadObject->Columns, MirroredTileMatrix);
 				UE_LOG(LogTemp, Warning, TEXT("Grid initialized..."));
 			}
 		}

@@ -108,6 +108,10 @@ void ANewMapMenuGameMode::SaveMap()
 		SaveObject->Rows = Rows;
 		SaveObject->Columns = Columns;
 
+		for (int32 i = 0; i < (Rows*Columns)/2; i++)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("%i -> %i"), i,(Rows*Columns) - (Columns-i%Columns) - ((i/Columns)*Columns )       );
+		}
 		
 		FString SlotName = "MapSave"+FString::FromInt(Persist->SavedMapNum+1);
 

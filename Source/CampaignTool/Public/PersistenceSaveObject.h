@@ -16,8 +16,8 @@ class CAMPAIGNTOOL_API UPersistenceSaveObject : public USaveGame
 public:
 	UPersistenceSaveObject();
 public:
-	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category = SaveData)
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category = SaveData)
 		int32 SavedMapNum;
-	UPROPERTY(VisibleAnywhere,BlueprintReadOnly, Category = SaveData)
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category = SaveData)
 		int32 SavedCharacterNum;
 };
