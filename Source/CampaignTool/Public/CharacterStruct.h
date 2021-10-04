@@ -21,6 +21,8 @@ public:
 		int32 Speed;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = General)
 		int32 HitDie;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = General)
+		TEnumAsByte<Size> Size;
 
 	//Attributes
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Attributes)
@@ -45,7 +47,19 @@ public:
 		TEnumAsByte<Alignment> Alignment;
 	//Proficiencies
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
-		TArray<TEnumAsByte<Proficiency>> ProficiencyArray;
+		TArray<TEnumAsByte<Proficiency>> ProficiencyArmorArray;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
+		TArray<TEnumAsByte<Proficiency>> ProficiencyWeaponArray;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
+		TArray<TEnumAsByte<Proficiency>> ProficiencySkillArray;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
+		TArray<TEnumAsByte<Proficiency>> ProficiencySavingThrowArray;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
+		TArray<TEnumAsByte<Resistance>> ProficiencyResistanceArray;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
+		TArray<TEnumAsByte<Feat>> FeatArray;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
 		TArray<TEnumAsByte<Language>> LanguageArray;
 	//Skills

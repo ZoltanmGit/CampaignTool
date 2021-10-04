@@ -6,11 +6,14 @@
 UENUM(BlueprintType)
 enum Proficiency
 {
+	//Armors
 	LightArmor UMETA(DisplayName = "Light Armor"),
 	MediumArmor UMETA(DisplayName = "Medium Armor"),
 	HeavyArmor UMETA(DisplayName = "Heavy Armor"),
 	AllArmor UMETA(DisplayName = "All Armor"),
 	Shields UMETA(DisplayName = "Shields"),
+
+	//Weapons
 	SimpleWeapons UMETA(DisplayName = "Simple Weapons"),
 	MartialWeapons UMETA(DisplayName = "Martial Weapons"),
 	Clubs UMETA(DisplayName = "Clubs"),
@@ -28,8 +31,21 @@ enum Proficiency
 	Shortswords UMETA(DisplayName = "Shortswords"),
 	Crossbows UMETA(DisplayName = "Crossbows"),
 	LightCrossbows UMETA(DisplayName = "Light Crossbows"),
+	Shortbows UMETA(DisplayName= "Shortbows"),
+	Longbows UMETA(DisplayName = "Longbows"),
 	Rapiers UMETA(DisplayName = "Rapiers"),
+	Battleaxe UMETA(DisplayName = "Battleaxe"),
+	Handaxe UMETA(DisplayName = "Handaxe"),
+	LightHammer UMETA(DisplayName = "LightHammer"),
+	Warhammer UMETA(DisplayName = "Warhammer"),
+
+	//Tools
 	ThievesTools UMETA(DisplayName = "Thieves' Tools"),
+	SmithsTools UMETA(DisplayName = "Smith's Tools"),
+	BrewersSupplies UMETA(DisplayName = "Brewer's Supplies"),
+	MasonsTools UMETA(DisplayName = "Mason's Tools"),
+
+	//Skills
 	Athletics UMETA(DisplayName = "Athletics"),
 	Acrobatics UMETA(DisplayName = "Acrobatics"),
 	SleightOfHand UMETA(DisplayName = "Sleight Of Hand"),
@@ -48,10 +64,16 @@ enum Proficiency
 	Intimidation UMETA(DisplayName = "Intimidation"),
 	Performance UMETA(DisplayName = "Performance"),
 	Persuasion UMETA(DisplayName = "Persuasion"),
-	Blindsight UMETA(DisplayName = "BlindSight"),
-	Darkvision UMETA(DisplayName = "Darkvision"),
-	Tremorsense UMETA(DisplayName = "Tremorsense"),
-	Truesight UMETA(DisplayName = "Truesight")
+	//Saving Throws
+	SavingCharmed UMETA(DisplayName = "Saving Charmed"),
+	SavingSleep UMETA(DisplayName = "Saving Sleep"),
+	SavingPoison UMETA(DisplayName = "Saving Poison")
+};
+UENUM(BlueprintType)
+enum Resistance
+{
+	PoisonResistance UMETA(DisplayName = "PoisonResistance"),
+	FireResistance UMETA(DisplayName = "FireResistance")
 };
 
 UENUM(BlueprintType)
@@ -95,6 +117,25 @@ enum Class
 	Sorcerer UMETA(DisplayName = "Sorcerer"),
 	Warlock UMETA(DisplayName = "Warlock"),
 	Wizard UMETA(DisplayName = "Wizard")
+};
+
+UENUM(BlueprintType)
+enum Feat
+{
+	UndefinedFeat UMETA(DisplayName = "UndefinedFeat"),
+	Blindsight UMETA(DisplayName = "BlindSight"),
+	Darkvision UMETA(DisplayName = "Darkvision"),
+	Tremorsense UMETA(DisplayName = "Tremorsense"),
+	Truesight UMETA(DisplayName = "Truesight"),
+	KeenSenses UMETA(DisplayName = "KeenSenses"),
+	FeyAncestry UMETA(DisplayName = "FeyAncestry"),
+	Trance UMETA(DisplayName = "Trance"),
+	DwarvenCombatTraining UMETA(DisplayName = "DwarvenCombatTraining"),
+	DwarvenResilience UMETA(DisplayName = "DwarvenResilience"),
+	DwarvenToughness UMETA(DisplayName = "DwarvenToughness"),
+	Stonecunning UMETA(DisplayName = "Stonecunning"),
+	HellishResistance UMETA(DisplayName = "HellishResistance"),
+	InfernalLegacy UMETA(DisplayName = "InfernalLegacy")
 };
 
 UENUM(BlueprintType)

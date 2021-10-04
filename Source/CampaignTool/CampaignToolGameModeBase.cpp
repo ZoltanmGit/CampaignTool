@@ -10,43 +10,6 @@
 
 ACampaignToolGameModeBase::ACampaignToolGameModeBase()
 {
-	TestFighter.CharacterName = FString("FighterBoy");
-	TestFighter.Level = 1;
-	TestFighter.ProficiencyBonus = 2;
-	TestFighter.Speed = 15.0f; // divided by 5
-	TestFighter.HitDie = 12;
-	TestFighter.Strength = 12;
-	TestFighter.Dexterity = 14;
-	TestFighter.Intelligence = 8;
-	TestFighter.Constitution = 18;
-	TestFighter.Wisdom = 9;
-	TestFighter.Charisma = 8;
-	TestFighter.Race = Race::Tiefling;
-	TestFighter.Class = Class::Fighter;
-	TestFighter.Alignment = Alignment::N;
-	TestFighter.ProficiencyArray.Add(Proficiency::Shortswords);
-	TestFighter.LanguageArray.Add(Language::Infernal);
-
-	TestRogue.CharacterName = FString("McRogue");
-	TestRogue.Level = 1;
-	TestRogue.ProficiencyBonus = 2;
-	TestRogue.Speed = 25.0f; // 5 tiles
-	TestRogue.HitDie = 8;
-	TestRogue.Strength = 8;
-	TestRogue.Dexterity = 18;
-	TestRogue.Intelligence = 14;
-	TestRogue.Constitution = 8;
-	TestRogue.Wisdom = 12;
-	TestRogue.Charisma = 14;
-	TestRogue.Race = Race::Dwarf;
-	TestRogue.Class = Class::Rogue;
-	TestRogue.Alignment = Alignment::LE;
-	TestRogue.ProficiencyArray.Add(Proficiency::Daggers);
-	TestRogue.ProficiencyArray.Add(Proficiency::ThievesTools);
-	TestRogue.LanguageArray.Add(Language::Common);
-	TestRogue.LanguageArray.Add(Language::Dwarvish);
-
-	MapChoice = 4;
 }
 
 void ACampaignToolGameModeBase::BeginPlay()

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
+#include "CharacterStruct.h"
 #include "CharacterSaveObject.generated.h"
 
 /**
@@ -14,4 +15,12 @@ UCLASS()
 class CAMPAIGNTOOL_API UCharacterSaveObject : public USaveGame
 {
 	GENERATED_BODY()
+public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Persistence)
+		FCharacterStruct SavedCharacterStruct;
+
+	//TODO
+
+	/*UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Persistence) 
+		TArra<BaseInventoryItem> SavedInventory;*/
 };
