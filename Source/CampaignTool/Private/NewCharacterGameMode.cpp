@@ -18,13 +18,14 @@ void ANewCharacterGameMode::OnElfChoice()
 	NewCharacter.Speed = 30.0f;
 	NewCharacter.Size = Size::Medium;
 	AbilityBonusArray[1] = 2; // +2 to Dexterity
+	AbilityBonusArray[3] = 1; // +1 to Intelligence
 	//Proficiencies
 
 	//Proficiency-Weapons
-	NewCharacter.ProficiencyWeaponArray.Add(Proficiency::Longswords);
-	NewCharacter.ProficiencyWeaponArray.Add(Proficiency::Shortswords);
-	NewCharacter.ProficiencyWeaponArray.Add(Proficiency::Shortbows);
-	NewCharacter.ProficiencyWeaponArray.Add(Proficiency::Longbows);
+	NewCharacter.ProficiencyWeaponArray.Add(Proficiency::Longswords); //Because of "Elf Weapon Training"
+	NewCharacter.ProficiencyWeaponArray.Add(Proficiency::Shortswords); //Because of "Elf Weapon Training"
+	NewCharacter.ProficiencyWeaponArray.Add(Proficiency::Shortbows); //Because of "Elf Weapon Training"
+	NewCharacter.ProficiencyWeaponArray.Add(Proficiency::Longbows); //Because of "Elf Weapon Training"
 	//Proficiency-Skills
 	NewCharacter.ProficiencySkillArray.Add(Proficiency::Perception); //Because of "Keen Senses" feat
 	//Proficiency-Saving Throws
@@ -41,14 +42,14 @@ void ANewCharacterGameMode::OnElfChoice()
 	NewCharacter.LanguageArray.Add(Language::Common);
 	NewCharacter.LanguageArray.Add(Language::Elvish);
 }
-void ANewCharacterGameMode::OnHumanChoice()
+void ANewCharacterGameMode::OnDragonbornChoice()
 {
 	//General
-	NewCharacter.Race = Race::Human;
+	NewCharacter.Race = Race::Dragonborn;
 	NewCharacter.Speed = 30.0f;
 	NewCharacter.Size = Size::Medium;
-	AbilityBonusArray.Empty(); 
-	AbilityBonusArray.Init(6,1); // +1 to all Abilities
+	AbilityBonusArray[0] = 2; //+2 to Strength
+	AbilityBonusArray[5] = 1; //+1 to Charisma
 	NewCharacter.LanguageArray.Add(Language::Common);
 }
 void ANewCharacterGameMode::OnDwarfChoice()
@@ -57,6 +58,7 @@ void ANewCharacterGameMode::OnDwarfChoice()
 	NewCharacter.Speed = 25.0f; // TODO: Not Reduced by Heavy Armor 
 	NewCharacter.Size = Size::Medium;
 	AbilityBonusArray[2] = 2; // +2 to Constitution
+	AbilityBonusArray[4] = 1; // +1 to Wisdom
 	//Proficiency-Weapons
 	NewCharacter.ProficiencyWeaponArray.Add(Proficiency::Warhammer); //Because of "Dwarven Weapon Training"
 	NewCharacter.ProficiencyWeaponArray.Add(Proficiency::Battleaxe); //Because of "Dwarven Weapon Training"
@@ -92,4 +94,24 @@ void ANewCharacterGameMode::OnTieflingChoice()
 	NewCharacter.LanguageArray.Add(Language::Common);
 	NewCharacter.LanguageArray.Add(Language::Infernal);
 
+}
+
+void ANewCharacterGameMode::ResetRaceChoice()
+{
+	//Reset race
+	NewCharacter.Race = Race::UndefinedRace;
+	//Reset the Ability bonuses
+	AbilityBonusArray.Empty();
+	AbilityBonusArray.Init(0, 6);
+	// We empty the arrays
+	NewCharacter.FeatArray.Empty();
+	NewCharacter.LanguageArray.Empty();
+	NewCharacter.ProficiencyResistanceArray.Empty();
+	NewCharacter.ProficiencySavingThrowArray.Empty();
+	NewCharacter.ProficiencyWeaponArray.Empty();
+}
+
+void ANewCharacterGameMode::AddLanguage(const TEnumAsByte<Language> LanguageToAdd)
+{
+	NewCharacter.LanguageArray.Add(LanguageToAdd);
 }

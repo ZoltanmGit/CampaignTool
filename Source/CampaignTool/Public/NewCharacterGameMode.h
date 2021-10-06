@@ -17,16 +17,28 @@ class CAMPAIGNTOOL_API ANewCharacterGameMode : public AGameModeBase
 
 		ANewCharacterGameMode();
 public:
+
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Character)
 		TArray<int32> AbilityBonusArray; // 0-STR || 1-DEX || 2-CON || 3-INT || 4-WIS || 5-CHA
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Character)
 		FCharacterStruct NewCharacter;
+
+
 	UFUNCTION(BlueprintCallable)
 		void OnElfChoice();
 	UFUNCTION(BlueprintCallable)
-		void OnHumanChoice();
+		void OnDragonbornChoice();
 	UFUNCTION(BlueprintCallable)
 		void OnDwarfChoice();
 	UFUNCTION(BlueprintCallable)
 		void OnTieflingChoice();
+
+
+	UFUNCTION(BlueprintCallable)
+		void ResetRaceChoice();
+	UFUNCTION(BlueprintCallable)
+		void AddLanguage(const TEnumAsByte<Language> LanguageToAdd);
+	/*UFUNCTION(BlueprintCallabe)
+		void AddSpellId();*/ // TODO
 };

@@ -69,11 +69,62 @@ enum Proficiency
 	SavingSleep UMETA(DisplayName = "Saving Sleep"),
 	SavingPoison UMETA(DisplayName = "Saving Poison")
 };
+
 UENUM(BlueprintType)
 enum Resistance
 {
 	PoisonResistance UMETA(DisplayName = "PoisonResistance"),
-	FireResistance UMETA(DisplayName = "FireResistance")
+	FireResistance UMETA(DisplayName = "FireResistance"),
+	AcidResistance UMETA(DisplayName = "AcidResistance"),
+	ColdResistance UMETA(DisplayName = "ColdResistance"),
+	LightningResistance UMETA(DisplayName = "LightningResistance"),
+	BludgeoningResistance UMETA(DisplayName = "BludgeoningResistance"),
+	SlashingResistance UMETA(DisplayName = "SlashingResistance"),
+	ForceResistance UMETA(DisplayName = "ForceResistance"),
+	ThunderResistance UMETA(DisplayName = "ThunderResistance"),
+	NecroticResistance UMETA(DisplayName = "NecroticResistance"),
+	RadiantResistance UMETA(DisplayName = "RadiantResistance"),
+	PsychicResistance UMETA(DisplayName = "PsychicResistance"),
+	NonMagicalResistance UMETA(DisplayName = "NonMagicalResistance"),
+	MagicalResistance UMETA(DisplayName = "MagicalResistance")
+};
+
+UENUM(BlueprintType)
+enum Immunitiy
+{
+	PoisonImmunity UMETA(DisplayName = "PoisonImmunity"),
+	FireImmunity  UMETA(DisplayName = "FireImmunity"),
+	AcidImmunity  UMETA(DisplayName = "AcidImmunity"),
+	ColdImmunity  UMETA(DisplayName = "ColdImmunity"),
+	LightningImmunity  UMETA(DisplayName = "LightningImmunity"),
+	BludgeoningImmunity  UMETA(DisplayName = "BludgeoningImmunity"),
+	SlashingImmunity UMETA(DisplayName = "SlashingImmunity"),
+	ForceImmunity  UMETA(DisplayName = "ForceImmunity"),
+	ThunderImmunity  UMETA(DisplayName = "ThunderImmunity"),
+	NecroticImmunity  UMETA(DisplayName = "NecroticImmunity"),
+	RadiantImmunity  UMETA(DisplayName = "RadiantImmunity"),
+	PsychicImmunity  UMETA(DisplayName = "PsychicImmunity"),
+	NonMagicalImmunity  UMETA(DisplayName = "NonMagicalImmunity"),
+	MagicalImmunity UMETA(DisplayName = "MagicalImmunity")
+};
+
+UENUM(BlueprintType)
+enum Vulnerability
+{
+	PoisonVulnerability UMETA(DisplayName = "PoisonVulnerability"),
+	FireVulnerability  UMETA(DisplayName = "FireVulnerability"),
+	AcidVulnerability  UMETA(DisplayName = "AcidVulnerability"),
+	ColdVulnerability  UMETA(DisplayName = "ColdVulnerability"),
+	LightningVulnerability  UMETA(DisplayName = "LightningVulnerability"),
+	BludgeoningVulnerability  UMETA(DisplayName = "BludgeoningVulnerability"),
+	SlashingVulnerability UMETA(DisplayName = "SlashingVulnerability"),
+	ForceVulnerability  UMETA(DisplayName = "ForceVulnerability"),
+	ThunderVulnerability  UMETA(DisplayName = "ThunderVulnerability"),
+	NecroticVulnerability  UMETA(DisplayName = "NecroticVulnerability"),
+	RadiantVulnerability  UMETA(DisplayName = "RadiantVulnerability"),
+	PsychicVulnerability  UMETA(DisplayName = "PsychicVulnerability"),
+	NonMagicalVulnerability  UMETA(DisplayName = "NonMagicalVulnerability"),
+	MagicalVulnerability UMETA(DisplayName = "MagicalVulnerability")
 };
 
 UENUM(BlueprintType)
@@ -135,13 +186,14 @@ enum Feat
 	DwarvenToughness UMETA(DisplayName = "DwarvenToughness"),
 	Stonecunning UMETA(DisplayName = "Stonecunning"),
 	HellishResistance UMETA(DisplayName = "HellishResistance"),
-	InfernalLegacy UMETA(DisplayName = "InfernalLegacy")
+	InfernalLegacy UMETA(DisplayName = "InfernalLegacy"),
+	ElfWeaponTraining UMETA(DisplayName = "ElfWeaponTraning")
 };
 
 UENUM(BlueprintType)
 enum Language
 {
-	Telepathy UMETA(DisplayName = "Telepathy"),
+	
 	Common UMETA(DisplayName = "Common"),
 	Dwarvish UMETA(DisplayName = "Dwarvish"),
 	Elvish UMETA(DisplayName = "Elvish"),
@@ -157,7 +209,10 @@ enum Language
 	Infernal UMETA(DisplayName = "Infernal"),
 	Primordial UMETA(DisplayName = "Primordial"),
 	Sylvan UMETA(DisplayName = "Sylvan"),
-	Undercommon UMETA(DisplayName = "Undercommon")
+	Undercommon UMETA(DisplayName = "Undercommon"),
+
+	//Should be special and unused for a while
+	Telepathy UMETA(DisplayName = "Telepathy")
 };
 
 UENUM(BlueprintType)
