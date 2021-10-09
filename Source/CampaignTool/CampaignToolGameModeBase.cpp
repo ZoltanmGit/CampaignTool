@@ -90,10 +90,10 @@ void ACampaignToolGameModeBase::SpawnCharacter(FCharacterStruct character, int32
 	ABaseCharacter* newCharacter = nullptr;
 	switch (character.Class)
 	{
-	case Class::Fighter:
+	case EClass::Fighter:
 		newCharacter = GetWorld()->SpawnActor<APlayerCharacter>(FighterClass, TransformParams, SpawnParams);
 		break;
-	case Class::Rogue:
+	case EClass::Rogue:
 		newCharacter = GetWorld()->SpawnActor<APlayerCharacter>(RogueClass, TransformParams, SpawnParams);
 		break;
 	default:

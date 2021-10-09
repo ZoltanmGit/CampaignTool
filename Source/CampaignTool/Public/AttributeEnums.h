@@ -4,7 +4,7 @@
 #include "AttributeEnums.generated.h"
 
 UENUM(BlueprintType)
-enum Proficiency
+enum EProficiency
 {
 	//Armors
 	LightArmor UMETA(DisplayName = "Light Armor"),
@@ -71,7 +71,7 @@ enum Proficiency
 };
 
 UENUM(BlueprintType)
-enum Resistance
+enum EResistance
 {
 	PoisonResistance UMETA(DisplayName = "PoisonResistance"),
 	FireResistance UMETA(DisplayName = "FireResistance"),
@@ -90,7 +90,7 @@ enum Resistance
 };
 
 UENUM(BlueprintType)
-enum Immunitiy
+enum EImmunitiy
 {
 	PoisonImmunity UMETA(DisplayName = "PoisonImmunity"),
 	FireImmunity  UMETA(DisplayName = "FireImmunity"),
@@ -109,7 +109,7 @@ enum Immunitiy
 };
 
 UENUM(BlueprintType)
-enum Vulnerability
+enum EVulnerability
 {
 	PoisonVulnerability UMETA(DisplayName = "PoisonVulnerability"),
 	FireVulnerability  UMETA(DisplayName = "FireVulnerability"),
@@ -128,7 +128,7 @@ enum Vulnerability
 };
 
 UENUM(BlueprintType)
-enum Size
+enum ESize
 {
 	Tiny UMETA(DisplayName = "Tiny"),
 	Small UMETA(DisplayName = "Small"),
@@ -139,7 +139,7 @@ enum Size
 };
 
 UENUM(BlueprintType)
-enum Race
+enum ERace
 {
 	UndefinedRace UMETA(DisplayName = "UndefinedRace"),
 	Dragonborn UMETA(DisplayName = "Dragonborn"),
@@ -154,7 +154,7 @@ enum Race
 };
 
 UENUM(BlueprintType)
-enum Class
+enum EClass
 {
 	UndefinedClass UMETA(DisplayName = "UndefinedClass"),
 	Barbarian UMETA(DisplayName = "Barbarian"),
@@ -171,7 +171,7 @@ enum Class
 };
 
 UENUM(BlueprintType)
-enum Feat
+enum EFeat
 {
 	UndefinedFeat UMETA(DisplayName = "UndefinedFeat"),
 	Blindsight UMETA(DisplayName = "BlindSight"),
@@ -191,7 +191,7 @@ enum Feat
 };
 
 UENUM(BlueprintType)
-enum Language
+enum ELanguage
 {
 	
 	Common UMETA(DisplayName = "Common"),
@@ -216,7 +216,7 @@ enum Language
 };
 
 UENUM(BlueprintType)
-enum Alignment
+enum EAlignment
 {
 	LG UMETA(DisplayName = "Lawful Good"),
 	NG UMETA(DisplayName = "Neutral Good"),
@@ -230,7 +230,7 @@ enum Alignment
 };
 
 UENUM(BlueprintType)
-enum Faction
+enum EFaction
 {
 	Unaligned UMETA(DisplayName = "Unaligned")
 };

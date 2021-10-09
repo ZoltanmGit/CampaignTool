@@ -22,7 +22,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = General)
 		int32 HitDie;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = General)
-		TEnumAsByte<Size> Size;
+		TEnumAsByte<ESize> Size;
 
 	//Attributes
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Attributes)
@@ -40,28 +40,30 @@ public:
 
 	//Background
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Background)
-		TEnumAsByte<Race> Race;
+		TEnumAsByte<ERace> Race;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Background)
-		TEnumAsByte<Class> Class;
+		TEnumAsByte<EClass> Class;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Background)
-		TEnumAsByte<Alignment> Alignment;
+		TEnumAsByte<EAlignment> Alignment;
 	//Proficiencies
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
-		TArray<TEnumAsByte<Proficiency>> ProficiencyArmorArray;
+		TArray<TEnumAsByte<EProficiency>> ProficiencyArmorArray;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
-		TArray<TEnumAsByte<Proficiency>> ProficiencyWeaponArray;
+		TArray<TEnumAsByte<EProficiency>> ProficiencyWeaponArray;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
-		TArray<TEnumAsByte<Proficiency>> ProficiencySkillArray;
+		TArray<TEnumAsByte<EProficiency>> ProficiencySkillArray;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
-		TArray<TEnumAsByte<Proficiency>> ProficiencySavingThrowArray;
+		TArray<TEnumAsByte<EProficiency>> ProficiencySavingThrowArray;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
-		TArray<TEnumAsByte<Resistance>> ProficiencyResistanceArray;
+		TArray<TEnumAsByte<EResistance>> ProficiencyResistanceArray;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
+		TArray<TEnumAsByte<EProficiency>> ProficiencyToolArray;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
-		TArray<TEnumAsByte<Feat>> FeatArray;
+		TArray<TEnumAsByte<EFeat>> FeatArray;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
-		TArray<TEnumAsByte<Language>> LanguageArray;
+		TArray<TEnumAsByte<ELanguage>> LanguageArray;
 	//Skills
 	//Skills - Strength
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Skills)

@@ -38,7 +38,17 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void ResetRaceChoice();
 	UFUNCTION(BlueprintCallable)
-		void AddLanguage(const TEnumAsByte<Language> LanguageToAdd);
+		void AddLanguage(const TEnumAsByte<ELanguage> LanguageToAdd);
+	UFUNCTION(BlueprintCallable)
+		void AddProficiencyToTools(const TEnumAsByte<EProficiency> ProficiencyToAdd);
+	UFUNCTION(BlueprintCallable)
+		void AddProficiencyToWeapon(const TEnumAsByte<EProficiency> ProficiencyToAdd);
+	UFUNCTION(BlueprintCallable)
+		void AddProficiencyToArmor(const TEnumAsByte<EProficiency> ProficiencyToAdd);
+	UFUNCTION(BlueprintCallable)
+		void AddProficiencyToSkills(const TEnumAsByte<EProficiency> ProficiencyToAdd);
+	UFUNCTION(BlueprintCallable)
+		void AddProficiencyToResistance(const TEnumAsByte<EResistance> ProficiencyToAdd);
 	/*UFUNCTION(BlueprintCallabe)
 		void AddSpellId();*/ // TODO
 };
