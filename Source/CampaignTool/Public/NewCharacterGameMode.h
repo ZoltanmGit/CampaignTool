@@ -24,7 +24,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Character)
 		FCharacterStruct NewCharacter;
 
-
+	//Race Choice
 	UFUNCTION(BlueprintCallable)
 		void OnElfChoice();
 	UFUNCTION(BlueprintCallable)
@@ -33,22 +33,30 @@ public:
 		void OnDwarfChoice();
 	UFUNCTION(BlueprintCallable)
 		void OnTieflingChoice();
-
-
 	UFUNCTION(BlueprintCallable)
 		void ResetRaceChoice();
+	//Class choice
+	UFUNCTION(BlueprintCallable)
+		void OnFighterChoice();
+	UFUNCTION(BlueprintCallable)
+		void OnRogueChoice();
+	UFUNCTION(BlueprintCallable)
+		void OnWizardChoice();
+
 	UFUNCTION(BlueprintCallable)
 		void AddLanguage(const TEnumAsByte<ELanguage> LanguageToAdd);
 	UFUNCTION(BlueprintCallable)
-		void AddProficiencyToTools(const TEnumAsByte<EProficiency> ProficiencyToAdd);
+		void AddToolProficiency(const TEnumAsByte<ETool> ProficiencyToAdd);
 	UFUNCTION(BlueprintCallable)
-		void AddProficiencyToWeapon(const TEnumAsByte<EProficiency> ProficiencyToAdd);
+		void AddWeaponProficiency(const TEnumAsByte<EWeapon> ProficiencyToAdd);
 	UFUNCTION(BlueprintCallable)
-		void AddProficiencyToArmor(const TEnumAsByte<EProficiency> ProficiencyToAdd);
+		void AddArmorProficiency(const TEnumAsByte<EArmor> ProficiencyToAdd);
 	UFUNCTION(BlueprintCallable)
-		void AddProficiencyToSkills(const TEnumAsByte<EProficiency> ProficiencyToAdd);
+		void AddSkillProficiency(const TEnumAsByte<ESkill> ProficiencyToAdd);
 	UFUNCTION(BlueprintCallable)
-		void AddProficiencyToResistance(const TEnumAsByte<EResistance> ProficiencyToAdd);
+		void AddResistanceProficiency(const TEnumAsByte<EDamageType> ProficiencyToAdd);
+	UFUNCTION(BlueprintCallable)
+		void AddAbilitySavingThrowProficiency(const TEnumAsByte<EAbilityType> ProficiencyToAdd);
 	/*UFUNCTION(BlueprintCallabe)
 		void AddSpellId();*/ // TODO
 };

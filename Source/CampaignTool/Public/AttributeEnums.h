@@ -4,16 +4,18 @@
 #include "AttributeEnums.generated.h"
 
 UENUM(BlueprintType)
-enum EProficiency
+enum EArmor
 {
-	//Armors
+	Unarmored UMETA(DisplayName = "Unarmored"),
 	LightArmor UMETA(DisplayName = "Light Armor"),
 	MediumArmor UMETA(DisplayName = "Medium Armor"),
 	HeavyArmor UMETA(DisplayName = "Heavy Armor"),
-	AllArmor UMETA(DisplayName = "All Armor"),
-	Shields UMETA(DisplayName = "Shields"),
+	Shields UMETA(DisplayName = "Shields")
+};
 
-	//Weapons
+UENUM(BlueprintType)
+enum EWeapon
+{
 	SimpleWeapons UMETA(DisplayName = "Simple Weapons"),
 	MartialWeapons UMETA(DisplayName = "Martial Weapons"),
 	Clubs UMETA(DisplayName = "Clubs"),
@@ -31,21 +33,18 @@ enum EProficiency
 	Shortswords UMETA(DisplayName = "Shortswords"),
 	Crossbows UMETA(DisplayName = "Crossbows"),
 	LightCrossbows UMETA(DisplayName = "Light Crossbows"),
-	Shortbows UMETA(DisplayName= "Shortbows"),
+	Shortbows UMETA(DisplayName = "Shortbows"),
 	Longbows UMETA(DisplayName = "Longbows"),
 	Rapiers UMETA(DisplayName = "Rapiers"),
 	Battleaxe UMETA(DisplayName = "Battleaxe"),
 	Handaxe UMETA(DisplayName = "Handaxe"),
 	LightHammer UMETA(DisplayName = "LightHammer"),
-	Warhammer UMETA(DisplayName = "Warhammer"),
+	Warhammer UMETA(DisplayName = "Warhammer")
+};
 
-	//Tools
-	ThievesTools UMETA(DisplayName = "Thieves' Tools"),
-	SmithsTools UMETA(DisplayName = "Smith's Tools"),
-	BrewersSupplies UMETA(DisplayName = "Brewer's Supplies"),
-	MasonsTools UMETA(DisplayName = "Mason's Tools"),
-
-	//Skills
+UENUM(BlueprintType)
+enum ESkill
+{
 	Athletics UMETA(DisplayName = "Athletics"),
 	Acrobatics UMETA(DisplayName = "Acrobatics"),
 	SleightOfHand UMETA(DisplayName = "Sleight Of Hand"),
@@ -63,68 +62,16 @@ enum EProficiency
 	Deception UMETA(DisplayName = "Deception"),
 	Intimidation UMETA(DisplayName = "Intimidation"),
 	Performance UMETA(DisplayName = "Performance"),
-	Persuasion UMETA(DisplayName = "Persuasion"),
-	//Saving Throws
-	SavingCharmed UMETA(DisplayName = "Saving Charmed"),
-	SavingSleep UMETA(DisplayName = "Saving Sleep"),
-	SavingPoison UMETA(DisplayName = "Saving Poison")
+	Persuasion UMETA(DisplayName = "Persuasion")
 };
 
 UENUM(BlueprintType)
-enum EResistance
+enum ETool
 {
-	PoisonResistance UMETA(DisplayName = "PoisonResistance"),
-	FireResistance UMETA(DisplayName = "FireResistance"),
-	AcidResistance UMETA(DisplayName = "AcidResistance"),
-	ColdResistance UMETA(DisplayName = "ColdResistance"),
-	LightningResistance UMETA(DisplayName = "LightningResistance"),
-	BludgeoningResistance UMETA(DisplayName = "BludgeoningResistance"),
-	SlashingResistance UMETA(DisplayName = "SlashingResistance"),
-	ForceResistance UMETA(DisplayName = "ForceResistance"),
-	ThunderResistance UMETA(DisplayName = "ThunderResistance"),
-	NecroticResistance UMETA(DisplayName = "NecroticResistance"),
-	RadiantResistance UMETA(DisplayName = "RadiantResistance"),
-	PsychicResistance UMETA(DisplayName = "PsychicResistance"),
-	NonMagicalResistance UMETA(DisplayName = "NonMagicalResistance"),
-	MagicalResistance UMETA(DisplayName = "MagicalResistance")
-};
-
-UENUM(BlueprintType)
-enum EImmunitiy
-{
-	PoisonImmunity UMETA(DisplayName = "PoisonImmunity"),
-	FireImmunity  UMETA(DisplayName = "FireImmunity"),
-	AcidImmunity  UMETA(DisplayName = "AcidImmunity"),
-	ColdImmunity  UMETA(DisplayName = "ColdImmunity"),
-	LightningImmunity  UMETA(DisplayName = "LightningImmunity"),
-	BludgeoningImmunity  UMETA(DisplayName = "BludgeoningImmunity"),
-	SlashingImmunity UMETA(DisplayName = "SlashingImmunity"),
-	ForceImmunity  UMETA(DisplayName = "ForceImmunity"),
-	ThunderImmunity  UMETA(DisplayName = "ThunderImmunity"),
-	NecroticImmunity  UMETA(DisplayName = "NecroticImmunity"),
-	RadiantImmunity  UMETA(DisplayName = "RadiantImmunity"),
-	PsychicImmunity  UMETA(DisplayName = "PsychicImmunity"),
-	NonMagicalImmunity  UMETA(DisplayName = "NonMagicalImmunity"),
-	MagicalImmunity UMETA(DisplayName = "MagicalImmunity")
-};
-
-UENUM(BlueprintType)
-enum EVulnerability
-{
-	PoisonVulnerability UMETA(DisplayName = "PoisonVulnerability"),
-	FireVulnerability  UMETA(DisplayName = "FireVulnerability"),
-	AcidVulnerability  UMETA(DisplayName = "AcidVulnerability"),
-	ColdVulnerability  UMETA(DisplayName = "ColdVulnerability"),
-	LightningVulnerability  UMETA(DisplayName = "LightningVulnerability"),
-	BludgeoningVulnerability  UMETA(DisplayName = "BludgeoningVulnerability"),
-	SlashingVulnerability UMETA(DisplayName = "SlashingVulnerability"),
-	ForceVulnerability  UMETA(DisplayName = "ForceVulnerability"),
-	ThunderVulnerability  UMETA(DisplayName = "ThunderVulnerability"),
-	NecroticVulnerability  UMETA(DisplayName = "NecroticVulnerability"),
-	RadiantVulnerability  UMETA(DisplayName = "RadiantVulnerability"),
-	PsychicVulnerability  UMETA(DisplayName = "PsychicVulnerability"),
-	NonMagicalVulnerability  UMETA(DisplayName = "NonMagicalVulnerability"),
-	MagicalVulnerability UMETA(DisplayName = "MagicalVulnerability")
+	ThievesTools UMETA(DisplayName = "Thieves' tools"),
+	SmithsTools UMETA(DisplayName = "Smith's tools"),
+	BrewersSupplies UMETA(DisplayName = "Brewer's supplies"),
+	MasonsTools UMETA(DisplayName = "Mason's tools"),
 };
 
 UENUM(BlueprintType)
@@ -145,11 +92,6 @@ enum ERace
 	Dragonborn UMETA(DisplayName = "Dragonborn"),
 	Dwarf UMETA(DisplayName = "Dwarf"),
 	Elf UMETA(DisplayName = "Elf"),
-	Gnome UMETA(DisplayName = "Gnome"),
-	HalfElf UMETA(DisplayName = "Half-Elf"),
-	Halfling UMETA(DisplayName = "Halfling"),
-	HalfOrc UMETA(DisplayName = "Half-Orc"),
-	Human UMETA(DisplayName = "Human"),
 	Tiefling UMETA(DisplayName = "Tiefling")
 };
 
@@ -157,16 +99,8 @@ UENUM(BlueprintType)
 enum EClass
 {
 	UndefinedClass UMETA(DisplayName = "UndefinedClass"),
-	Barbarian UMETA(DisplayName = "Barbarian"),
-	Bard UMETA(DisplayName = "Bard"),
-	Cleric UMETA(DisplayName = "Cleric"),
-	Druid UMETA(DisplayName = "Druid"),
 	Fighter UMETA(DisplayName = "Fighter"),
-	Paladin UMETA(DisplayName = "Paladin"),
-	Ranger UMETA(DisplayName = "Ranger"),
 	Rogue UMETA(DisplayName = "Rogue"),
-	Sorcerer UMETA(DisplayName = "Sorcerer"),
-	Warlock UMETA(DisplayName = "Warlock"),
 	Wizard UMETA(DisplayName = "Wizard")
 };
 
@@ -187,7 +121,12 @@ enum EFeat
 	Stonecunning UMETA(DisplayName = "Stonecunning"),
 	HellishResistance UMETA(DisplayName = "HellishResistance"),
 	InfernalLegacy UMETA(DisplayName = "InfernalLegacy"),
-	ElfWeaponTraining UMETA(DisplayName = "ElfWeaponTraning")
+	ElfWeaponTraining UMETA(DisplayName = "ElfWeaponTraning"),
+	SneakAttack UMETA(DisplayName = "SneakAttack"),
+	TheivesCant UMETA(DisplayName = "Thieves' cant"),
+	Expertise UMETA(DisplayName = "Expertise")
+
+
 };
 
 UENUM(BlueprintType)
@@ -234,3 +173,73 @@ enum EFaction
 {
 	Unaligned UMETA(DisplayName = "Unaligned")
 };
+
+UENUM(BlueprintType)
+enum EDamageType
+{
+	Poison UMETA(DisplayName = "Poison"),
+	Fire UMETA(DisplayName = "Fire"),
+	Acid UMETA(DisplayName = "Acid"),
+	Cold UMETA(DisplayName = "Cold"),
+	Lightning UMETA(DisplayName = "Lightning"),
+	Bludgeoning UMETA(DisplayName = "Bludgeoning"),
+	Slashing UMETA(DisplayName = "Slashing"),
+	Force UMETA(DisplayName = "Force"),
+	Thunder UMETA(DisplayName = "Thunder"),
+	Necrotic UMETA(DisplayName = "Necrotic"),
+	Radiant UMETA(DisplayName = "Radiant"),
+	Psychic UMETA(DisplayName = "Psychic"),
+};
+
+UENUM(BlueprintType)
+enum ECondition
+{
+	Paralyzed UMETA(DisplayName = "Paralyzed"),
+	Petrified UMETA(DisplayName = "Petrified"),
+	Blinded UMETA(DisplayName = "Blinded"),
+	Charmed UMETA(DisplayName = "Charmed"),
+	Deafened UMETA(DisplayName = "Deafened"),
+	Exhausted UMETA(DisplayName = "Exhausted"),
+	Poisoned UMETA(DisplayName = "Poisoned"),
+	Frightened UMETA(DisplayName = "Frightened"),
+	Grappled UMETA(DisplayName = "Grappled"),
+	Incapacitated UMETA(DisplayName = "Incapacitated"),
+	Invisible UMETA(DisplayName = "Invisible"),
+	Prone UMETA(DisplayName = "Prone"),
+	Restrained UMETA(DisplayName = "Restrained"),
+	Stunned UMETA(DisplayName = "Stunned"),
+	Unconscious UMETA(DisplayName = "Unconscious"),
+	Sleeping UMETA(DisplayName = "Sleeping"),
+};
+
+UENUM(BlueprintType)
+enum EAbilityType
+{
+	UndefiniedAbility UMETA(DisplayName = "UndefinedAbility"),
+	Strength UMETA(DisplayName = "Strength"),
+	Dexterity UMETA(DisplayName = "Dexterity"),
+	Constitution UMETA(DisplayName = "Constitution"),
+	Intelligence UMETA(DisplayName = "Intelligence"),
+	Wisdom UMETA(DisplayName = "Wisdom"),
+	Charsima UMETA(DisplayName = "Charisma")
+};
+
+UENUM(BlueprintType)
+enum ECreatureType
+{
+	TAberration UMETA(DisplayName = "Aberration"),
+	TBeast UMETA(DisplayName = "Beast"),
+	TCelestial UMETA(DisplayName = "Celestial"),
+	TConstruct UMETA(DisplayName = "Construct"),
+	TDragon UMETA(DisplayName = "Dragon"),
+	TElemental UMETA(DisplayName = "Elemental"),
+	TFey UMETA(DisplayName = "Fey"),
+	TFiend UMETA(DisplayName = "Fiend"),
+	TGiant UMETA(DisplayName = "Giant"),
+	THumanoid UMETA(DisplayName = "Humanoid"),
+	TMonstrosity UMETA(DisplayName = "Monstrosity"),
+	TOoze UMETA(DisplayName = "Ooze"),
+	TPlant UMETA(DisplayName = "Plant"),
+	TUndead UMETA(DisplayName = "Undead")
+};
+// Ctrl+C: UMETA(DisplayName = ""),

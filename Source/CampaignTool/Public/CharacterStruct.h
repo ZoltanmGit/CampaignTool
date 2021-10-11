@@ -14,7 +14,13 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = General)
 		FString CharacterName;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = General)
+		TEnumAsByte<ESize> Size;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = General)
+		TEnumAsByte<ECreatureType> CreatureType;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = General)
 		int32 Level;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = General)
+		int32 ArmorClass;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = General)
 		int32 ProficiencyBonus;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = General)
@@ -22,7 +28,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = General)
 		int32 HitDie;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = General)
-		TEnumAsByte<ESize> Size;
+		int32 PerLevelHitDie;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = General)
+		bool bIsPlayerCharacter;
 
 	//Attributes
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Attributes)
@@ -45,25 +53,48 @@ public:
 		TEnumAsByte<EClass> Class;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Background)
 		TEnumAsByte<EAlignment> Alignment;
-	//Proficiencies
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
-		TArray<TEnumAsByte<EProficiency>> ProficiencyArmorArray;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
-		TArray<TEnumAsByte<EProficiency>> ProficiencyWeaponArray;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
-		TArray<TEnumAsByte<EProficiency>> ProficiencySkillArray;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
-		TArray<TEnumAsByte<EProficiency>> ProficiencySavingThrowArray;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
-		TArray<TEnumAsByte<EResistance>> ProficiencyResistanceArray;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
-		TArray<TEnumAsByte<EProficiency>> ProficiencyToolArray;
+	
 
+	//Equipment
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
+		TArray<TEnumAsByte<EArmor>> ProficiencyArmorArray;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
+		TArray<TEnumAsByte<EWeapon>> ProficiencyWeaponArray;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
+		TArray<TEnumAsByte<ETool>> ProficiencyToolArray;
+	//Combat related
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
+		TArray<TEnumAsByte<EDamageType>> DamageImmunities; //Damage types to which this character is immune to
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
+		TArray<TEnumAsByte<ECondition>> ConditionImmunities; //Condition to which this character is immune to
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
+		TArray<TEnumAsByte<EAbilityType>> SavingThrowProficiencyArray;
+
+	/** Spellcasting **/
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Spellcasting)
+		TEnumAsByte<EAbilityType> SpellcastingAbility;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Spellcasting)
+		int32 SpellSaveDC;
+	/** Saving Throws **/
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
+		TArray<TEnumAsByte<EAbilityType>> AbilitySavingThrowArray;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
+		TArray<TEnumAsByte<ECondition>> ConditionSavingThrowArray;
+	//Damage Resistance
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
+		TArray<TEnumAsByte<EDamageType>> DamageResistanceArray;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
+		TArray<TEnumAsByte<ESkill>> SkillProficiencyArray;
+	//Feats
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
 		TArray<TEnumAsByte<EFeat>> FeatArray;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
 		TArray<TEnumAsByte<ELanguage>> LanguageArray;
+
+
+
 	//Skills
 	//Skills - Strength
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Skills)
@@ -106,4 +137,5 @@ public:
 		int32 Performance;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Skills)
 		int32 Persuasion;
+
 };

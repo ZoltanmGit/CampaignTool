@@ -6,8 +6,12 @@
 ANewCharacterGameMode::ANewCharacterGameMode()
 {
 	NewCharacter.Level = 1;
+	NewCharacter.ArmorClass = 10;
+
 	NewCharacter.Race = ERace::UndefinedRace;
 	NewCharacter.Class = EClass::UndefinedClass;
+	NewCharacter.CreatureType = ECreatureType::THumanoid;
+	NewCharacter.bIsPlayerCharacter = true;
 	NewCharacter.Alignment = EAlignment::N;
 	AbilityBonusArray.Init(0, 6);
 }
@@ -22,15 +26,15 @@ void ANewCharacterGameMode::OnElfChoice()
 	//Proficiencies
 
 	//Proficiency-Weapons
-	NewCharacter.ProficiencyWeaponArray.Add(EProficiency::Longswords); //Because of "Elf Weapon Training"
-	NewCharacter.ProficiencyWeaponArray.Add(EProficiency::Shortswords); //Because of "Elf Weapon Training"
-	NewCharacter.ProficiencyWeaponArray.Add(EProficiency::Shortbows); //Because of "Elf Weapon Training"
-	NewCharacter.ProficiencyWeaponArray.Add(EProficiency::Longbows); //Because of "Elf Weapon Training"
+	NewCharacter.ProficiencyWeaponArray.Add(EWeapon::Longswords); //Because of "Elf Weapon Training"
+	NewCharacter.ProficiencyWeaponArray.Add(EWeapon::Shortswords); //Because of "Elf Weapon Training"
+	NewCharacter.ProficiencyWeaponArray.Add(EWeapon::Shortbows); //Because of "Elf Weapon Training"
+	NewCharacter.ProficiencyWeaponArray.Add(EWeapon::Longbows); //Because of "Elf Weapon Training"
 	//Proficiency-Skills
-	NewCharacter.ProficiencySkillArray.Add(EProficiency::Perception); //Because of "Keen Senses" feat
+	NewCharacter.SkillProficiencyArray.Add(ESkill::Perception); //Because of "Keen Senses" feat
 	//Proficiency-Saving Throws
-	NewCharacter.ProficiencySavingThrowArray.Add(EProficiency::SavingCharmed); //Because of "Fey Ancestry"
-	NewCharacter.ProficiencySavingThrowArray.Add(EProficiency::SavingSleep);   //Because of "Fey Ancestry"
+	NewCharacter.ConditionSavingThrowArray.Add(ECondition::Charmed); //Because of "Fey Ancestry"
+	NewCharacter.ConditionImmunities.Add(ECondition::Sleeping);   //Because of "Fey Ancestry"
 
 	//Feats
 	NewCharacter.FeatArray.Add(EFeat::Darkvision);
@@ -51,6 +55,7 @@ void ANewCharacterGameMode::OnDragonbornChoice()
 	AbilityBonusArray[0] = 2; //+2 to Strength
 	AbilityBonusArray[5] = 1; //+1 to Charisma
 	NewCharacter.LanguageArray.Add(ELanguage::Common);
+	//ADD BREATH WEAPON
 }
 void ANewCharacterGameMode::OnDwarfChoice()
 {
@@ -60,14 +65,13 @@ void ANewCharacterGameMode::OnDwarfChoice()
 	AbilityBonusArray[2] = 2; // +2 to Constitution
 	AbilityBonusArray[4] = 1; // +1 to Wisdom
 	//Proficiency-Weapons
-	NewCharacter.ProficiencyWeaponArray.Add(EProficiency::Warhammer); //Because of "Dwarven Weapon Training"
-	NewCharacter.ProficiencyWeaponArray.Add(EProficiency::Battleaxe); //Because of "Dwarven Weapon Training"
-	NewCharacter.ProficiencyWeaponArray.Add(EProficiency::LightHammer); //Because of "Dwarven Weapon Training"
-	NewCharacter.ProficiencyWeaponArray.Add(EProficiency::Handaxe); //Because of "Dwarven Weapon Training"
+	NewCharacter.ProficiencyWeaponArray.Add(EWeapon::Warhammer);    //Because of "Dwarven Weapon Training"
+	NewCharacter.ProficiencyWeaponArray.Add(EWeapon::Battleaxe);    //Because of "Dwarven Weapon Training"
+	NewCharacter.ProficiencyWeaponArray.Add(EWeapon::LightHammer);  //Because of "Dwarven Weapon Training"
+	NewCharacter.ProficiencyWeaponArray.Add(EWeapon::Handaxe);      //Because of "Dwarven Weapon Training"
 	//Proficiency-Saving Throws
-	NewCharacter.ProficiencySavingThrowArray.Add(EProficiency::SavingPoison); //Becasue of "Dwarven Resilience"
-	//Resistance
-	NewCharacter.ProficiencyResistanceArray.Add(EResistance::PoisonResistance); //Because of "Dwarven Resilience"
+	NewCharacter.ConditionSavingThrowArray.Add(ECondition::Poisoned);         //Becasue of "Dwarven Resilience"
+	NewCharacter.DamageResistanceArray.Add(EDamageType::Poison);              //Becasue of "Dwarven Resilience"
 	//Feats
 	NewCharacter.FeatArray.Add(EFeat::Darkvision);
 	NewCharacter.FeatArray.Add(EFeat::DwarvenResilience);
@@ -84,7 +88,7 @@ void ANewCharacterGameMode::OnTieflingChoice()
 	AbilityBonusArray[3] = 1; // +1 to INT
 	AbilityBonusArray[5] = 2; // +2 to CHA
 	//Resistance
-	NewCharacter.ProficiencyResistanceArray.Add(EResistance::FireResistance); //Because of "Hellish Resistance"
+	NewCharacter.DamageResistanceArray.Add(EDamageType::Fire); //Because of "Hellish Resistance"
 	//Feats
 	NewCharacter.FeatArray.Add(EFeat::Darkvision);
 	NewCharacter.FeatArray.Add(EFeat::InfernalLegacy);
@@ -104,10 +108,62 @@ void ANewCharacterGameMode::ResetRaceChoice()
 	// We empty the arrays
 	NewCharacter.FeatArray.Empty();
 	NewCharacter.LanguageArray.Empty();
-	NewCharacter.ProficiencyResistanceArray.Empty();
-	NewCharacter.ProficiencySavingThrowArray.Empty();
+	NewCharacter.SkillProficiencyArray.Empty();
+	NewCharacter.ConditionImmunities.Empty();
+	NewCharacter.AbilitySavingThrowArray.Empty();
+	NewCharacter.ConditionSavingThrowArray.Empty();
 	NewCharacter.ProficiencyWeaponArray.Empty();
+	NewCharacter.ProficiencyArmorArray.Empty();
 	NewCharacter.ProficiencyToolArray.Empty();
+}
+
+void ANewCharacterGameMode::OnFighterChoice()
+{
+	NewCharacter.HitDie = 10;
+	NewCharacter.PerLevelHitDie = 6;
+	//Armor: All armor, shields
+	AddArmorProficiency(EArmor::Shields);
+	AddArmorProficiency(EArmor::LightArmor);
+	AddArmorProficiency(EArmor::MediumArmor);
+	AddArmorProficiency(EArmor::HeavyArmor);
+	//Weapons: Simple Weapons, Martial Weapons
+	AddWeaponProficiency(EWeapon::SimpleWeapons);
+	AddWeaponProficiency(EWeapon::MartialWeapons);
+	//Tools: None
+	//Saving Throws: Strength, Constitution
+	AddAbilitySavingThrowProficiency(EAbilityType::Strength);
+	AddAbilitySavingThrowProficiency(EAbilityType::Constitution);
+	//Skills: Choose 2 from Acrobatics, Animal Handling, Athletics, History, Insight, Intimidation, Perception, and Survival
+	//Choose fighting style: Archery, Defense, Dueling, Great Weapon Fighting, Protection, Two Weapon Fighting 
+	//Add Second Wind to spells
+}
+
+void ANewCharacterGameMode::OnRogueChoice()
+{
+	NewCharacter.HitDie = 8;
+	NewCharacter.PerLevelHitDie = 5;
+	//Armor: Light Armor
+	AddArmorProficiency(EArmor::LightArmor);
+	//Weapons: Simple weapons, hand crossbows, longswords, rapiers, shortswords
+	AddWeaponProficiency(EWeapon::Shortswords);
+	AddWeaponProficiency(EWeapon::HandCrossbows);
+	AddWeaponProficiency(EWeapon::Longswords);
+	AddWeaponProficiency(EWeapon::Rapiers);
+	AddWeaponProficiency(EWeapon::SimpleWeapons);
+	//Tools: Thieves' tools
+	AddToolProficiency(ETool::ThievesTools);
+	//Saving Throws: Dexterity, Intelligence
+	AddAbilitySavingThrowProficiency(EAbilityType::Dexterity);
+	AddAbilitySavingThrowProficiency(EAbilityType::Intelligence);
+	// Skills: Choose 4 from Acrobatics, Athletics, Deception, Insight, Intimidation, Investigation, Perception, Performance, Persuasion, Sleight of Hand, and Stealth
+}
+
+void ANewCharacterGameMode::OnWizardChoice()
+{
+	NewCharacter.SpellcastingAbility = EAbilityType::Intelligence;
+	NewCharacter.SpellSaveDC = 8;
+	//Choose 3 Cantrips
+	//Choose 6 spells
 }
 
 void ANewCharacterGameMode::AddLanguage(const TEnumAsByte<ELanguage> LanguageToAdd)
@@ -115,27 +171,32 @@ void ANewCharacterGameMode::AddLanguage(const TEnumAsByte<ELanguage> LanguageToA
 	NewCharacter.LanguageArray.Add(LanguageToAdd);
 }
 
-void ANewCharacterGameMode::AddProficiencyToTools(const TEnumAsByte<EProficiency> ProficiencyToAdd)
+void ANewCharacterGameMode::AddToolProficiency(const TEnumAsByte<ETool> ProficiencyToAdd)
 {
-	NewCharacter.ProficiencyToolArray.Add(ProficiencyToAdd);
+	NewCharacter.ProficiencyToolArray.AddUnique(ProficiencyToAdd);
 }
 
-void ANewCharacterGameMode::AddProficiencyToWeapon(const TEnumAsByte<EProficiency> WeaponProficiencyToAdd)
+void ANewCharacterGameMode::AddWeaponProficiency(const TEnumAsByte<EWeapon> WeaponProficiencyToAdd)
 {
-	NewCharacter.ProficiencyWeaponArray.Add(WeaponProficiencyToAdd);
+	NewCharacter.ProficiencyWeaponArray.AddUnique(WeaponProficiencyToAdd);
 }
 
-void ANewCharacterGameMode::AddProficiencyToArmor(const TEnumAsByte<EProficiency> ArmorProficiencyToAdd)
+void ANewCharacterGameMode::AddArmorProficiency(const TEnumAsByte<EArmor> ArmorProficiencyToAdd)
 {
-	NewCharacter.ProficiencyArmorArray.Add(ArmorProficiencyToAdd);
+	NewCharacter.ProficiencyArmorArray.AddUnique(ArmorProficiencyToAdd);
 }
 
-void ANewCharacterGameMode::AddProficiencyToSkills(const TEnumAsByte<EProficiency> SkillProficiencyToAdd)
+void ANewCharacterGameMode::AddSkillProficiency(const TEnumAsByte<ESkill> SkillProficiencyToAdd)
 {
-	NewCharacter.ProficiencySkillArray.Add(SkillProficiencyToAdd);
+	NewCharacter.SkillProficiencyArray.AddUnique(SkillProficiencyToAdd);
 }
 
-void ANewCharacterGameMode::AddProficiencyToResistance(const TEnumAsByte<EResistance> ResistanceProficiencyToAdd)
+void ANewCharacterGameMode::AddResistanceProficiency(const TEnumAsByte<EDamageType> ResistanceProficiencyToAdd)
 {
-	NewCharacter.ProficiencyResistanceArray.Add(ResistanceProficiencyToAdd);
+	NewCharacter.DamageResistanceArray.AddUnique(ResistanceProficiencyToAdd);
+}
+
+void ANewCharacterGameMode::AddAbilitySavingThrowProficiency(const TEnumAsByte<EAbilityType> AbilityTypeToAdd)
+{
+	NewCharacter.SavingThrowProficiencyArray.AddUnique(AbilityTypeToAdd);
 }
