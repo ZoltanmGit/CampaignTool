@@ -5,15 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "CharacterStruct.h"
+#include "AttributeEnums.h"
 #include "BaseCharacter.generated.h"
-
-UENUM(BlueprintType)
-enum CharacterType
-{
-	Ally,
-	Hostile,
-	Self
-};
 
 UCLASS()
 class CAMPAIGNTOOL_API ABaseCharacter : public APawn
@@ -41,6 +34,8 @@ public:
 		class UHealthComponent* CharacterHealth; //Component that manages the health of the character
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
 		class UAttributesComponent* CharacterAttributes;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+		class UAbilityComponent* CharacterAbilityComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Pathfinding)
 		class UPathfinderComponent* Pathfinder;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Movement)
@@ -53,7 +48,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		FVector CursorLocation; // The location of the tile the cursor is on
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		TEnumAsByte<CharacterType> CharacterType;
+		TEnumAsByte<ECharacterType> CharacterType;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Pathfinding)
 		float CurrentSpeed;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Grid)
@@ -64,6 +59,7 @@ public:
 	bool bCanMove;
 	bool bCanAct;
 	bool bIsActive;
+	bool bIsAimingAbility;
 	/// <summary>
 	/// Function that handles changes in health, healing and damage both
 	/// </summary>
@@ -83,6 +79,10 @@ public:
 	/// Changes the supposed location of the character, which then gets moved by the MovementController
 	/// </summary>
 	UFUNCTION()
+		/// <summary>
+		/// Moves the character to a new location
+		/// </summary>
+		/// <param name="newLocation">The new location for the character</param>
 		void ChangeLocation(FVector newLocation);
 	UFUNCTION()
 		void RefreshPathfinding();

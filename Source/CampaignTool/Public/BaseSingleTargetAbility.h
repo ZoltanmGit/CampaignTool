@@ -13,5 +13,11 @@ UCLASS()
 class CAMPAIGNTOOL_API UBaseSingleTargetAbility : public UBaseAbility
 {
 	GENERATED_BODY()
-	
+
+		UBaseSingleTargetAbility();
+public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = AbilityDetails)
+		TEnumAsByte<ESingleTargetType> SingleTargetType;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = AbilityDetails )
+	class ABaseCharacter* AbilityTarget;
 };

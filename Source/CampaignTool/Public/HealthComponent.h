@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "AttributeEnums.h"
 #include "HealthComponent.generated.h"
 
 
@@ -26,7 +27,12 @@ private:
 	float fullHealth;
 	float armorClass;
 public:
-	void HandleTakeDamage(float Damage);
+	UPROPERTY()
+		class ABaseCharacter* Owner;
+	UFUNCTION(BlueprintCallable)
+		void HandleDamage(float Damage, EDamageType DamageType);
+	UFUNCTION(BlueprintCallable)
+		void HandleTakeDamage(float Damage);
 public:
 	// Getters, we need to be able to call them from blueprint
 	// as to represent them for the User Interface widgets

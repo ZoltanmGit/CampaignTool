@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "AttributeEnums.h"
+#include "HealthComponent.h"
 #include "BaseAbility.generated.h"
 
 
@@ -56,6 +58,13 @@ enum EAffectedTargetType
 	Everyone UMETA(DisplayName = "Everyone")
 };
 
+UENUM(BlueprintType)
+enum EOriginType
+{
+	Caster UMETA(DisplayName = "Caster"),
+	Cursor UMETA(DisplayName = "Cursor")
+};
+
 UCLASS()
 class CAMPAIGNTOOL_API UBaseAbility : public UObject
 {
@@ -63,17 +72,23 @@ class CAMPAIGNTOOL_API UBaseAbility : public UObject
 	
 public:
 	//Ability Details
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = AbilityDetails)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = AbilityDetails)
 		FString Name;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = AbilityDetails)
 		FString Description;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-		int32 AbilityLevel;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = AbilityDetails)
+		int32 Level;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = AbilityDetails)
+		int32 Range;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = AbilityDetails)
+		bool bIsConcentration;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = AbilityDetails)
+		bool bHasCollision;
 
 	//Enum properties
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = AbilityDetails)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = AbilityDetails)
 		TEnumAsByte<ECastTime> CastTime;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = AbilityDetails)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = AbilityDetails)
 		TEnumAsByte<ETargetType> TargetType;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = AbilityDetails)
 		TArray<TEnumAsByte<ERequirementType>> AbilityRequirements;
@@ -82,7 +97,9 @@ public:
 
 	//Misc
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Particle)
-		class UParticleSystem* AbilityParticle; //We pass this to the AEmmiter / UParticleSystemComponent to the Character's asset which will conttain the spell data
+		class UParticleSystem* SelectionParticle;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Particle)
+		class UParticleSystem* CommitParticle;
 
 	UFUNCTION(BlueprintCallable)
 		virtual void OnSelect() {};

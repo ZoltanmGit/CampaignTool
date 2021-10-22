@@ -97,6 +97,7 @@ void AGrid::InitializeGrid(int32 argRows, int32 argColumns, TArray<int32> argGri
 		}
 	}
 }
+
 TerrainType AGrid::GetTerrainTypeFromInt(int value)
 {
 	switch (FMath::Clamp(value,-1,this->HISMC_GridArray.Num()))

@@ -3,3 +3,7 @@
 
 #include "BaseAoeTargetAbility.h"
 
+UBaseAoeTargetAbility::UBaseAoeTargetAbility()
+{
+	TargetType = ETargetType::AOE;
+}

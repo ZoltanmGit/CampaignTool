@@ -10,6 +10,17 @@
 
 ACampaignToolGameModeBase::ACampaignToolGameModeBase()
 {
+	TestFighter.bIsPlayerCharacter = true;
+	TestFighter.ArmorClass = 10;
+	TestFighter.CharacterName = "BlackBetty";
+	TestFighter.Class = EClass::Fighter;
+	TestFighter.Speed = 30.0f;
+
+	TestRogue.bIsPlayerCharacter = true;
+	TestRogue.ArmorClass = 10;
+	TestRogue.CharacterName = "Bames Jond";
+	TestRogue.Class = EClass::Rogue;
+	TestRogue.Speed = 25.0f;
 }
 
 void ACampaignToolGameModeBase::BeginPlay()
@@ -23,9 +34,8 @@ void ACampaignToolGameModeBase::BeginPlay()
 		//Spawn Grid
 		InitializeGrid();
 		//Spawn Characters
-		//InitializeCharacters();
+		InitializeCharacters();
 		//Spawn MovementController
-		//InitializeMovementController();
 	}
 	else
 	{

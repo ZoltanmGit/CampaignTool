@@ -36,7 +36,7 @@ APlayerCharacter::APlayerCharacter()
 	bIsRightMouseDown = false;
 	bCastMouseLineTrace = true;
 	PlayerCursorState = CursorState::OverGameWorld;
-	CharacterType = CharacterType::Ally;
+	CharacterType = ECharacterType::C_Ally;
 }
 /// <summary>
 /// Beginplay is called when the game starts or when the actor is spawned

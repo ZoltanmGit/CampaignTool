@@ -2,6 +2,8 @@
 
 
 #include "HealthComponent.h"
+#include "../Public/BaseCharacter.h"
+#include "../Public/AttributesComponent.h"
 
 // Sets default values for this component's properties
 UHealthComponent::UHealthComponent()
@@ -9,12 +11,46 @@ UHealthComponent::UHealthComponent()
 	fullHealth = 100.0f;
 }
 
-
 // Called when the game starts
 void UHealthComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	
+}
+void UHealthComponent::HandleDamage(float Damage, EDamageType DamageType)
+{
+	switch (DamageType)
+	{
+	case Healing:
+		//If it's a healing spell then heal
+		if (Owner != nullptr)
+		{
+			if (Owner->CharacterAttributes->Stats.CreatureType != ECreatureType::TUndead && Owner->CharacterAttributes->Stats.CreatureType != ECreatureType::TConstruct)
+			{
+				// If it's not undead nor construct than the character can be healed
+				SetCurrentHealth(GetCurrentHealth() + Damage);
+			}
+		}
+		break;
+	default:
+		if (Owner != nullptr)
+		{
+			if (Owner->CharacterAttributes->Stats.DamageImmunities.Contains(DamageType))
+			{
+				// If immunte to DamageType then skip
+			}
+			else if(Owner->CharacterAttributes->Stats.DamageResistanceArray.Contains(DamageType))
+			{
+				//If resistant then take half damage
+				SetCurrentHealth(GetCurrentHealth() - (Damage / 2));
+			}
+			else
+			{
+				//If not resistant nor immune than take the full damage | TODO: Saving throw
+				SetCurrentHealth(GetCurrentHealth() - Damage);
+			}
+		}
+		break;
+	}
 }
 void UHealthComponent::HandleTakeDamage(float Damage)
 {

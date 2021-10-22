@@ -189,6 +189,7 @@ enum EDamageType
 	Necrotic UMETA(DisplayName = "Necrotic"),
 	Radiant UMETA(DisplayName = "Radiant"),
 	Psychic UMETA(DisplayName = "Psychic"),
+	Healing UMETA(DisplayName = "Healing")
 };
 
 UENUM(BlueprintType)
@@ -241,5 +242,13 @@ enum ECreatureType
 	TOoze UMETA(DisplayName = "Ooze"),
 	TPlant UMETA(DisplayName = "Plant"),
 	TUndead UMETA(DisplayName = "Undead")
+};
+
+UENUM(BlueprintType)
+enum ECharacterType
+{
+	C_Ally,
+	C_Hostile,
+	C_Self
 };
 // Ctrl+C: UMETA(DisplayName = ""),

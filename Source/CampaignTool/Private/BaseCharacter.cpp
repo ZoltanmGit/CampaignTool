@@ -4,6 +4,7 @@
 #include "BaseCharacter.h"
 #include "Components/SplineComponent.h"
 #include "../Public/HealthComponent.h"
+#include "../Public/AbilityComponent.h"
 #include "../Public/AttributesComponent.h"
 #include "../Public/PathfinderComponent.h"
 #include "../Public/MoverComponent.h"
@@ -28,9 +29,13 @@ ABaseCharacter::ABaseCharacter()
 	
 	//Health and Attributes
 	CharacterHealth = CreateDefaultSubobject<UHealthComponent>(TEXT("CharacterHealth"));
+	CharacterHealth->Owner = this;
+
 	CharacterAttributes = CreateDefaultSubobject<UAttributesComponent>(TEXT("CharacterAttributes"));
+
 	Pathfinder = CreateDefaultSubobject<UPathfinderComponent>(TEXT("PathFinder"));
 
+	CharacterAbilityComponent = CreateDefaultSubobject<UAbilityComponent>(TEXT("AbilityComponent"));
 
 	Grid = nullptr;
 
@@ -201,6 +206,7 @@ void ABaseCharacter::RefreshPathfinding()
 			Transform.SetLocation(FVector((i * Grid->fieldSize) + (Grid->fieldSize / 2), (j * Grid->fieldSize) + (Grid->fieldSize / 2), 5.0f));
 			OnPathfinding(Transform);
 		}
+		UE_LOG(LogTemp, Warning, TEXT("Pathfinding refreshed"));
 	}
 	else
 	{

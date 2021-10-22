@@ -3,3 +3,7 @@
 
 #include "BaseSingleTargetAbility.h"
 
+UBaseSingleTargetAbility::UBaseSingleTargetAbility()
+{
+	TargetType = ETargetType::Single;
+}

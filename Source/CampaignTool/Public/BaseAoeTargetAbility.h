@@ -13,5 +13,14 @@ UCLASS()
 class CAMPAIGNTOOL_API UBaseAoeTargetAbility : public UBaseAbility
 {
 	GENERATED_BODY()
-	
+
+
+	UBaseAoeTargetAbility(); //Constructor
+public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = SpellDetails)
+		TEnumAsByte<EAreaOfEffectType> AreaEffectType;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = SpellDetails)
+		TEnumAsByte<EOriginType> OriginType;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = SpellDetails)
+		TArray<class ABaseCharacter*> AffectedCharacters;
 };
