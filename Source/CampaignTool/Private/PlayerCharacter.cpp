@@ -14,6 +14,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
+#include "BaseAoeTargetAbility.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -37,6 +38,12 @@ APlayerCharacter::APlayerCharacter()
 	bCastMouseLineTrace = true;
 	PlayerCursorState = CursorState::OverGameWorld;
 	CharacterType = ECharacterType::C_Ally;
+
+	/** DEBUG **/
+	TestAbility = CreateDefaultSubobject<UBaseAoeTargetAbility>(TEXT("TestAbility"));
+	TestAbility->Range = 5;
+	TestAbility->AreaEffectType = EAreaOfEffectType::Line;
+	TestAbility->AfffectedTargetType = EAffectedTargetType::Everyone;
 }
 /// <summary>
 /// Beginplay is called when the game starts or when the actor is spawned

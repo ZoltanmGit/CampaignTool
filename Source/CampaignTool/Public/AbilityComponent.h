@@ -37,9 +37,15 @@ protected:
 public:
 	
 	/** Properties **/
+	UPROPERTY()
+		class ABaseCharacter* Owner;
+
 	UPROPERTY(VisibleAnywhere, Category = General)
 		class UBaseAbility* SelectedAbility;
-
+	UPROPERTY(VisibleAnywhere, Category = Pathfinding)
+		TArray<class ABaseCharacter*> AffectedCharacters;
+	UPROPERTY(VisibleAnywhere, Category = Pathfinding)
+		TArray<int32> AffectedTiles;
 
 	UFUNCTION(BlueprintCallable)
 		void HandleTileChange(int32 x, int32 y, float range);
@@ -58,14 +64,13 @@ public:
 		int32 Columns;
 	UPROPERTY(VisibleAnywhere, Category = Pathfinding)
 		TArray<FDijkstraNode> DijkstraGrid;
-	UPROPERTY(VisibleAnywhere, Category = Pathfinding)
-		TArray<int32> AffectedTiles;
-	UPROPERTY(VisibleAnywhere, Category = Pathfinding)
-		TArray<class ABaseCharacter*> AffectedCharacters;
+	
+	
+	/** Bresenham's line algorithm **/
 
 private:
 	UFUNCTION(BlueprintCallable)
 		void ProcessTile();
 	UFUNCTION()
-		void GetAffectedCharactersInLine();
+		void GetAffectedCharactersInLine(int32 x0, int32 y0, int32 x1, int32 y1);
 };

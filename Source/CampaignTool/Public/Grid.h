@@ -56,4 +56,9 @@ private:
 	TerrainType GetTerrainTypeFromInt(int value);
 public:
 	virtual void OnConstruction(const FTransform& transform);
+
+	UFUNCTION(BlueprintCallable)
+		int32 CoordToIndex(int32 x, int32 y);
+	UFUNCTION(BlueprintCallable)
+		void IntexToCoord(int32 Index, int32 &OutX, int32 &OutY);
 };

@@ -17,31 +17,36 @@ ABaseCharacter::ABaseCharacter()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	//Mesh
+	/** Character Mesh **/
 	CharacterMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CharacterMesh"));
 	CharacterMesh->SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECollisionResponse::ECR_Block);
 	CharacterMesh->SetCollisionObjectType(ECollisionChannel::ECC_Pawn);
 	CharacterMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Overlap);
 	CharacterMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap); // I Set this so 
 	RootComponent = CharacterMesh; //Set Mesh as the RootComponent
-	//Mover
-	Mover = CreateDefaultSubobject<UMoverComponent>(TEXT("MoverComponent"));
-	//SplineComponent
 	
-	//Health and Attributes
+	/** Movement **/
+	Mover = CreateDefaultSubobject<UMoverComponent>(TEXT("MoverComponent"));
+	Pathfinder = CreateDefaultSubobject<UPathfinderComponent>(TEXT("PathFinder"));
+	
+	
+	/** General Components **/
+	// Health
 	CharacterHealth = CreateDefaultSubobject<UHealthComponent>(TEXT("CharacterHealth"));
 	CharacterHealth->Owner = this;
-
+	
+	// Attributes
 	CharacterAttributes = CreateDefaultSubobject<UAttributesComponent>(TEXT("CharacterAttributes"));
-
-	Pathfinder = CreateDefaultSubobject<UPathfinderComponent>(TEXT("PathFinder"));
-
+	
+	
+	
+	// Ability Component
 	CharacterAbilityComponent = CreateDefaultSubobject<UAbilityComponent>(TEXT("AbilityComponent"));
 
 	Grid = nullptr;
 
 	// Subscribe to HandleTakeDamage to OnTakeAnyDamage event
-	OnTakeAnyDamage.AddDynamic(this, &ABaseCharacter::HandleTakeDamage);
+	OnTakeAnyDamage.AddDynamic(this, &ABaseCharacter::HandleTakeDamage); //Might be redundant soon
 }
 
 // Called when the game starts or when spawned

@@ -70,6 +70,10 @@ protected:
 
 	void HandleLMBPress();
 	void ChangePossession(class ABaseCharacter* newCharacter);
+
+	/**REDUNDANT FOR DEBUG PURPOSES**/
+	UPROPERTY(VisibleAnywhere)
+		class UBaseAoeTargetAbility* TestAbility;
 public:
 	
 };
