@@ -19,5 +19,5 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = AbilityDetails)
 		TEnumAsByte<ESingleTargetType> SingleTargetType;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = AbilityDetails )
-	class ABaseCharacter* AbilityTarget;
+	class ABaseCharacter* Target;
 };

@@ -4,9 +4,22 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "PathfindingStructure.h"
 #include "BaseAbility.h"
 #include "AbilityComponent.generated.h"
 
+UENUM(BlueprintType)
+enum ETileDirection
+{
+	D_Up UMETA(DisplayName = "Up"),
+	D_Down UMETA(DisplayName = "Down"),
+	D_Left UMETA(DisplayName = "Left"),
+	D_Right UMETA(DisplayName = "Right"),
+	D_UpRight UMETA(DisplayName = "UpRight"),
+	D_UpLeft UMETA(DisplayName = "UpLeft"),
+	D_DownRight UMETA(DisplayName = "DownRight"),
+	D_DownLeft UMETA(DisplayName = "DownLeft")
+};
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class CAMPAIGNTOOL_API UAbilityComponent : public UActorComponent
@@ -21,9 +34,38 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	//virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+public:
+	
+	/** Properties **/
+	UPROPERTY(VisibleAnywhere, Category = General)
+		class UBaseAbility* SelectedAbility;
 
-		
+
+	UFUNCTION(BlueprintCallable)
+		void HandleTileChange(int32 x, int32 y, float range);
+	UFUNCTION(BlueprintCallable)
+		void ExecuteAbility();
+	UFUNCTION(BlueprintCallable)
+		void OnAbilitySelection(class UBaseAbility* AbilityToSelect);
+	UFUNCTION(BlueprintCallable)
+		void OnAbilityDeselection();
+
+	/** Pathfinding **/
+	TQueue<TPair<int32, int32>> DijkstraQueue;
+	UPROPERTY(VisibleAnywhere, Category = Pathfinding)
+		int32 Rows;
+	UPROPERTY(VisibleAnywhere, Category = Pathfinding)
+		int32 Columns;
+	UPROPERTY(VisibleAnywhere, Category = Pathfinding)
+		TArray<FDijkstraNode> DijkstraGrid;
+	UPROPERTY(VisibleAnywhere, Category = Pathfinding)
+		TArray<int32> AffectedTiles;
+	UPROPERTY(VisibleAnywhere, Category = Pathfinding)
+		TArray<class ABaseCharacter*> AffectedCharacters;
+
+private:
+	UFUNCTION(BlueprintCallable)
+		void ProcessTile();
+	UFUNCTION()
+		void GetAffectedCharactersInLine();
 };

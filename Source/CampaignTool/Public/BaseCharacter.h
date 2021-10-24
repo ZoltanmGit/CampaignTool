@@ -54,6 +54,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Grid)
 		class AGrid* Grid;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Indicator)
+		class AIndicatorActor* Indicator;
 
 	//Properties not exposed to the editor
 	bool bCanMove;
@@ -94,7 +96,7 @@ public:
 		/// </summary>
 		/// <param name="Character"></param>
 		/// <param name="ArgGrid"></param>
-		void InitializeCharacter(FCharacterStruct Character, class AGrid* ArgGrid);
+		void InitializeCharacter(FCharacterStruct Character, class AGrid* ArgGrid, class AIndicatorActor* ArgIndicator);
 public:
 
 	//Getters

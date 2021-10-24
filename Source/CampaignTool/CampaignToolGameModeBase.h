@@ -20,29 +20,48 @@ public:
 protected:
 	virtual void BeginPlay() override;
 public:
+	
+	/** IndicatorActor **/
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Indicator)
+		TSubclassOf<class AIndicatorActor> Indicator;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Indicator)
+		class AIndicatorActor* Indicatorptr;
+	/** Grid **/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Init)
-		TSubclassOf<class AGrid> Grid;
-	class AGrid* Gridptr;
+		TSubclassOf<class AGrid> Grid; // type of grid
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Grid)
+		class AGrid* Gridptr; // actual reference to grid
 
-	//Character Blueprints
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Init)
+	/** Characters **/
+	//Assigned direct reference in BP
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Characters)
 		TSubclassOf<class APlayerCharacter> FighterClass;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Init)
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Characters)
 		TSubclassOf<class APlayerCharacter> RogueClass;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Init)
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Characters)
 		TSubclassOf<class APlayerCharacter> WizardClass;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Init)
-		class APlayerController* UserController;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Characters)
 		TArray<class ABaseCharacter*> Characters;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Controller)
+		class APlayerController* UserController;
+	
+	
+
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Init)
 		int32 MapChoice;
 protected:
 	void InitializeGrid();
+	void InitializeIndicator();
 	void InitializeCharacters();
 	void SpawnCharacter(FCharacterStruct character, int32 x, int32 y);
 protected:
-	FCharacterStruct TestFighter;
-	FCharacterStruct TestRogue;
+	FCharacterStruct TestFighter; // Redundant after character creation is implemented
+	FCharacterStruct TestRogue;   // Redundant after character creation is implemented
 };

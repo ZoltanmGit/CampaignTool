@@ -9,6 +9,7 @@
 #include "../Public/PathfinderComponent.h"
 #include "../Public/MoverComponent.h"
 #include "../Public/Grid.h"
+#include "IndicatorActor.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -141,49 +142,6 @@ void ABaseCharacter::ChangeLocation(FVector newLocation)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Cannot move"));
 	}
-
-
-	/*if (Grid && Pathfinder && MovementSpline)
-	{
-		if (MovementSpline->GetNumberOfSplinePoints() > 0)
-		{
-			MovementSpline->ClearSplinePoints();
-		}
-		bool bValidMovement = false;
-		FTransform transform;
-		transform.SetLocation(newLocation);
-		int32 index;
-		Grid->GetTilePropertiesFromTransform(transform, index);
-		if (newLocation != CharacterLocation && Pathfinder->ValidIndexMap.Contains(index))
-		{
-			CleanupPathfinding(); //PLACEHOLDER 
-			CurrentSpeed = CurrentSpeed - *Pathfinder->ValidIndexMap.Find(index);
-			UE_LOG(LogTemp, Warning, TEXT("Speed is %f"), CurrentSpeed);
-			Grid->GridDataArray[index].bIsOccupied = true;
-			transform.SetLocation(this->GetActorLocation());
-			Grid->GetTilePropertiesFromTransform(transform, index);
-			Grid->GridDataArray[index].bIsOccupied = false;
-
-			FVector halfvector = (newLocation - CharacterLocation) / 2 + CharacterLocation;
-			halfvector.Z = 200.0f;
-
-			MovementSpline->AddSplinePoint(CharacterLocation,ESplineCoordinateSpace::World);
-			MovementSpline->AddSplinePoint(halfvector, ESplineCoordinateSpace::World);
-			MovementSpline->AddSplinePoint(newLocation, ESplineCoordinateSpace::World);
-
-			FTransform tempTransform;
-			tempTransform.SetLocation(CharacterLocation);
-			FTransform tempTransform1;
-			tempTransform1.SetLocation(halfvector);
-			FTransform tempTransform2;
-			tempTransform2.SetLocation(newLocation);
-			OnPathfinding(tempTransform);
-			OnPathfinding(tempTransform1);
-			OnPathfinding(tempTransform2);
-			CharacterLocation = newLocation;
-		}
-	}*/
-	
 }
 
 void ABaseCharacter::RefreshPathfinding()
@@ -214,9 +172,10 @@ void ABaseCharacter::RefreshPathfinding()
 	}
 }
 
-void ABaseCharacter::InitializeCharacter(FCharacterStruct Character, AGrid* ArgGrid)
+void ABaseCharacter::InitializeCharacter(FCharacterStruct Character, AGrid* ArgGrid, AIndicatorActor* ArgIndicator)
 {
 	Grid = ArgGrid;
+	Indicator = ArgIndicator;
 	Pathfinder->Rows = Grid->Rows;
 	Pathfinder->Columns = Grid->Columns;
 	if (CharacterAttributes)
@@ -259,9 +218,24 @@ void ABaseCharacter::OnHealthChange_Implementation()
 }
 void ABaseCharacter::OnPathfinding_Implementation(const FTransform transform)
 {
-
+	if (Indicator != nullptr)
+	{
+		Indicator->SpawnIndicator(transform.GetLocation(), EIndicatorType::MovementIndicator);
+		UE_LOG(LogTemp, Warning, TEXT("SpawnIndicator called"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Indicator is nullptr"));
+	}
 }
 void ABaseCharacter::CleanupPathfinding_Implementation()
 {
-
+	if (Indicator != nullptr)
+	{
+		Indicator->CleanupIndicators(EIndicatorType::MovementIndicator);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Indicator is nullptr"));
+	}
 }

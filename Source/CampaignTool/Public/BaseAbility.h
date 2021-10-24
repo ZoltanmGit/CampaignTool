@@ -93,7 +93,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = AbilityDetails)
 		TArray<TEnumAsByte<ERequirementType>> AbilityRequirements;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = AbilityDetails)
-		TEnumAsByte<EAffectedTargetType> AfffectedTarget;
+		TEnumAsByte<EAffectedTargetType> AfffectedTargetType;
 
 	//Misc
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Particle)
@@ -102,7 +102,5 @@ public:
 		class UParticleSystem* CommitParticle;
 
 	UFUNCTION(BlueprintCallable)
-		virtual void OnSelect() {};
-	UFUNCTION(BlueprintCallable)
-		virtual void OnCommit() {};
+		virtual void Execute() {};
 };

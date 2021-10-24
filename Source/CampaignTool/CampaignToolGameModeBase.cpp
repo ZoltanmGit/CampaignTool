@@ -3,6 +3,7 @@
 
 #include "CampaignToolGameModeBase.h"
 #include "Public/Grid.h"
+#include "Public/IndicatorActor.h"
 #include "Public/PlayerCharacter.h"
 #include "Public/MapSaveObject.h"
 #include "Public/CampaignToolGameInstance.h"
@@ -28,14 +29,16 @@ void ACampaignToolGameModeBase::BeginPlay()
 	UserController = Cast<APlayerController>(UGameplayStatics::GetActorOfClass(GetWorld(), APlayerController::StaticClass()));
 	if (UserController)
 	{
-		
 		UE_LOG(LogTemp, Warning, TEXT("PlayerController found"));
-
-		//Spawn Grid
+		
+		/** Grid Init **/
 		InitializeGrid();
-		//Spawn Characters
-		InitializeCharacters();
-		//Spawn MovementController
+
+		/** Indicator Init **/
+		InitializeIndicator();
+
+		/** Character Init **/
+		InitializeCharacters(); //requires grid and indicator to be initialized beforehand
 	}
 	else
 	{
@@ -77,6 +80,15 @@ void ACampaignToolGameModeBase::InitializeGrid()
 	}
 }
 
+void ACampaignToolGameModeBase::InitializeIndicator()
+{
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	FTransform TransformParams;
+	TransformParams.SetLocation(FVector(0.0f, 0.0f, 0.0f));
+	Indicatorptr = GetWorld()->SpawnActor<AIndicatorActor>(Indicator, TransformParams, SpawnParams);
+}
+
 void ACampaignToolGameModeBase::InitializeCharacters()
 {
 	SpawnCharacter(TestFighter, 0, 0);
@@ -113,7 +125,7 @@ void ACampaignToolGameModeBase::SpawnCharacter(FCharacterStruct character, int32
 	if (newCharacter != nullptr)
 	{
 		Gridptr->GridDataArray[(x * Gridptr->Columns) + y].ActorOnTile = newCharacter;
-		newCharacter->InitializeCharacter(character,Gridptr);
+		newCharacter->InitializeCharacter(character,Gridptr,Indicatorptr);
 	}
 	Characters.Add(newCharacter);
 }
