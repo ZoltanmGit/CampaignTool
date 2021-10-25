@@ -42,6 +42,7 @@ ABaseCharacter::ABaseCharacter()
 	
 	// Ability Component
 	CharacterAbilityComponent = CreateDefaultSubobject<UAbilityComponent>(TEXT("AbilityComponent"));
+	CharacterAbilityComponent->Owner = this;
 
 	Grid = nullptr;
 
@@ -219,28 +220,16 @@ UAttributesComponent* ABaseCharacter::GetCharacterAttributes() const
 
 void ABaseCharacter::OnHealthChange_Implementation()
 {
-
 }
 void ABaseCharacter::OnPathfinding_Implementation(const FTransform transform)
 {
-	if (Indicator != nullptr)
-	{
-		Indicator->SpawnIndicator(transform.GetLocation(), EIndicatorType::MovementIndicator);
-		UE_LOG(LogTemp, Warning, TEXT("SpawnIndicator called"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Indicator is nullptr"));
-	}
 }
 void ABaseCharacter::CleanupPathfinding_Implementation()
 {
-	if (Indicator != nullptr)
-	{
-		Indicator->CleanupIndicators(EIndicatorType::MovementIndicator);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Indicator is nullptr"));
-	}
+}
+void ABaseCharacter::OnAbilityAim_Implementation(const FTransform transform)
+{
+}
+void ABaseCharacter::CleanupAbilityIndicators_Implementation()
+{
 }

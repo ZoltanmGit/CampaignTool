@@ -68,9 +68,13 @@ public:
 	
 	/** Bresenham's line algorithm **/
 
-private:
+public:
 	UFUNCTION(BlueprintCallable)
 		void ProcessTile();
 	UFUNCTION()
 		void GetAffectedCharactersInLine(int32 x0, int32 y0, int32 x1, int32 y1);
+private:
+	/** Bresenham's line algorithm **/
+	void PlotTileLow(int32 x0, int32 y0, int32 x1, int32 y1);
+	void PlotTileHigh(int32 x0, int32 y0, int32 x1, int32 y1);
 };

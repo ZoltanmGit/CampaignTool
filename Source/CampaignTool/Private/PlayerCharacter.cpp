@@ -7,6 +7,7 @@
 #include "../Public/PathfinderComponent.h"
 #include "../Public/MoverComponent.h"
 #include "../Public/Grid.h"
+#include "AbilityComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/HierarchicalInstancedStaticMeshComponent.h"
@@ -209,6 +210,26 @@ void APlayerCharacter::HandleTestAction()
 	//UGameplayStatics::ApplyDamage(this, 5, nullptr, this, nullptr);
 
 	//CharacterSpringArm->SetWorldLocation(this->GetActorLocation());
+	if (CharacterAbilityComponent != nullptr)
+	{
+		CharacterAbilityComponent->SelectedAbility = TestAbility;
+
+		int32 x0;
+		int32 y0;
+		int32 OutIndex;
+		Grid->GetTilePropertiesFromTransform(this->GetActorTransform(), OutIndex);
+		Grid->IntexToCoord(OutIndex, x0, y0);
+
+		
+		int32 OutIndex1;
+		FTransform CursorTransform;
+		CursorTransform.SetLocation(CursorLocation);
+		FTileProperties temptileprop = Grid->GetTilePropertiesFromTransform(CursorTransform, OutIndex1);
+		int32 x1 = temptileprop.Row;
+		int32 y1 = temptileprop.Column;
+
+		CharacterAbilityComponent->GetAffectedCharactersInLine(x0,y0,x1,y1);
+	}
 }
 /// <summary>
 /// Moves the camera in a forward and backward direction relative to its current rotation

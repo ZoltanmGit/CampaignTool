@@ -113,4 +113,8 @@ public:
 		void OnPathfinding(const FTransform transform);
 	UFUNCTION(BlueprintNativeEvent)
 		void CleanupPathfinding();
+	UFUNCTION(BlueprintNativeEvent)
+		void OnAbilityAim(const FTransform transform);
+	UFUNCTION(BlueprintNativeEvent)
+		void CleanupAbilityIndicators();
 };
