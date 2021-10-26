@@ -7,3 +7,8 @@ UBaseAoeTargetAbility::UBaseAoeTargetAbility()
 {
 	TargetType = ETargetType::AOE;
 }
+
+void UBaseAoeTargetAbility::Execute()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Base Area of Effect Execute called"));
+}

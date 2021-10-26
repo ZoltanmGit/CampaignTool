@@ -45,6 +45,7 @@ APlayerCharacter::APlayerCharacter()
 	TestAbility->Range = 5;
 	TestAbility->AreaEffectType = EAreaOfEffectType::Line;
 	TestAbility->AfffectedTargetType = EAffectedTargetType::Everyone;
+	AbilityArray.Add(TestAbility);
 }
 /// <summary>
 /// Beginplay is called when the game starts or when the actor is spawned
@@ -80,6 +81,9 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction("RMBAction", IE_Pressed, this, &APlayerCharacter::HandleRMBPress);
 	PlayerInputComponent->BindAction("RMBAction", IE_Released, this, &APlayerCharacter::HandleRMBRelease);
 	PlayerInputComponent->BindAction("LMBAction", IE_Pressed, this, &APlayerCharacter::HandleLMBPress);
+	PlayerInputComponent->BindAction<FCustomInputDelegate>("Hotkey01", IE_Pressed, this, &APlayerCharacter::HandleHotkey, 0);
+	PlayerInputComponent->BindAction<FCustomInputDelegate>("Hotkey02", IE_Pressed, this, &APlayerCharacter::HandleHotkey, 1);
+	PlayerInputComponent->BindAction<FCustomInputDelegate>("Hotkey03", IE_Pressed, this, &APlayerCharacter::HandleHotkey, 2);
 }
 /// <summary>
 /// The Tick function gets called every frame
@@ -116,11 +120,20 @@ void APlayerCharacter::Tick(float DeltaTime)
 					
 					if (CursorLocation != TileTransform.GetLocation() && bCanMove)
 					{
-						UE_LOG(LogTemp, Warning, TEXT("New CursorLocation"));
+						
+						//UE_LOG(LogTemp, Warning, TEXT("New CursorLocation"));
 						CursorLocation = TileTransform.GetLocation();
+
+						// if aiming ability
+						if (bIsAimingAbility)
+						{
+							UE_LOG(LogTemp, Warning, TEXT("______ChangedAim______"));
+							CharacterAbilityComponent->HandleTileChange();
+						}
+						// if aiming movement ...
 						if (Pathfinder->ValidIndexMap.Contains(hitTileProperties.Row*Grid->Columns + hitTileProperties.Column))
 						{
-							UE_LOG(LogTemp, Warning, TEXT("New CursorLocation is Valid Movement"));
+							//UE_LOG(LogTemp, Warning, TEXT("New CursorLocation is Valid Movement"));
 							TArray<int32> Path = Pathfinder->GetRouteFromIndexes(hitTileProperties.Row, hitTileProperties.Column);
 							Mover->RefreshSpline();
 						}
@@ -133,7 +146,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 						}
 					}
 					//DEBUG
-					if (GEngine)
+					/*if (GEngine)
 					{
 
 						GEngine->AddOnScreenDebugMessage(-1, 0.0, FColor::Emerald, FString::Printf(TEXT("Tile Index: %i"), tileIndex));
@@ -142,7 +155,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 						GEngine->AddOnScreenDebugMessage(-4, 0.0, FColor::Emerald, FString::Printf(TEXT("Tile LightType: %i"), hitTileProperties.LightType));
 						GEngine->AddOnScreenDebugMessage(-5, 0.0, FColor::Emerald, FString::Printf(TEXT("Tile Row: %i"), hitTileProperties.Row));
 						GEngine->AddOnScreenDebugMessage(-6, 0.0, FColor::Emerald, FString::Printf(TEXT("Tile Column: %i"), hitTileProperties.Column));
-					}
+					}*/
 				}
 				else //If the grid isn't targeted then we check for characters
 				{
@@ -207,28 +220,23 @@ void APlayerCharacter::Tick(float DeltaTime)
 /// </summary>
 void APlayerCharacter::HandleTestAction()
 {
-	//UGameplayStatics::ApplyDamage(this, 5, nullptr, this, nullptr);
-
-	//CharacterSpringArm->SetWorldLocation(this->GetActorLocation());
-	if (CharacterAbilityComponent != nullptr)
+}
+void APlayerCharacter::HandleHotkey(int index)
+{
+	if (AbilityArray.IsValidIndex(index))
 	{
-		CharacterAbilityComponent->SelectedAbility = TestAbility;
-
-		int32 x0;
-		int32 y0;
-		int32 OutIndex;
-		Grid->GetTilePropertiesFromTransform(this->GetActorTransform(), OutIndex);
-		Grid->IntexToCoord(OutIndex, x0, y0);
-
-		
-		int32 OutIndex1;
-		FTransform CursorTransform;
-		CursorTransform.SetLocation(CursorLocation);
-		FTileProperties temptileprop = Grid->GetTilePropertiesFromTransform(CursorTransform, OutIndex1);
-		int32 x1 = temptileprop.Row;
-		int32 y1 = temptileprop.Column;
-
-		CharacterAbilityComponent->GetAffectedCharactersInLine(x0,y0,x1,y1);
+		// If we're already aiming the same spell then the aim is canceled
+		if (bIsAimingAbility && CharacterAbilityComponent->SelectedAbility == AbilityArray[index])
+		{
+			CharacterAbilityComponent->CancelAbility();
+			bIsAimingAbility = false;
+		}
+		else if (!bIsAimingAbility)
+		{
+			bIsAimingAbility = true;
+			CharacterAbilityComponent->SelectAbility(AbilityArray[index]);
+			CharacterAbilityComponent->HandleTileChange();
+		}
 	}
 }
 /// <summary>
@@ -323,15 +331,24 @@ void APlayerCharacter::HandleRMBRelease()
 /// </summary>
 void APlayerCharacter::HandleLMBPress()
 {	
-	if (TargetedTile != nullptr && bCanMove && Mover)
+	// If MovementAiming
+	if (TargetedTile != nullptr && bCanMove && Mover && !bIsAimingAbility)
 	{
 		this->ChangeLocation(FVector(CursorLocation.X, CursorLocation.Y, 50.0f));
 	}
-	else if (TargetedCharacter != nullptr)
+	// Temporary, 
+	else if (TargetedCharacter != nullptr && !bIsAimingAbility)
 	{
 		if (TargetedCharacter != this)
 		{
 			ChangePossession(TargetedCharacter);
+		}
+	}
+	else if (bIsAimingAbility && CharacterAbilityComponent != nullptr)
+	{
+		if (CharacterAbilityComponent->AffectedTiles.Num() > 0)
+		{
+			CharacterAbilityComponent->ExecuteAbility();
 		}
 	}
 }

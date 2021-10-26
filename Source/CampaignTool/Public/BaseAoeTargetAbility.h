@@ -23,4 +23,6 @@ public:
 		TEnumAsByte<EOriginType> OriginType;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = SpellDetails)
 		TArray<class ABaseCharacter*> AffectedCharacters;
+
+	virtual void Execute() override;
 };

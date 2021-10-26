@@ -46,7 +46,7 @@ FTileProperties AGrid::GetTilePropertiesFromTransform(const FTransform tileTrans
 	return GridDataArray[OutIndex];
 }
 
-FTileProperties AGrid::GetTilePropertiesFromIndex(int32 Row, int32 Column)
+FTileProperties AGrid::GetTilePropertiesFromCoord(int32 Row, int32 Column)
 {
 	int32 index = (Row * Columns) + Column;
 	return GridDataArray[index];

@@ -109,7 +109,7 @@ void UMoverComponent::RefreshSpline()
 			MovementSpline->SetTangentsAtSplinePoint(i, FVector(0, 0, 0), FVector(0, 0, 0), ESplineCoordinateSpace::Local);
 		}
 		RefreshSplineMesh();
-		UE_LOG(LogTemp, Warning, TEXT("SplineMeshes: %i"),MovementSplineMeshArray.Num());
+		//UE_LOG(LogTemp, Warning, TEXT("SplineMeshes: %i"),MovementSplineMeshArray.Num());
 	}
 }
 

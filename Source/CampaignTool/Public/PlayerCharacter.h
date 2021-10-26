@@ -13,7 +13,7 @@ enum CursorState
 	OverInterface UMETA(DisplayName = "OverInterface"),
 	Turning UMETA(DisplayName = "Turning"),
 	OverEnemy UMETA(DisplayName = "OverEnemy"),
-	OverAlly UMETA(DisplayName = "OverAlly")
+	OverAlly UMETA(DisplayName = "OverAlly"),
 };
 
 UCLASS()
@@ -54,11 +54,12 @@ protected:
 	bool bCastMouseLineTrace;
 
 	FHitResult UnderCursorHitResult;
-
-	class UHierarchicalInstancedStaticMeshComponent* TargetedTile;
+	UPROPERTY()
+		class UHierarchicalInstancedStaticMeshComponent* TargetedTile;
 
 	//Test method
 	void HandleTestAction();
+	void HandleHotkey(int index);
 
 	//CameraMovement
 	void CameraForward(float value);
@@ -74,6 +75,8 @@ protected:
 	/**REDUNDANT FOR DEBUG PURPOSES**/
 	UPROPERTY(VisibleAnywhere)
 		class UBaseAoeTargetAbility* TestAbility;
+	/** For parametered bindaction use **/
+	DECLARE_DELEGATE_OneParam(FCustomInputDelegate, const int);
 public:
 	
 };

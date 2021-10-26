@@ -53,9 +53,10 @@ public:
 		float CurrentSpeed;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Grid)
 		class AGrid* Grid;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Indicator)
 		class AIndicatorActor* Indicator;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Abilities)
+		TArray<class UBaseAbility*> AbilityArray;
 
 	//Properties not exposed to the editor
 	bool bCanMove;

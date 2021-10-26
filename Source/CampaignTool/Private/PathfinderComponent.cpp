@@ -249,7 +249,7 @@ void UPathfinderComponent::GetValidMovementIndexes(int32 x, int32 y, float range
 				node.x = i;
 				node.y = j;
 				node.bWasProcessed = false;
-				if (Owner->Grid->GetTilePropertiesFromIndex(i, j).bIsOccupied || Owner->Grid->GetTilePropertiesFromIndex(i, j).TerrainType == TerrainType::Water || Owner->Grid->GetTilePropertiesFromIndex(i, j).TerrainType == TerrainType::DeepWater || Owner->Grid->GetTilePropertiesFromIndex(i, j).TerrainType == TerrainType::Void)
+				if (Owner->Grid->GetTilePropertiesFromCoord(i, j).bIsOccupied || Owner->Grid->GetTilePropertiesFromCoord(i, j).TerrainType == TerrainType::Water || Owner->Grid->GetTilePropertiesFromCoord(i, j).TerrainType == TerrainType::DeepWater || Owner->Grid->GetTilePropertiesFromCoord(i, j).TerrainType == TerrainType::Void)
 				{
 					node.bIsValidTerrain = false;
 				}

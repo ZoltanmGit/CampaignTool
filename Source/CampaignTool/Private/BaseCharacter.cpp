@@ -33,7 +33,6 @@ ABaseCharacter::ABaseCharacter()
 	/** General Components **/
 	// Health
 	CharacterHealth = CreateDefaultSubobject<UHealthComponent>(TEXT("CharacterHealth"));
-	CharacterHealth->Owner = this;
 	
 	// Attributes
 	CharacterAttributes = CreateDefaultSubobject<UAttributesComponent>(TEXT("CharacterAttributes"));
@@ -42,7 +41,6 @@ ABaseCharacter::ABaseCharacter()
 	
 	// Ability Component
 	CharacterAbilityComponent = CreateDefaultSubobject<UAbilityComponent>(TEXT("AbilityComponent"));
-	CharacterAbilityComponent->Owner = this;
 
 	Grid = nullptr;
 
@@ -87,7 +85,7 @@ void ABaseCharacter::HandleTakeDamage(AActor* DamagedActor, float Damage, const 
 
 void ABaseCharacter::BeginTurn()
 {
-	if (Grid && CharacterHealth && CharacterAttributes && Pathfinder && Mover && !bCanAct && !bCanMove && !bIsActive)
+	if (Grid && CharacterHealth && CharacterAttributes && Pathfinder && Mover && !bCanAct && !bCanMove && !bIsActive && Indicator)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Components are valid at BeginTurn"));
 		bCanAct = true;
@@ -120,7 +118,7 @@ void ABaseCharacter::ChangeLocation(FVector newLocation)
 		{
 			float minusSpeed = *Pathfinder->ValidIndexMap.Find(index);
 			CurrentSpeed = CurrentSpeed - minusSpeed;
-			UE_LOG(LogTemp, Warning, TEXT("Speed is %f"), CurrentSpeed);
+			//UE_LOG(LogTemp, Warning, TEXT("Speed is %f"), CurrentSpeed);
 
 
 			int32 CurrentIndex;
@@ -133,7 +131,7 @@ void ABaseCharacter::ChangeLocation(FVector newLocation)
 			Grid->GridDataArray[NewTileIndex].bIsOccupied = true;
 			Grid->GridDataArray[NewTileIndex].ActorOnTile = this;
 			
-			UE_LOG(LogTemp, Warning, TEXT("Speed: %f"),(1/minusSpeed)*4);
+			//UE_LOG(LogTemp, Warning, TEXT("Speed: %f"),(1/minusSpeed)*4);
 			Mover->Timeline->SetPlayRate((1/minusSpeed)*4);
 			Mover->MoveCharacter(newLocation);
 			CharacterLocation = newLocation;
@@ -170,7 +168,7 @@ void ABaseCharacter::RefreshPathfinding()
 			Transform.SetLocation(FVector((i * Grid->fieldSize) + (Grid->fieldSize / 2), (j * Grid->fieldSize) + (Grid->fieldSize / 2), 5.0f));
 			OnPathfinding(Transform);
 		}
-		UE_LOG(LogTemp, Warning, TEXT("Pathfinding refreshed"));
+		//UE_LOG(LogTemp, Warning, TEXT("Pathfinding refreshed"));
 	}
 	else
 	{
@@ -184,6 +182,12 @@ void ABaseCharacter::InitializeCharacter(FCharacterStruct Character, AGrid* ArgG
 	Indicator = ArgIndicator;
 	Pathfinder->Rows = Grid->Rows;
 	Pathfinder->Columns = Grid->Columns;
+	CharacterHealth->Owner = this;
+	CharacterAbilityComponent->Owner = this;
+	if (CharacterAbilityComponent->Owner != nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ABility Component has Owner"));
+	}
 	if (CharacterAttributes)
 	{
 		CharacterAttributes->InitComponent(Character);

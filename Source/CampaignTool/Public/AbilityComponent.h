@@ -48,15 +48,13 @@ public:
 		TArray<int32> AffectedTiles;
 
 	UFUNCTION(BlueprintCallable)
-		void HandleTileChange(int32 x, int32 y, float range);
+		void HandleTileChange();
 	UFUNCTION(BlueprintCallable)
 		void ExecuteAbility();
 	UFUNCTION(BlueprintCallable)
-		void OnAbilitySelection(class UBaseAbility* AbilityToSelect);
-	UFUNCTION(BlueprintCallable)
-		void OnAbilityDeselection();
+		void SelectAbility(class UBaseAbility* AbilityToSelect);
 
-	/** Pathfinding **/
+	/** Dijkstra's algorithm **/
 	TQueue<TPair<int32, int32>> DijkstraQueue;
 	UPROPERTY(VisibleAnywhere, Category = Pathfinding)
 		int32 Rows;
@@ -64,17 +62,22 @@ public:
 		int32 Columns;
 	UPROPERTY(VisibleAnywhere, Category = Pathfinding)
 		TArray<FDijkstraNode> DijkstraGrid;
-	
-	
-	/** Bresenham's line algorithm **/
-
 public:
+	/** Dijkstra's algorithm **/
 	UFUNCTION(BlueprintCallable)
 		void ProcessTile();
-	UFUNCTION()
-		void GetAffectedCharactersInLine(int32 x0, int32 y0, int32 x1, int32 y1);
-private:
 	/** Bresenham's line algorithm **/
-	void PlotTileLow(int32 x0, int32 y0, int32 x1, int32 y1);
-	void PlotTileHigh(int32 x0, int32 y0, int32 x1, int32 y1);
+	UFUNCTION()
+		void ResolveLine(int32 x0, int32 y0, int32 x1, int32 y1);
+
+	/** General Functionality **/
+	void CancelAbility();
+	void ResetPathfinding();
+	bool HasSelectedAbility();
+
+private:
+
+	/** Bresenham's line algorithm **/
+	void PlotTileLow(int32 x0, int32 y0, int32 x1, int32 y1, bool bWasSwitched);
+	void PlotTileHigh(int32 x0, int32 y0, int32 x1, int32 y1, bool bWasSwitched);
 };

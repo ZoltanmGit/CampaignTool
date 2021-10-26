@@ -20,4 +20,6 @@ public:
 		TEnumAsByte<ESingleTargetType> SingleTargetType;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = AbilityDetails )
 	class ABaseCharacter* Target;
+
+	virtual void Execute() override;
 };
