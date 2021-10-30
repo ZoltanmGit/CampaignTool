@@ -158,7 +158,7 @@ void UAbilityComponent::ResolveLine(int32 x0, int32 y0, int32 x1, int32 y1)
 
 void UAbilityComponent::ResolveCone(int32 x, int32 y, TEnumAsByte<EConeDirection> Direction)
 {
-	if (Direction == EConeDirection::D_Up || Direction == EConeDirection::D_Up)
+	if (Direction == EConeDirection::D_Up || Direction == EConeDirection::D_Down)
 	{
 		ResolveConeVertical(x, y, Direction);
 	}
@@ -214,46 +214,115 @@ TEnumAsByte<EConeDirection> UAbilityComponent::GetConeDirection(int32 x_char, in
 	{
 		if (x_curs > x_char)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("UpRight"));
 			return EConeDirection::D_UpRight;
 		}
 		else
 		{
+			UE_LOG(LogTemp, Warning, TEXT("DownLeft"));
 			return EConeDirection::D_DownLeft;
 		}
+		UE_LOG(LogTemp, Warning, TEXT("Undefined"));
 		return EConeDirection::D_Undefined; // Redundant
 	}
 	else if (x_curs - x_char == (y_curs - y_char) * -1)
 	{
 		if (x_curs > x_char)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("UpLeft"));
 			return EConeDirection::D_UpLeft;
 		}
 		else
 		{
+			UE_LOG(LogTemp, Warning, TEXT("UpRight"));
 			return EConeDirection::D_DownRight;
 		}
+		UE_LOG(LogTemp, Warning, TEXT("Undefined"));
 		return EConeDirection::D_Undefined; // Redundant
 	}
 	else
 	{
+		// Up or displacement
 		if (x_curs > x_char && y_curs > y_char - (x_curs - x_char) && y_curs < y_char + (x_curs - x_char))
 		{
+			if (x_curs - x_char > 2)
+			{
+				// Init Displacement
+				int32 displacement;
+				if (x_curs - x_char % 2 == 0)
+				{
+					// If even 
+					displacement = (x_curs - x_char - 2) / 2;
+				}
+				else
+				{
+					// If odd
+					displacement = (x_curs - x_char - 1) / 2;
+				}
+
+				if (y_curs <= y_char - (x_curs - x_char) + displacement)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("UpLeft"));
+					return EConeDirection::D_UpLeft;
+				}
+				else if (y_curs >= y_char + (x_curs - x_char) - displacement)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("UpRight"));
+					return EConeDirection::D_UpRight;
+				}
+			}
+
+			UE_LOG(LogTemp, Warning, TEXT("Up"));
 			return EConeDirection::D_Up;
 		}
+		// Down or displacement
 		else if (x_curs < x_char && y_curs > y_char - (x_char - x_curs) && y_curs < y_char + (x_char - x_curs))
 		{
+			if (x_char - x_curs > 2)
+			{
+				// Init Displacement
+				int32 displacement;
+				if (x_char - x_curs % 2 == 0)
+				{
+					// If even 
+					displacement = (x_char - x_curs - 2) / 2;
+				}
+				else
+				{
+					// If odd
+					displacement = (x_char - x_curs - 1) / 2;
+				}
+
+				if (y_curs <= y_char - (x_char - x_curs) + displacement)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("DownLeft"));
+					return EConeDirection::D_DownLeft;
+				}
+				else if (y_curs >= y_char + (x_char - x_curs) - displacement)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("DownRight"));
+					return EConeDirection::D_DownRight;
+				}
+			}
+			UE_LOG(LogTemp, Warning, TEXT("Down"));
 			return EConeDirection::D_Down;
 		}
+		// Right or displacement
 		else if (y_curs > y_char && x_curs > x_curs - (y_curs - y_char) && x_curs < x_curs + (y_curs - y_char))
 		{
+			UE_LOG(LogTemp, Warning, TEXT("Right"));
 			return EConeDirection::D_Right;
 		}
+		// Left or displacement
 		else if (y_curs < y_char && x_curs > x_curs - (y_char - y_curs) && x_curs < x_curs + (y_char - y_curs))
 		{
+			UE_LOG(LogTemp, Warning, TEXT("Left"));
 			return EConeDirection::D_Left;
 		}
+		UE_LOG(LogTemp, Warning, TEXT("Undefined"));
 		return EConeDirection::D_Undefined; // Redundant if everything is covered
 	}
+	UE_LOG(LogTemp, Warning, TEXT("Undefined"));
 	return EConeDirection::D_Undefined; // Redundant
 }
 
@@ -270,9 +339,9 @@ void UAbilityComponent::ResolveConeVertical(int32 x_char, int32 y_char, TEnumAsB
 		x = x + 1;
 		for (int32 i = 1; i <= 9/* CHANGE TO ABILITY RANGE*/; i++)
 		{
+			FTransform transform;
 			if (Owner->Grid->IsValidCoord(x, y))
 			{
-				FTransform transform;
 				transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 10.0f));
 				Owner->OnAbilityAim(transform);
 			}
@@ -286,15 +355,22 @@ void UAbilityComponent::ResolveConeVertical(int32 x_char, int32 y_char, TEnumAsB
 			{
 				width = (i - 1) / 2;
 			}
+
 			for (int32 j = 1; j <= width; j++)
 			{
 				// To the right
-				transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), ((y + j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 10.0f));
-				Owner->OnAbilityAim(transform);
+				if (Owner->Grid->IsValidCoord(x, y + j))
+				{
+					transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), ((y + j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 10.0f));
+					Owner->OnAbilityAim(transform);
+				}
+				
 				// To the left
-				transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), ((y - j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 10.0f));
-				Owner->OnAbilityAim(transform);
-
+				if (Owner->Grid->IsValidCoord(x, y - 1))
+				{
+					transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), ((y - j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 10.0f));
+					Owner->OnAbilityAim(transform);
+				}
 			}
 			x = x + 1;
 		}
@@ -302,6 +378,43 @@ void UAbilityComponent::ResolveConeVertical(int32 x_char, int32 y_char, TEnumAsB
 	else if (Direction == EConeDirection::D_Down)
 	{
 		x = x - 1;
+		for (int32 i = 1; i <= 9/* CHANGE TO ABILITY RANGE*/; i++)
+		{
+			FTransform transform;
+			if (Owner->Grid->IsValidCoord(x, y))
+			{
+				transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 10.0f));
+				Owner->OnAbilityAim(transform);
+			}
+
+			int32 width;
+			if (i % 2 == 0)
+			{
+				width = i / 2;
+			}
+			else
+			{
+				width = (i - 1) / 2;
+			}
+
+			for (int32 j = 1; j <= width; j++)
+			{
+				// To the right
+				if (Owner->Grid->IsValidCoord(x, y + j))
+				{
+					transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), ((y + j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 10.0f));
+					Owner->OnAbilityAim(transform);
+				}
+
+				// To the left
+				if (Owner->Grid->IsValidCoord(x, y - 1))
+				{
+					transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), ((y - j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 10.0f));
+					Owner->OnAbilityAim(transform);
+				}
+			}
+			x = x - 1;
+		}
 	}
 }
 
