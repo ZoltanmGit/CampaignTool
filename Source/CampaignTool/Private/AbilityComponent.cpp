@@ -167,6 +167,39 @@ void UAbilityComponent::ResolveCone(int32 x, int32 y, TEnumAsByte<EConeDirection
 	{
 		ResolveConeHorizontal(x, y, Direction);
 	}
+	else
+	{
+		switch (Direction)
+		{
+		case EConeDirection::D_UpLeft:
+			if (Owner->Grid->IsValidCoord(x + 1, y - 1))
+			{
+
+				ResolveConeDiagonal(x + 1, y - 1, Direction);
+			}
+			break;
+		case EConeDirection::D_UpRight:
+			if (Owner->Grid->IsValidCoord(x + 1, y + 1))
+			{
+				ResolveConeDiagonal(x + 1, y + 1, Direction);
+			}
+			break;
+		case EConeDirection::D_DownLeft:
+			if (Owner->Grid->IsValidCoord(x - 1, y - 1))
+			{
+				ResolveConeDiagonal(x - 1, y - 1, Direction);
+			}
+			break;
+		case EConeDirection::D_DownRight:
+			if (Owner->Grid->IsValidCoord(x - 1, y + 1))
+			{
+				ResolveConeDiagonal(x - 1, y + 1, Direction);
+			}
+			break;
+		default:
+			break;
+		}
+	}
 }
 
 void UAbilityComponent::CancelAbility()
@@ -194,6 +227,14 @@ void UAbilityComponent::ResetPathfinding()
 	if (AffectedTiles.Num() > 0)
 	{
 		AffectedTiles.Empty();
+	}
+	if (ConeDijkstraGrid.Num() > 0)
+	{
+		ConeDijkstraGrid.Empty();
+	}
+	if (!ConeDijkstraQueue.IsEmpty())
+	{
+		ConeDijkstraQueue.Empty();
 	}
 }
 
@@ -223,22 +264,22 @@ TEnumAsByte<EConeDirection> UAbilityComponent::GetConeDirection(int32 x_char, in
 			UE_LOG(LogTemp, Warning, TEXT("DownLeft"));
 			return EConeDirection::D_DownLeft;
 		}
-		UE_LOG(LogTemp, Warning, TEXT("Undefined"));
+		//UE_LOG(LogTemp, Warning, TEXT("Undefined"));
 		return EConeDirection::D_Undefined; // Redundant
 	}
 	else if (x_curs - x_char == (y_curs - y_char) * -1)
 	{
 		if (x_curs > x_char)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("UpLeft"));
+			//UE_LOG(LogTemp, Warning, TEXT("UpLeft"));
 			return EConeDirection::D_UpLeft;
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("UpRight"));
+			//UE_LOG(LogTemp, Warning, TEXT("UpRight"));
 			return EConeDirection::D_DownRight;
 		}
-		UE_LOG(LogTemp, Warning, TEXT("Undefined"));
+		//UE_LOG(LogTemp, Warning, TEXT("Undefined"));
 		return EConeDirection::D_Undefined; // Redundant
 	}
 	else
@@ -273,7 +314,7 @@ TEnumAsByte<EConeDirection> UAbilityComponent::GetConeDirection(int32 x_char, in
 				}
 			}
 
-			UE_LOG(LogTemp, Warning, TEXT("Up"));
+			//UE_LOG(LogTemp, Warning, TEXT("Up"));
 			return EConeDirection::D_Up;
 		}
 		// Down or displacement
@@ -557,6 +598,7 @@ void UAbilityComponent::ResolveConeDiagonal(int32 x_char, int32 y_char, TEnumAsB
 {
 	/** Init the Dijkstra grid for the cone algorithm **/
 	ConeDijkstraGrid.Empty();
+
 	for (int32 i = 0; i < Owner->Grid->Rows; i++)
 	{
 		for (int32 j = 0; j < Owner->Grid->Columns; j++)
@@ -580,16 +622,162 @@ void UAbilityComponent::ResolveConeDiagonal(int32 x_char, int32 y_char, TEnumAsB
 			}
 			else
 			{
-				node.NodeValue = Rows * Columns + 1;
+				node.NodeValue = Owner->Grid->Rows * Owner->Grid->Columns + 1;
 			}
-			DijkstraGrid.Add(node);
+			ConeDijkstraGrid.Add(node);
 		}
+	}
+
+	TPair<int32, int32> s = TPair<int32, int32>(x_char, y_char);
+	ConeDijkstraQueue.Enqueue(s);
+
+	while (!ConeDijkstraQueue.IsEmpty())
+	{
+		TPair<int32, int32> pair;
+		ConeDijkstraQueue.Dequeue(pair);
+		ProcessNodeForCone(pair.Key, pair.Value, 5/* RANGE */, Direction);
 	}
 }
 
 void UAbilityComponent::ProcessNodeForCone(int32 x, int32 y, float range, TEnumAsByte<EConeDirection> Direction)
 {
+	FDijkstraNode CurrentNode = ConeDijkstraGrid[Owner->Grid->CoordToIndex(x, y)];
+	bool bQueueNeighbors = true;
+	if (FMath::CeilToFloat(CurrentNode.NodeValue) == range)
+	{
+		bQueueNeighbors = false;
+		//UE_LOG(LogTemp, Warning, TEXT("x:%i  y:%i don't queue neighbours range:%f"), CurrentNode.x,CurrentNode.y, range);
+	}
+	//Left
+	if (y - 1 >= 0 && (Direction == EConeDirection::D_DownLeft || Direction == EConeDirection::D_UpLeft ))
+	{
+		if (ConeDijkstraGrid[Owner->Grid->CoordToIndex(x, y - 1)].NodeValue > CurrentNode.NodeValue + 1.0f && ConeDijkstraGrid[Owner->Grid->CoordToIndex(x, y - 1)].bIsValidTerrain && !ConeDijkstraGrid[Owner->Grid->CoordToIndex(x, y - 1)].bWasProcessed)
+		{
+			ConeDijkstraGrid[Owner->Grid->CoordToIndex(x, y - 1)].NodeValue = CurrentNode.NodeValue + 1.0f;
+			if (bQueueNeighbors && CurrentNode.NodeValue + 1.0f <= range)
+			{
+				TPair<int32, int32> pair = TPair<int32, int32>(x, y - 1);
+				ConeDijkstraQueue.Enqueue(pair);
+				UE_LOG(LogTemp, Warning, TEXT("Left Queued"));
+			}
+		}
+	}
+	//Right
+	if (y + 1 <= Owner->Grid->Columns - 1 && (Direction == EConeDirection::D_UpRight || Direction == EConeDirection::D_DownRight))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("%f > %f"), ConeDijkstraGrid[Owner->Grid->CoordToIndex(x, y + 1)].NodeValue,CurrentNode.NodeValue);
 
+		if (ConeDijkstraGrid[Owner->Grid->CoordToIndex(x, y + 1)].NodeValue > CurrentNode.NodeValue + 1.0f && ConeDijkstraGrid[Owner->Grid->CoordToIndex(x, y + 1)].bIsValidTerrain && !ConeDijkstraGrid[Owner->Grid->CoordToIndex(x, y + 1)].bWasProcessed)
+		{
+			ConeDijkstraGrid[Owner->Grid->CoordToIndex(x, y + 1)].NodeValue = CurrentNode.NodeValue + 1.0f;
+			if (bQueueNeighbors && CurrentNode.NodeValue + 1.0f <= range)
+			{
+				TPair<int32, int32> pair = TPair<int32, int32>(x, y + 1);
+				ConeDijkstraQueue.Enqueue(pair);
+				UE_LOG(LogTemp, Warning, TEXT("Right Queued"));
+			}
+		}
+	}
+
+	// Top
+	if (x + 1 <= Owner->Grid->Rows - 1 && (Direction == EConeDirection::D_UpLeft || Direction == EConeDirection::D_UpRight))
+	{
+		if (ConeDijkstraGrid[Owner->Grid->CoordToIndex(x + 1, y)].NodeValue > CurrentNode.NodeValue + 1.0f && ConeDijkstraGrid[Owner->Grid->CoordToIndex(x + 1, y)].bIsValidTerrain && !ConeDijkstraGrid[Owner->Grid->CoordToIndex(x + 1, y)].bWasProcessed)
+		{
+			ConeDijkstraGrid[Owner->Grid->CoordToIndex(x + 1, y)].NodeValue = CurrentNode.NodeValue + 1.0f;
+			if (bQueueNeighbors && CurrentNode.NodeValue + 1.0f <= range)
+			{
+				TPair<int32, int32> pair = TPair<int32, int32>(x + 1, y);
+				ConeDijkstraQueue.Enqueue(pair);
+				UE_LOG(LogTemp, Warning, TEXT("Top Queued"));
+			}
+		}
+	}
+
+	// Bottom
+	if (x - 1 >= 0 && (Direction == EConeDirection::D_DownLeft || Direction == EConeDirection::D_DownRight))
+	{
+		if (ConeDijkstraGrid[Owner->Grid->CoordToIndex(x - 1, y)].NodeValue > CurrentNode.NodeValue + 1.0f && ConeDijkstraGrid[Owner->Grid->CoordToIndex(x - 1, y)].bIsValidTerrain && !ConeDijkstraGrid[Owner->Grid->CoordToIndex(x - 1, y)].bWasProcessed)
+		{
+			ConeDijkstraGrid[Owner->Grid->CoordToIndex(x - 1, y)].NodeValue = CurrentNode.NodeValue + 1.0f;
+			if (bQueueNeighbors && CurrentNode.NodeValue + 1.0f <= range)
+			{
+				TPair<int32, int32> pair = TPair<int32, int32>(x - 1, y);
+				ConeDijkstraQueue.Enqueue(pair);
+				UE_LOG(LogTemp, Warning, TEXT("Bottom Queued"));
+			}
+		}
+	}
+
+	// Top-Left
+	if (x + 1 <= Owner->Grid->Rows - 1 && y - 1 >= 0 && Direction == EConeDirection::D_UpLeft)
+	{
+		if (ConeDijkstraGrid[Owner->Grid->CoordToIndex(x + 1, y - 1)].NodeValue > CurrentNode.NodeValue + 1.5f && ConeDijkstraGrid[Owner->Grid->CoordToIndex(x + 1, y - 1)].bIsValidTerrain && !ConeDijkstraGrid[Owner->Grid->CoordToIndex(x + 1, y - 1)].bWasProcessed)
+		{
+			ConeDijkstraGrid[Owner->Grid->CoordToIndex(x + 1, y - 1)].NodeValue = CurrentNode.NodeValue + 1.5f;
+			if (bQueueNeighbors && CurrentNode.NodeValue + 1.5f <= range)
+			{
+				TPair<int32, int32> pair = TPair<int32, int32>(x + 1, y - 1);
+				ConeDijkstraQueue.Enqueue(pair);
+				UE_LOG(LogTemp, Warning, TEXT("Top Left Queued"));
+			}
+		}
+	}
+
+	// Top-Right
+	if (x + 1 <= Owner->Grid->Rows - 1 && y + 1 <= Owner->Grid->Columns - 1 && Direction == EConeDirection::D_UpRight)
+	{
+		if (ConeDijkstraGrid[Owner->Grid->CoordToIndex(x + 1, y + 1)].NodeValue > CurrentNode.NodeValue + 1.5f && ConeDijkstraGrid[Owner->Grid->CoordToIndex(x + 1, y + 1)].bIsValidTerrain && !ConeDijkstraGrid[Owner->Grid->CoordToIndex(x + 1, y + 1)].bWasProcessed)
+		{
+			ConeDijkstraGrid[Owner->Grid->CoordToIndex(x + 1, y + 1)].NodeValue = CurrentNode.NodeValue + 1.5f;
+			if (bQueueNeighbors && CurrentNode.NodeValue + 1.5f <= range)
+			{
+				TPair<int32, int32> pair = TPair<int32, int32>(x + 1, y + 1);
+				ConeDijkstraQueue.Enqueue(pair);
+				UE_LOG(LogTemp, Warning, TEXT("Top Right Queued"));
+			}
+		}
+	}
+
+	// Bottom-Left
+	if (x - 1 >= 0 && y - 1 >= 0 && Direction == EConeDirection::D_DownLeft)
+	{
+		if (ConeDijkstraGrid[Owner->Grid->CoordToIndex(x - 1, y - 1)].NodeValue > CurrentNode.NodeValue + 1.5f && ConeDijkstraGrid[Owner->Grid->CoordToIndex(x - 1, y - 1)].bIsValidTerrain && !ConeDijkstraGrid[Owner->Grid->CoordToIndex(x - 1, y - 1)].bWasProcessed)
+		{
+			ConeDijkstraGrid[Owner->Grid->CoordToIndex(x - 1, y - 1)].NodeValue = CurrentNode.NodeValue + 1.5f;
+			if (bQueueNeighbors && CurrentNode.NodeValue + 1.5f <= range)
+			{
+				TPair<int32, int32> pair = TPair<int32, int32>(x - 1, y - 1);
+				ConeDijkstraQueue.Enqueue(pair);
+				UE_LOG(LogTemp, Warning, TEXT("Bottom Left Queued"));
+			}
+		}
+	}
+	// Bottom-Right
+	if (x - 1 >= 0 && y + 1 <= Columns - 1 && Direction == EConeDirection::D_DownRight)
+	{
+
+		if (ConeDijkstraGrid[Owner->Grid->CoordToIndex(x - 1, y + 1)].NodeValue > CurrentNode.NodeValue + 1.5f && ConeDijkstraGrid[Owner->Grid->CoordToIndex(x - 1, y + 1)].bIsValidTerrain && !ConeDijkstraGrid[Owner->Grid->CoordToIndex(x - 1, y + 1)].bWasProcessed)
+		{
+			ConeDijkstraGrid[Owner->Grid->CoordToIndex(x - 1, y + 1)].NodeValue = CurrentNode.NodeValue + 1.5f;
+			if (bQueueNeighbors && CurrentNode.NodeValue + 1.5f <= range)
+			{
+				TPair<int32, int32> pair = TPair<int32, int32>(x - 1, y + 1);
+				ConeDijkstraQueue.Enqueue(pair);
+				UE_LOG(LogTemp, Warning, TEXT("Bottom Right Queued"));
+			}
+		}
+	}
+
+	ConeDijkstraGrid[Owner->Grid->CoordToIndex(x, y)].bWasProcessed = true;
+	
+	if (Owner->Grid->IsValidCoord(x, y))
+	{
+		FTransform transform;
+		transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 2.0f));
+		Owner->OnAbilityAim(transform);
+	}
+	//ValidIndexMap.Add(CoordToIndex(x, y), DijkstraGrid[CoordToIndex(x, y)].NodeValue);
 }
 
 void UAbilityComponent::PlotTileLow(int32 x0, int32 y0, int32 x1, int32 y1, bool bWasSwitched)

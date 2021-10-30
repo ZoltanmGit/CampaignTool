@@ -91,7 +91,9 @@ private:
 	void ResolveConeDiagonal(int32 x_char, int32 y_char, TEnumAsByte<EConeDirection> Direction);
 	void ProcessNodeForCone(int32 x,int32 y,float range, TEnumAsByte<EConeDirection> Direction );
 
-	TArray<FDijkstraNode> ConeDijkstraGrid;
+	UPROPERTY(VisibleAnywhere, Category = "Cone")
+		TArray<FDijkstraNode> ConeDijkstraGrid;
+	
 	TQueue<TPair<int32,int32>> ConeDijkstraQueue;
 
 	
