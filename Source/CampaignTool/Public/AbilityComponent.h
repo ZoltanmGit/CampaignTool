@@ -57,18 +57,16 @@ public:
 		void SelectAbility(class UBaseAbility* AbilityToSelect);
 
 	/** Dijkstra's algorithm **/
-	TQueue<TPair<int32, int32>> DijkstraQueue;
 	UPROPERTY(VisibleAnywhere, Category = Pathfinding)
 		int32 Rows;
 	UPROPERTY(VisibleAnywhere, Category = Pathfinding)
 		int32 Columns;
 	UPROPERTY(VisibleAnywhere, Category = Pathfinding)
 		TArray<FDijkstraNode> DijkstraGrid;
+	TQueue<TPair<int32, int32>> DijkstraQueue;
 public:
 	
 	/** Dijkstra's algorithm **/
-	UFUNCTION()
-		void ProcessTile();
 	
 	/** Bresenham's line algorithm **/
 	UFUNCTION()
@@ -91,6 +89,10 @@ private:
 	void ResolveConeHorizontal(int32 x_char, int32 y_char, TEnumAsByte<EConeDirection> Direction);
 	void ResolveConeVertical(int32 x_char, int32 y_char, TEnumAsByte<EConeDirection> Direction);
 	void ResolveConeDiagonal(int32 x_char, int32 y_char, TEnumAsByte<EConeDirection> Direction);
+	void ProcessNodeForCone(int32 x,int32 y,float range, TEnumAsByte<EConeDirection> Direction );
+
+	TArray<FDijkstraNode> ConeDijkstraGrid;
+	TQueue<TPair<int32,int32>> ConeDijkstraQueue;
 
 	
 	/** Bresenham's line algorithm **/

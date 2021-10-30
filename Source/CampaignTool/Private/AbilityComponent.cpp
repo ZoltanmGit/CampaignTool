@@ -379,6 +379,90 @@ TEnumAsByte<EConeDirection> UAbilityComponent::GetConeDirection(int32 x_char, in
 
 void UAbilityComponent::ResolveConeHorizontal(int32 x_char, int32 y_char, TEnumAsByte<EConeDirection> Direction)
 {
+	int32 x = x_char;
+	int32 y = y_char;
+	if (Direction == EConeDirection::D_Right)
+	{
+		y = y + 1;
+		for (int32 i = 1; i <= 6/* CHANGE TO ABILITY RANGE */; i++)
+		{
+			FTransform transform;
+			if (Owner->Grid->IsValidCoord(x, y))
+			{
+				transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 10.0f));
+				Owner->OnAbilityAim(transform);
+			}
+
+			int32 width;
+			if (i % 2 == 0)
+			{
+				width = i / 2;
+			}
+			else
+			{
+				width = (i - 1) / 2;
+			}
+
+			for (int32 j = 1; j <= width; j++)
+			{
+				// To the Up
+				if (Owner->Grid->IsValidCoord(x + j, y))
+				{
+					transform.SetLocation(FVector(((x+j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 10.0f));
+					Owner->OnAbilityAim(transform);
+				}
+
+				// To the Down
+				if (Owner->Grid->IsValidCoord(x - j, y))
+				{
+					transform.SetLocation(FVector(((x-j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 10.0f));
+					Owner->OnAbilityAim(transform);
+				}
+			}
+			y = y + 1;
+		}
+	}
+	else if(Direction == EConeDirection::D_Left)
+	{
+		y = y - 1;
+		for (int32 i = 1; i <= 6/* CHANGE TO ABILITY RANGE */; i++)
+		{
+			FTransform transform;
+			if (Owner->Grid->IsValidCoord(x, y))
+			{
+				transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 10.0f));
+				Owner->OnAbilityAim(transform);
+			}
+
+			int32 width;
+			if (i % 2 == 0)
+			{
+				width = i / 2;
+			}
+			else
+			{
+				width = (i - 1) / 2;
+			}
+
+			for (int32 j = 1; j <= width; j++)
+			{
+				// To the Up
+				if (Owner->Grid->IsValidCoord(x + j, y))
+				{
+					transform.SetLocation(FVector(((x+j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 10.0f));
+					Owner->OnAbilityAim(transform);
+				}
+
+				// To the Down
+				if (Owner->Grid->IsValidCoord(x - j, y))
+				{
+					transform.SetLocation(FVector(((x-j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 10.0f));
+					Owner->OnAbilityAim(transform);
+				}
+			}
+			y = y - 1;
+		}
+	}
 }
 
 void UAbilityComponent::ResolveConeVertical(int32 x_char, int32 y_char, TEnumAsByte<EConeDirection> Direction)
@@ -388,7 +472,7 @@ void UAbilityComponent::ResolveConeVertical(int32 x_char, int32 y_char, TEnumAsB
 	if (Direction == EConeDirection::D_Up)
 	{
 		x = x + 1;
-		for (int32 i = 1; i <= 6/* CHANGE TO ABILITY RANGE*/; i++)
+		for (int32 i = 1; i <= 6/* CHANGE TO ABILITY RANGE */; i++)
 		{
 			FTransform transform;
 			if (Owner->Grid->IsValidCoord(x, y))
@@ -471,6 +555,41 @@ void UAbilityComponent::ResolveConeVertical(int32 x_char, int32 y_char, TEnumAsB
 
 void UAbilityComponent::ResolveConeDiagonal(int32 x_char, int32 y_char, TEnumAsByte<EConeDirection> Direction)
 {
+	/** Init the Dijkstra grid for the cone algorithm **/
+	ConeDijkstraGrid.Empty();
+	for (int32 i = 0; i < Owner->Grid->Rows; i++)
+	{
+		for (int32 j = 0; j < Owner->Grid->Columns; j++)
+		{
+			FDijkstraNode node;
+			node.x = i;
+			node.y = j;
+			node.bWasProcessed = false;
+			if (Owner->Grid->GetTilePropertiesFromCoord(i, j).TerrainType == TerrainType::Water || Owner->Grid->GetTilePropertiesFromCoord(i, j).TerrainType == TerrainType::DeepWater || Owner->Grid->GetTilePropertiesFromCoord(i, j).TerrainType == TerrainType::Void)
+			{
+				node.bIsValidTerrain = false;
+			}
+			else
+			{
+				node.bIsValidTerrain = true;
+			}
+
+			if (x_char == i && y_char == j)
+			{
+				node.NodeValue = 0;
+			}
+			else
+			{
+				node.NodeValue = Rows * Columns + 1;
+			}
+			DijkstraGrid.Add(node);
+		}
+	}
+}
+
+void UAbilityComponent::ProcessNodeForCone(int32 x, int32 y, float range, TEnumAsByte<EConeDirection> Direction)
+{
+
 }
 
 void UAbilityComponent::PlotTileLow(int32 x0, int32 y0, int32 x1, int32 y1, bool bWasSwitched)
@@ -579,7 +698,4 @@ void UAbilityComponent::PlotTileHigh(int32 x0, int32 y0, int32 x1, int32 y1, boo
 	}
 }
 
-void UAbilityComponent::ProcessTile()
-{
-}
 

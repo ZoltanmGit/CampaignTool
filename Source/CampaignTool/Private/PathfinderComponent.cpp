@@ -269,8 +269,8 @@ void UPathfinderComponent::GetValidMovementIndexes(int32 x, int32 y, float range
 				DijkstraGrid.Add(node);
 			}
 		}
-		TPair<int32, int32> asd = TPair<int32, int32>(x, y);
-		DijkstraQ.Enqueue(asd);
+		TPair<int32, int32> s = TPair<int32, int32>(x, y);
+		DijkstraQ.Enqueue(s);
 		while (DijkstraQ.IsEmpty() == false)
 		{
 			TPair<int32, int32> pair;
