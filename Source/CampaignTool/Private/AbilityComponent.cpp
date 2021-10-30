@@ -77,9 +77,10 @@ void UAbilityComponent::HandleTileChange()
 				if (!(x_curs == x_char && y_curs == y_char))
 				{
 					// Get Direction
-					if (GetConeDirection(x_char, y_char, x_curs, y_curs) != EConeDirection::D_Undefined)
+					TEnumAsByte<EConeDirection> Direction = GetConeDirection(x_char, y_char, x_curs, y_curs);
+					if ( Direction != EConeDirection::D_Undefined)
 					{
-						ResolveCone(x_char, y_char, GetConeDirection(x_char, y_char, x_curs, y_curs));
+						ResolveCone(x_char, y_char, Direction);
 					}
 				}
 			}
@@ -162,7 +163,7 @@ void UAbilityComponent::ResolveCone(int32 x, int32 y, TEnumAsByte<EConeDirection
 	{
 		ResolveConeVertical(x, y, Direction);
 	}
-	if (Direction == EConeDirection::D_Left || Direction == EConeDirection::D_Right)
+	else if (Direction == EConeDirection::D_Left || Direction == EConeDirection::D_Right)
 	{
 		ResolveConeHorizontal(x, y, Direction);
 	}
@@ -308,14 +309,64 @@ TEnumAsByte<EConeDirection> UAbilityComponent::GetConeDirection(int32 x_char, in
 			return EConeDirection::D_Down;
 		}
 		// Right or displacement
-		else if (y_curs > y_char && x_curs > x_curs - (y_curs - y_char) && x_curs < x_curs + (y_curs - y_char))
+		else if (y_curs > y_char && x_curs > x_curs - (y_curs - y_char) && x_curs < x_char + (y_curs - y_char))
 		{
+			if (y_curs - y_char > 2)
+			{
+				int32 displacement;
+				if (y_curs - y_char % 2 == 0)
+				{
+					// If even 
+					displacement = (y_curs - y_char - 2) / 2;
+				}
+				else
+				{
+					// If odd
+					displacement = (y_curs - y_char - 1) / 2;
+				}
+
+				if (x_curs <= x_char - (y_curs - y_char) + displacement )
+				{
+					UE_LOG(LogTemp, Warning, TEXT("DownRight"));
+					return EConeDirection::D_DownRight;
+				}
+				else if (x_curs >= x_char + (y_curs - y_char) - displacement)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("UpRight"));
+					return EConeDirection::D_UpRight;
+				}
+			}
 			UE_LOG(LogTemp, Warning, TEXT("Right"));
 			return EConeDirection::D_Right;
 		}
 		// Left or displacement
 		else if (y_curs < y_char && x_curs > x_curs - (y_char - y_curs) && x_curs < x_curs + (y_char - y_curs))
 		{
+			if (y_char - y_curs > 2)
+			{
+				int32 displacement;
+				if (y_char - y_curs % 2 == 0)
+				{
+					// If even 
+					displacement = (y_char - y_curs - 2) / 2;
+				}
+				else
+				{
+					// If odd
+					displacement = (y_char - y_curs - 1) / 2;
+				}
+
+				if (x_curs <= x_char - (y_char - y_curs) + displacement)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("DownLeft"));
+					return EConeDirection::D_DownLeft;
+				}
+				else if (x_curs >= x_char + (y_char - y_curs) - displacement)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("UpLeft"));
+					return EConeDirection::D_UpLeft;
+				}
+			}
 			UE_LOG(LogTemp, Warning, TEXT("Left"));
 			return EConeDirection::D_Left;
 		}
@@ -337,7 +388,7 @@ void UAbilityComponent::ResolveConeVertical(int32 x_char, int32 y_char, TEnumAsB
 	if (Direction == EConeDirection::D_Up)
 	{
 		x = x + 1;
-		for (int32 i = 1; i <= 9/* CHANGE TO ABILITY RANGE*/; i++)
+		for (int32 i = 1; i <= 6/* CHANGE TO ABILITY RANGE*/; i++)
 		{
 			FTransform transform;
 			if (Owner->Grid->IsValidCoord(x, y))
