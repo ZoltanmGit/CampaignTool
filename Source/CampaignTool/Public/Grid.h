@@ -61,4 +61,6 @@ public:
 		int32 CoordToIndex(int32 x, int32 y);
 	UFUNCTION(BlueprintCallable)
 		void IntexToCoord(int32 Index, int32 &OutX, int32 &OutY);
+	UFUNCTION(BlueprintCallable)
+		bool IsValidCoord(int32 x, int32 y);
 };

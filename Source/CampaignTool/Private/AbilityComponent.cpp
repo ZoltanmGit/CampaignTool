@@ -39,26 +39,49 @@ void UAbilityComponent::HandleTileChange()
 			UBaseAoeTargetAbility* AbilityAsAOE = Cast<UBaseAoeTargetAbility>(SelectedAbility);
 			if (AbilityAsAOE != nullptr && AbilityAsAOE->AreaEffectType == EAreaOfEffectType::Line)
 			{
+				// Character coordinates
 				int32 DummyIndex;
 				FTileProperties temptileprop = Owner->Grid->GetTilePropertiesFromTransform(Owner->GetActorTransform(), DummyIndex);
 				int32 x0 = temptileprop.Row;
 				int32 y0 = temptileprop.Column;
-
+				
+				// Cursor coordinates
 				FTransform CursorTransform;
 				CursorTransform.SetLocation(Owner->CursorLocation);
 				temptileprop = Owner->Grid->GetTilePropertiesFromTransform(CursorTransform, DummyIndex);
 				int32 x1 = temptileprop.Row;
 				int32 y1 = temptileprop.Column;
-
+				
+				// Line
 				ResolveLine(x0, y0, x1, y1);
 			}
 			else if (AbilityAsAOE != nullptr && AbilityAsAOE->AreaEffectType == EAreaOfEffectType::Sphere)
 			{
-				//Sphere
+				// Sphere
 			}
 			else if (AbilityAsAOE != nullptr && AbilityAsAOE->AreaEffectType == EAreaOfEffectType::Cone)
 			{
-				//Cone
+				// Character coordinates
+				int32 DummyIndex;
+				FTileProperties temptileprop = Owner->Grid->GetTilePropertiesFromTransform(Owner->GetActorTransform(), DummyIndex);
+				int32 x_char = temptileprop.Row;
+				int32 y_char = temptileprop.Column;
+
+				// Cursor coordinates
+				FTransform CursorTransform;
+				CursorTransform.SetLocation(Owner->CursorLocation);
+				temptileprop = Owner->Grid->GetTilePropertiesFromTransform(CursorTransform, DummyIndex);
+				int32 x_curs = temptileprop.Row;
+				int32 y_curs = temptileprop.Column;
+
+				if (!(x_curs == x_char && y_curs == y_char))
+				{
+					// Get Direction
+					if (GetConeDirection(x_char, y_char, x_curs, y_curs) != EConeDirection::D_Undefined)
+					{
+						ResolveCone(x_char, y_char, GetConeDirection(x_char, y_char, x_curs, y_curs));
+					}
+				}
 			}
 		}
 		else if (SelectedAbility->TargetType == ETargetType::Single)
@@ -133,6 +156,18 @@ void UAbilityComponent::ResolveLine(int32 x0, int32 y0, int32 x1, int32 y1)
 	}
 }
 
+void UAbilityComponent::ResolveCone(int32 x, int32 y, TEnumAsByte<EConeDirection> Direction)
+{
+	if (Direction == EConeDirection::D_Up || Direction == EConeDirection::D_Up)
+	{
+		ResolveConeVertical(x, y, Direction);
+	}
+	if (Direction == EConeDirection::D_Left || Direction == EConeDirection::D_Right)
+	{
+		ResolveConeHorizontal(x, y, Direction);
+	}
+}
+
 void UAbilityComponent::CancelAbility()
 {
 	SelectedAbility = nullptr;
@@ -171,6 +206,107 @@ bool UAbilityComponent::HasSelectedAbility()
 	{
 		return false;
 	}
+}
+
+TEnumAsByte<EConeDirection> UAbilityComponent::GetConeDirection(int32 x_char, int32 y_char, int32 x_curs, int32 y_curs)
+{
+	if (x_curs - x_char == y_curs - y_char) 
+	{
+		if (x_curs > x_char)
+		{
+			return EConeDirection::D_UpRight;
+		}
+		else
+		{
+			return EConeDirection::D_DownLeft;
+		}
+		return EConeDirection::D_Undefined; // Redundant
+	}
+	else if (x_curs - x_char == (y_curs - y_char) * -1)
+	{
+		if (x_curs > x_char)
+		{
+			return EConeDirection::D_UpLeft;
+		}
+		else
+		{
+			return EConeDirection::D_DownRight;
+		}
+		return EConeDirection::D_Undefined; // Redundant
+	}
+	else
+	{
+		if (x_curs > x_char && y_curs > y_char - (x_curs - x_char) && y_curs < y_char + (x_curs - x_char))
+		{
+			return EConeDirection::D_Up;
+		}
+		else if (x_curs < x_char && y_curs > y_char - (x_char - x_curs) && y_curs < y_char + (x_char - x_curs))
+		{
+			return EConeDirection::D_Down;
+		}
+		else if (y_curs > y_char && x_curs > x_curs - (y_curs - y_char) && x_curs < x_curs + (y_curs - y_char))
+		{
+			return EConeDirection::D_Right;
+		}
+		else if (y_curs < y_char && x_curs > x_curs - (y_char - y_curs) && x_curs < x_curs + (y_char - y_curs))
+		{
+			return EConeDirection::D_Left;
+		}
+		return EConeDirection::D_Undefined; // Redundant if everything is covered
+	}
+	return EConeDirection::D_Undefined; // Redundant
+}
+
+void UAbilityComponent::ResolveConeHorizontal(int32 x_char, int32 y_char, TEnumAsByte<EConeDirection> Direction)
+{
+}
+
+void UAbilityComponent::ResolveConeVertical(int32 x_char, int32 y_char, TEnumAsByte<EConeDirection> Direction)
+{
+	int32 x = x_char;
+	int32 y = y_char;
+	if (Direction == EConeDirection::D_Up)
+	{
+		x = x + 1;
+		for (int32 i = 1; i <= 9/* CHANGE TO ABILITY RANGE*/; i++)
+		{
+			if (Owner->Grid->IsValidCoord(x, y))
+			{
+				FTransform transform;
+				transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 10.0f));
+				Owner->OnAbilityAim(transform);
+			}
+
+			int32 width;
+			if (i % 2 == 0)
+			{
+				width = i / 2;
+			}
+			else
+			{
+				width = (i - 1) / 2;
+			}
+			for (int32 j = 1; j <= width; j++)
+			{
+				// To the right
+				transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), ((y + j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 10.0f));
+				Owner->OnAbilityAim(transform);
+				// To the left
+				transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), ((y - j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 10.0f));
+				Owner->OnAbilityAim(transform);
+
+			}
+			x = x + 1;
+		}
+	}
+	else if (Direction == EConeDirection::D_Down)
+	{
+		x = x - 1;
+	}
+}
+
+void UAbilityComponent::ResolveConeDiagonal(int32 x_char, int32 y_char, TEnumAsByte<EConeDirection> Direction)
+{
 }
 
 void UAbilityComponent::PlotTileLow(int32 x0, int32 y0, int32 x1, int32 y1, bool bWasSwitched)

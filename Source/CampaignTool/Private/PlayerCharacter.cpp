@@ -41,11 +41,23 @@ APlayerCharacter::APlayerCharacter()
 	CharacterType = ECharacterType::C_Ally;
 
 	/** DEBUG **/
-	TestAbility = CreateDefaultSubobject<UBaseAoeTargetAbility>(TEXT("TestAbility"));
-	TestAbility->Range = 5;
-	TestAbility->AreaEffectType = EAreaOfEffectType::Line;
-	TestAbility->AfffectedTargetType = EAffectedTargetType::Everyone;
-	AbilityArray.Add(TestAbility);
+	TestAbility01 = CreateDefaultSubobject<UBaseAoeTargetAbility>(TEXT("TestAbility01"));
+	TestAbility01->Range = 5;
+	TestAbility01->AreaEffectType = EAreaOfEffectType::Line;
+	TestAbility01->AfffectedTargetType = EAffectedTargetType::Everyone;
+	AbilityArray.Add(TestAbility01);
+
+	TestAbility02 = CreateDefaultSubobject<UBaseAoeTargetAbility>(TEXT("TestAbility02"));
+	TestAbility02->Range = 5;
+	TestAbility02->AreaEffectType = EAreaOfEffectType::Cone;
+	TestAbility02->AfffectedTargetType = EAffectedTargetType::Everyone;
+	AbilityArray.Add(TestAbility02);
+
+	TestAbility03 = CreateDefaultSubobject<UBaseAoeTargetAbility>(TEXT("TestAbility03"));
+	TestAbility03->Range = 5;
+	TestAbility03->AreaEffectType = EAreaOfEffectType::Sphere;
+	TestAbility03->AfffectedTargetType = EAffectedTargetType::Everyone;
+	AbilityArray.Add(TestAbility03);
 }
 /// <summary>
 /// Beginplay is called when the game starts or when the actor is spawned
@@ -127,7 +139,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 						// if aiming ability
 						if (bIsAimingAbility)
 						{
-							UE_LOG(LogTemp, Warning, TEXT("______ChangedAim______"));
+							//UE_LOG(LogTemp, Warning, TEXT("______ChangedAim______"));
 							CharacterAbilityComponent->HandleTileChange();
 						}
 						// if aiming movement ...
@@ -230,6 +242,12 @@ void APlayerCharacter::HandleHotkey(int index)
 		{
 			CharacterAbilityComponent->CancelAbility();
 			bIsAimingAbility = false;
+		}
+		else if (bIsAimingAbility && CharacterAbilityComponent->SelectedAbility != AbilityArray[index])
+		{
+			CharacterAbilityComponent->CancelAbility();
+			CharacterAbilityComponent->SelectAbility(AbilityArray[index]);
+			CharacterAbilityComponent->HandleTileChange();
 		}
 		else if (!bIsAimingAbility)
 		{

@@ -149,3 +149,12 @@ void AGrid::IntexToCoord(int32 Index, int32& OutX, int32& OutY)
 	OutX = Index / Columns;
 	OutY = Index % Columns;
 }
+
+bool AGrid::IsValidCoord(int32 x, int32 y)
+{
+	if (x >= 0 && x < Rows && y >= 0 && y < Columns)
+	{
+		return true;
+	}
+	return false;
+}

@@ -74,7 +74,11 @@ protected:
 
 	/**REDUNDANT FOR DEBUG PURPOSES**/
 	UPROPERTY(VisibleAnywhere)
-		class UBaseAoeTargetAbility* TestAbility;
+		class UBaseAoeTargetAbility* TestAbility01;
+	UPROPERTY(VisibleAnywhere)
+		class UBaseAoeTargetAbility* TestAbility02;
+	UPROPERTY(VisibleAnywhere)
+		class UBaseAoeTargetAbility* TestAbility03;
 	/** For parametered bindaction use **/
 	DECLARE_DELEGATE_OneParam(FCustomInputDelegate, const int);
 public:
