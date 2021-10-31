@@ -23,7 +23,7 @@ APlayerCharacter::APlayerCharacter()
 
 	//Camera and SpringArm
 	CharacterSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CharacterSpringArm"));
-	CharacterSpringArm->TargetArmLength = 700.0f;
+	CharacterSpringArm->TargetArmLength = 1000.0f;
 	CharacterSpringArm->bEnableCameraLag = true;
 	CharacterSpringArm->SetRelativeRotation(FRotator(-70.0f, 0.0f, 0.0f));
 	CharacterSpringArm->SetUsingAbsoluteLocation(true);
