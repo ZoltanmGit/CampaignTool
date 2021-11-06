@@ -66,12 +66,11 @@ public:
 	TQueue<TPair<int32, int32>> DijkstraQueue;
 public:
 	
-	/** Dijkstra's algorithm **/
+	/** Sphere Dijkstra's algorithm **/
 	
 	/** Bresenham's line algorithm **/
 	UFUNCTION()
 		void ResolveLine(int32 x0, int32 y0, int32 x1, int32 y1);
-	
 	/** Cone Algorithm **/
 	UFUNCTION()
 		void ResolveCone(int32 x, int32 y, TEnumAsByte<EConeDirection> Direction);
@@ -80,24 +79,35 @@ public:
 	/** General Functionality **/
 	void CancelAbility();
 	void ResetPathfinding();
-	bool HasSelectedAbility(); // Redundant? 
 
 private:
-	
+	/** Sphere Algorithm **/
+
 	/** Cone Algorithm **/
+	UPROPERTY(VisibleAnywhere, Category = "Cone")
+		TArray<FDijkstraNode> ConeDijkstraGrid;
+	TQueue<TPair<int32, int32>> ConeDijkstraQueue;
+
 	TEnumAsByte<EConeDirection> GetConeDirection(int32 x_char, int32 y_char, int32 x_curs, int32 y_curs);
 	void ResolveConeHorizontal(int32 x_char, int32 y_char, TEnumAsByte<EConeDirection> Direction);
 	void ResolveConeVertical(int32 x_char, int32 y_char, TEnumAsByte<EConeDirection> Direction);
 	void ResolveConeDiagonal(int32 x_char, int32 y_char, TEnumAsByte<EConeDirection> Direction);
 	void ProcessNodeForCone(int32 x,int32 y,float range, TEnumAsByte<EConeDirection> Direction );
 
-	UPROPERTY(VisibleAnywhere, Category = "Cone")
-		TArray<FDijkstraNode> ConeDijkstraGrid;
 	
-	TQueue<TPair<int32,int32>> ConeDijkstraQueue;
 
 	
 	/** Bresenham's line algorithm **/
 	void PlotTileLow(int32 x0, int32 y0, int32 x1, int32 y1, bool bWasSwitched);
 	void PlotTileHigh(int32 x0, int32 y0, int32 x1, int32 y1, bool bWasSwitched);
+
+
+	/** Range **/
+	UPROPERTY(VisibleAnywhere, Category = "Range")
+		TArray<FDijkstraNode> RangeDijkstraGrid;
+
+	TQueue<TPair<int32, int32>> RangeDijkstraQueue;
+
+	void GetRangeGrid(int32 x_char, int32 y_char);
+	void ProcessNodeForRange(int32 x, int32 y, float range);
 };
