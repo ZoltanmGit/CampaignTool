@@ -60,9 +60,7 @@ APlayerCharacter::APlayerCharacter()
 	TestAbility03->AfffectedTargetType = EAffectedTargetType::Everyone;
 	AbilityArray.Add(TestAbility03);
 }
-/// <summary>
-/// Beginplay is called when the game starts or when the actor is spawned
-/// </summary>
+
 void APlayerCharacter::BeginPlay()
 {
 	DefaultController = Cast<APlayerController>(GetController());
@@ -77,10 +75,7 @@ void APlayerCharacter::BeginPlay()
 
 	Super::BeginPlay();
 }
-/// <summary>
-/// Sets up the player inputs
-/// </summary>
-/// <param name="PlayerInputComponent">The component through which the setup is handled</param>
+
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -98,10 +93,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction<FCustomInputDelegate>("Hotkey02", IE_Pressed, this, &APlayerCharacter::HandleHotkey, 1);
 	PlayerInputComponent->BindAction<FCustomInputDelegate>("Hotkey03", IE_Pressed, this, &APlayerCharacter::HandleHotkey, 2);
 }
-/// <summary>
-/// The Tick function gets called every frame
-/// </summary>
-/// <param name="DeltaTime">The DeltaTime for this tick</param>
+
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -228,11 +220,10 @@ void APlayerCharacter::Tick(float DeltaTime)
 		}
 	}
 }
-/// <summary>
-/// Test action that is bound to the "T" letter
-/// </summary>
+
 void APlayerCharacter::HandleTestAction()
 {
+	UE_LOG(LogTemp, Warning, TEXT("________"));
 	int32 testValue = DiceRoller->Roll(4);
 	UE_LOG(LogTemp, Warning, TEXT("d4: %i"), testValue);
 	testValue = DiceRoller->Roll(6);
@@ -245,6 +236,7 @@ void APlayerCharacter::HandleTestAction()
 	UE_LOG(LogTemp, Warning, TEXT("d12: %i"), testValue);
 	testValue = DiceRoller->Roll(20);
 	UE_LOG(LogTemp, Warning, TEXT("d20: %i"), testValue);
+	UE_LOG(LogTemp, Warning, TEXT("________"));
 }
 void APlayerCharacter::HandleHotkey(int index)
 {
@@ -270,10 +262,7 @@ void APlayerCharacter::HandleHotkey(int index)
 		}
 	}
 }
-/// <summary>
-/// Moves the camera in a forward and backward direction relative to its current rotation
-/// </summary>
-/// <param name="value">The value that drives the movement</param>
+
 void APlayerCharacter::CameraForward(float value)
 {
 	if (value != 0.0f && CharacterCamera && CharacterSpringArm)
@@ -283,10 +272,7 @@ void APlayerCharacter::CameraForward(float value)
 		CharacterSpringArm->SetWorldLocation(newLocation);
 	}
 }
-/// <summary>
-/// Moves the camera in the right and left direction relative to its current rotation
-/// </summary>
-/// <param name="value">The value that drives the movement</param>
+
 void APlayerCharacter::CameraRight(float value)
 {
 	if (value != 0.0f && CharacterCamera != nullptr && CharacterSpringArm != nullptr)
@@ -296,10 +282,7 @@ void APlayerCharacter::CameraRight(float value)
 		CharacterSpringArm->SetWorldLocation(newLocation);
 	}
 }
-/// <summary>
-/// Turns the Actor's Spring Arm and with it the camera that is attached to it
-/// </summary>
-/// <param name="value">The value that drives the rotation</param>
+
 void APlayerCharacter::CameraTurn(float value)
 {
 	if (value != 0 && CharacterCamera != nullptr && CharacterSpringArm != nullptr && bIsRightMouseDown)
@@ -307,9 +290,7 @@ void APlayerCharacter::CameraTurn(float value)
 		CharacterSpringArm->SetRelativeRotation(FRotator(CharacterSpringArm->GetRelativeRotation().Pitch, CharacterSpringArm->GetRelativeRotation().Yaw + value, CharacterSpringArm->GetRelativeRotation().Roll));
 	}
 }
-/// <summary>
-/// Handles the behaviour of the right mouse button being pressed down
-/// </summary>
+
 void APlayerCharacter::HandleRMBPress()
 {
 	if (!bIsRightMouseDown && PlayerCursorState == CursorState::OverGameWorld)
@@ -336,9 +317,7 @@ void APlayerCharacter::HandleRMBPress()
 		}
 	}
 }
-/// <summary>
-/// Handles the behaviour of the right mouse button being released
-/// </summary>
+
 void APlayerCharacter::HandleRMBRelease()
 {
 	if (bIsRightMouseDown && PlayerCursorState == CursorState::Turning)
@@ -357,9 +336,7 @@ void APlayerCharacter::HandleRMBRelease()
 		}
 	}
 }
-/// <summary>
-/// Handles the behaviour of the Left Mouse Button being pressed down
-/// </summary>
+
 void APlayerCharacter::HandleLMBPress()
 {	
 	// If MovementAiming
@@ -383,10 +360,7 @@ void APlayerCharacter::HandleLMBPress()
 		}
 	}
 }
-/// <summary>
-/// Changes the possession of the playerController and clears some values for the previous possession
-/// </summary>
-/// <param name="newCharacter">The character which is next to be possessed</param>
+
 void APlayerCharacter::ChangePossession(ABaseCharacter* newCharacter)
 {
 	CleanupPathfinding(); // PLACEHOLDER

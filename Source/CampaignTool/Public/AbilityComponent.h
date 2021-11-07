@@ -61,13 +61,14 @@ public:
 		int32 Rows;
 	UPROPERTY(VisibleAnywhere, Category = Pathfinding)
 		int32 Columns;
-	UPROPERTY(VisibleAnywhere, Category = Pathfinding)
+	/*UPROPERTY(VisibleAnywhere, Category = Pathfinding)
 		TArray<FDijkstraNode> DijkstraGrid;
-	TQueue<TPair<int32, int32>> DijkstraQueue;
+	TQueue<TPair<int32, int32>> DijkstraQueue;*/
 public:
 	
 	/** Sphere Dijkstra's algorithm **/
-	
+	UFUNCTION()
+		void ResolveSphere(int32 x, int32 y);
 	/** Bresenham's line algorithm **/
 	UFUNCTION()
 		void ResolveLine(int32 x0, int32 y0, int32 x1, int32 y1);
@@ -82,6 +83,11 @@ public:
 
 private:
 	/** Sphere Algorithm **/
+	UPROPERTY(VisibleAnywhere, Category = "Sphere")
+		TArray<FDijkstraNode> SphereDijkstraGrid;
+	TQueue<TPair<int32, int32>> SphereDijkstraQueue;
+
+	void ProcessNodeForSphere(int32 x, int32 y, float range);
 
 	/** Cone Algorithm **/
 	UPROPERTY(VisibleAnywhere, Category = "Cone")
@@ -92,10 +98,7 @@ private:
 	void ResolveConeHorizontal(int32 x_char, int32 y_char, TEnumAsByte<EConeDirection> Direction);
 	void ResolveConeVertical(int32 x_char, int32 y_char, TEnumAsByte<EConeDirection> Direction);
 	void ResolveConeDiagonal(int32 x_char, int32 y_char, TEnumAsByte<EConeDirection> Direction);
-	void ProcessNodeForCone(int32 x,int32 y,float range, TEnumAsByte<EConeDirection> Direction );
-
-	
-
+	void ProcessNodeForCone(int32 x, int32 y, float range, TEnumAsByte<EConeDirection> Direction);
 	
 	/** Bresenham's line algorithm **/
 	void PlotTileLow(int32 x0, int32 y0, int32 x1, int32 y1, bool bWasSwitched);

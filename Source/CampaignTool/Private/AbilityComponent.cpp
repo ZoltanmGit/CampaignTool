@@ -138,6 +138,10 @@ void UAbilityComponent::SelectAbility(UBaseAbility* AbilityToSelect)
 	SelectedAbility = AbilityToSelect;
 }
 
+void UAbilityComponent::ResolveSphere(int32 x, int32 y)
+{
+}
+
 void UAbilityComponent::ResolveLine(int32 x0, int32 y0, int32 x1, int32 y1)
 {
 	if (abs(y1 - y0) < abs(x1 - x0))
@@ -220,30 +224,22 @@ void UAbilityComponent::CancelAbility()
 
 void UAbilityComponent::ResetPathfinding()
 {
-	if (DijkstraGrid.Num() > 0)
-	{
-		DijkstraGrid.Empty();
-	}
-	if (!DijkstraQueue.IsEmpty())
-	{
-		DijkstraQueue.Empty();
-	}
-	if (AffectedCharacters.Num() > 0)
-	{
-		AffectedCharacters.Empty();
-	}
-	if (AffectedTiles.Num() > 0)
-	{
-		AffectedTiles.Empty();
-	}
-	if (ConeDijkstraGrid.Num() > 0)
-	{
-		ConeDijkstraGrid.Empty();
-	}
-	if (!ConeDijkstraQueue.IsEmpty())
-	{
-		ConeDijkstraQueue.Empty();
-	}
+	// Tiles and characters
+	AffectedCharacters.Empty();
+	AffectedTiles.Empty();
+	// Cone
+	ConeDijkstraGrid.Empty();
+	ConeDijkstraQueue.Empty();
+	// Range
+	RangeDijkstraGrid.Empty();
+	RangeDijkstraQueue.Empty();
+	//Sphere
+	SphereDijkstraGrid.Empty();
+	SphereDijkstraQueue.Empty();
+}
+
+void UAbilityComponent::ProcessNodeForSphere(int32 x, int32 y, float range)
+{
 }
 
 TEnumAsByte<EConeDirection> UAbilityComponent::GetConeDirection(int32 x_char, int32 y_char, int32 x_curs, int32 y_curs)
