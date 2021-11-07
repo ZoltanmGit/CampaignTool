@@ -31,12 +31,13 @@ void UAbilityComponent::BeginPlay()
 
 void UAbilityComponent::HandleTileChange()
 {
-	if (HasSelectedAbility() && Owner != nullptr && Owner->Grid != nullptr)
+	if (SelectedAbility!= nullptr && Owner != nullptr && Owner->Grid != nullptr)
 	{
 		Owner->CleanupAbilityIndicators();
 		if (SelectedAbility->TargetType == ETargetType::AOE)
 		{
 			UBaseAoeTargetAbility* AbilityAsAOE = Cast<UBaseAoeTargetAbility>(SelectedAbility);
+			// Line
 			if (AbilityAsAOE != nullptr && AbilityAsAOE->AreaEffectType == EAreaOfEffectType::Line)
 			{
 				// Character coordinates
@@ -44,21 +45,22 @@ void UAbilityComponent::HandleTileChange()
 				FTileProperties temptileprop = Owner->Grid->GetTilePropertiesFromTransform(Owner->GetActorTransform(), DummyIndex);
 				int32 x0 = temptileprop.Row;
 				int32 y0 = temptileprop.Column;
-				
+
 				// Cursor coordinates
 				FTransform CursorTransform;
 				CursorTransform.SetLocation(Owner->CursorLocation);
 				temptileprop = Owner->Grid->GetTilePropertiesFromTransform(CursorTransform, DummyIndex);
 				int32 x1 = temptileprop.Row;
 				int32 y1 = temptileprop.Column;
-				
-				// Line
+
 				ResolveLine(x0, y0, x1, y1);
 			}
+			// Sphere
 			else if (AbilityAsAOE != nullptr && AbilityAsAOE->AreaEffectType == EAreaOfEffectType::Sphere)
 			{
-				// Sphere
+				
 			}
+			// Cone
 			else if (AbilityAsAOE != nullptr && AbilityAsAOE->AreaEffectType == EAreaOfEffectType::Cone)
 			{
 				// Character coordinates
@@ -87,6 +89,12 @@ void UAbilityComponent::HandleTileChange()
 		}
 		else if (SelectedAbility->TargetType == ETargetType::Single)
 		{
+			int32 DummyIndex;
+			FTileProperties temptileprop = Owner->Grid->GetTilePropertiesFromTransform(Owner->GetActorTransform(), DummyIndex);
+			int32 x_char = temptileprop.Row;
+			int32 y_char = temptileprop.Column;
+			InitRangeGrid(x_char, y_char);
+
 			UBaseSingleTargetAbility* AbilityAsSingle = Cast<UBaseSingleTargetAbility>(SelectedAbility);
 			if (AbilityAsSingle != nullptr && AbilityAsSingle->SingleTargetType == ESingleTargetType::NonAttack)
 			{
@@ -595,14 +603,15 @@ void UAbilityComponent::ResolveConeDiagonal(int32 x_char, int32 y_char, TEnumAsB
 			node.x = i;
 			node.y = j;
 			node.bWasProcessed = false;
-			if (Owner->Grid->GetTilePropertiesFromCoord(i, j).TerrainType == TerrainType::Void)
+			node.bIsValidTerrain = true;
+			/*if (Owner->Grid->GetTilePropertiesFromCoord(i, j).TerrainType == TerrainType::Void)
 			{
 				node.bIsValidTerrain = false;
 			}
 			else
 			{
 				node.bIsValidTerrain = true;
-			}
+			}*/
 
 			if (x_char == i && y_char == j)
 			{
@@ -865,7 +874,7 @@ void UAbilityComponent::PlotTileHigh(int32 x0, int32 y0, int32 x1, int32 y1, boo
 	}
 }
 
-void UAbilityComponent::GetRangeGrid(int32 x_char, int32 y_char)
+void UAbilityComponent::InitRangeGrid(int32 x_char, int32 y_char)
 {
 	if (RangeDijkstraGrid.Num() > 0)
 	{
@@ -926,7 +935,7 @@ void UAbilityComponent::ProcessNodeForRange(int32 x, int32 y, float range)
 		}
 	}
 	//Right
-	if (y + 1 <= Columns - 1)
+	if (y + 1 <= Owner->Grid->Columns - 1)
 	{
 		if (RangeDijkstraGrid[Owner->Grid->CoordToIndex(x, y + 1)].NodeValue > CurrentNode.NodeValue + 1.0f && RangeDijkstraGrid[Owner->Grid->CoordToIndex(x, y + 1)].bIsValidTerrain && !RangeDijkstraGrid[Owner->Grid->CoordToIndex(x, y + 1)].bWasProcessed)
 		{
@@ -938,9 +947,8 @@ void UAbilityComponent::ProcessNodeForRange(int32 x, int32 y, float range)
 			}
 		}
 	}
-
 	// Top
-	if (x + 1 <= Rows - 1)
+	if (x + 1 <= Owner->Grid->Rows - 1)
 	{
 		if (RangeDijkstraGrid[Owner->Grid->CoordToIndex(x + 1, y)].NodeValue > CurrentNode.NodeValue + 1.0f && RangeDijkstraGrid[Owner->Grid->CoordToIndex(x + 1, y)].bIsValidTerrain && !RangeDijkstraGrid[Owner->Grid->CoordToIndex(x + 1, y)].bWasProcessed)
 		{
@@ -952,7 +960,6 @@ void UAbilityComponent::ProcessNodeForRange(int32 x, int32 y, float range)
 			}
 		}
 	}
-
 	// Bottom
 	if (x - 1 >= 0)
 	{
@@ -968,7 +975,7 @@ void UAbilityComponent::ProcessNodeForRange(int32 x, int32 y, float range)
 	}
 
 	// Top-Left
-	if (x + 1 <= Rows - 1 && y - 1 >= 0)
+	if (x + 1 <= Owner->Grid->Rows - 1 && y - 1 >= 0)
 	{
 		if (RangeDijkstraGrid[Owner->Grid->CoordToIndex(x + 1, y - 1)].NodeValue > CurrentNode.NodeValue + 1.5f && RangeDijkstraGrid[Owner->Grid->CoordToIndex(x + 1, y - 1)].bIsValidTerrain && !RangeDijkstraGrid[Owner->Grid->CoordToIndex(x + 1, y - 1)].bWasProcessed)
 		{
@@ -982,7 +989,7 @@ void UAbilityComponent::ProcessNodeForRange(int32 x, int32 y, float range)
 	}
 
 	// Top-Right
-	if (x + 1 <= Rows - 1 && y + 1 <= Columns - 1)
+	if (x + 1 <= Owner->Grid->Rows - 1 && y + 1 <= Owner->Grid->Columns - 1)
 	{
 		if (RangeDijkstraGrid[Owner->Grid->CoordToIndex(x + 1, y + 1)].NodeValue > CurrentNode.NodeValue + 1.5f && RangeDijkstraGrid[Owner->Grid->CoordToIndex(x + 1, y + 1)].bIsValidTerrain && !RangeDijkstraGrid[Owner->Grid->CoordToIndex(x + 1, y + 1)].bWasProcessed)
 		{
@@ -1009,7 +1016,7 @@ void UAbilityComponent::ProcessNodeForRange(int32 x, int32 y, float range)
 		}
 	}
 	// Bottom-Right
-	if (x - 1 >= 0 && y + 1 <= Columns - 1)
+	if (x - 1 >= 0 && y + 1 <= Owner->Grid->Columns - 1)
 	{
 
 		if (RangeDijkstraGrid[Owner->Grid->CoordToIndex(x - 1, y + 1)].NodeValue > CurrentNode.NodeValue + 1.5f && RangeDijkstraGrid[Owner->Grid->CoordToIndex(x - 1, y + 1)].bIsValidTerrain && !RangeDijkstraGrid[Owner->Grid->CoordToIndex(x - 1, y + 1)].bWasProcessed)

@@ -42,6 +42,8 @@ public:
 		class UMoverComponent* Mover;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Mesh)
 		class UStaticMeshComponent* CharacterMesh; //The Mesh that represents the character in-game
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Roller)
+		class UDiceRoller* DiceRoller;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		FVector CharacterLocation; // The location the pawn is supposed to be at, not necessarily where he is.

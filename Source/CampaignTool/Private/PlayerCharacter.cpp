@@ -8,6 +8,7 @@
 #include "../Public/MoverComponent.h"
 #include "../Public/Grid.h"
 #include "AbilityComponent.h"
+#include "DiceRoller.h"
 #include "Components/WidgetComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/HierarchicalInstancedStaticMeshComponent.h"
@@ -232,6 +233,18 @@ void APlayerCharacter::Tick(float DeltaTime)
 /// </summary>
 void APlayerCharacter::HandleTestAction()
 {
+	int32 testValue = DiceRoller->Roll(4);
+	UE_LOG(LogTemp, Warning, TEXT("d4: %i"), testValue);
+	testValue = DiceRoller->Roll(6);
+	UE_LOG(LogTemp, Warning, TEXT("d6: %i"), testValue);
+	testValue = DiceRoller->Roll(8);
+	UE_LOG(LogTemp, Warning, TEXT("d8: %i"), testValue);
+	testValue = DiceRoller->Roll(10);
+	UE_LOG(LogTemp, Warning, TEXT("d10: %i"), testValue);
+	testValue = DiceRoller->Roll(12);
+	UE_LOG(LogTemp, Warning, TEXT("d12: %i"), testValue);
+	testValue = DiceRoller->Roll(20);
+	UE_LOG(LogTemp, Warning, TEXT("d20: %i"), testValue);
 }
 void APlayerCharacter::HandleHotkey(int index)
 {

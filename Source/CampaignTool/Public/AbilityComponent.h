@@ -108,6 +108,6 @@ private:
 
 	TQueue<TPair<int32, int32>> RangeDijkstraQueue;
 
-	void GetRangeGrid(int32 x_char, int32 y_char);
+	void InitRangeGrid(int32 x_char, int32 y_char);
 	void ProcessNodeForRange(int32 x, int32 y, float range);
 };
