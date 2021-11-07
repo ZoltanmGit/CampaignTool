@@ -41,21 +41,22 @@ APlayerCharacter::APlayerCharacter()
 	PlayerCursorState = CursorState::OverGameWorld;
 	CharacterType = ECharacterType::C_Ally;
 
-	/** DEBUG **/
+	/** DEBUG DELETE LATER **/
 	TestAbility01 = CreateDefaultSubobject<UBaseAoeTargetAbility>(TEXT("TestAbility01"));
-	TestAbility01->Range = 5;
+	TestAbility01->Range = 6;
 	TestAbility01->AreaEffectType = EAreaOfEffectType::Line;
 	TestAbility01->AfffectedTargetType = EAffectedTargetType::Everyone;
 	AbilityArray.Add(TestAbility01);
 
 	TestAbility02 = CreateDefaultSubobject<UBaseAoeTargetAbility>(TEXT("TestAbility02"));
-	TestAbility02->Range = 5;
+	TestAbility02->Range = 7;
 	TestAbility02->AreaEffectType = EAreaOfEffectType::Cone;
 	TestAbility02->AfffectedTargetType = EAffectedTargetType::Everyone;
 	AbilityArray.Add(TestAbility02);
 
 	TestAbility03 = CreateDefaultSubobject<UBaseAoeTargetAbility>(TEXT("TestAbility03"));
-	TestAbility03->Range = 5;
+	TestAbility03->Range = 15;
+	TestAbility03->OptionalRange = 7;
 	TestAbility03->AreaEffectType = EAreaOfEffectType::Sphere;
 	TestAbility03->AfffectedTargetType = EAffectedTargetType::Everyone;
 	AbilityArray.Add(TestAbility03);

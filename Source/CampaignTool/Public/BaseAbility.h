@@ -71,6 +71,7 @@ class CAMPAIGNTOOL_API UBaseAbility : public UObject
 	GENERATED_BODY()
 	
 public:
+	UBaseAbility();
 	//Ability Details
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = AbilityDetails)
 		FString Name;
@@ -80,6 +81,8 @@ public:
 		int32 Level;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = AbilityDetails)
 		int32 Range;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = AbilityDetails)
+		int32 OptionalRange;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = AbilityDetails)
 		bool bIsConcentration;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = AbilityDetails)

@@ -58,7 +58,24 @@ void UAbilityComponent::HandleTileChange()
 			// Sphere
 			else if (AbilityAsAOE != nullptr && AbilityAsAOE->AreaEffectType == EAreaOfEffectType::Sphere)
 			{
-				
+				// Character coordinates
+				int32 DummyIndex;
+				FTileProperties temptileprop = Owner->Grid->GetTilePropertiesFromTransform(Owner->GetActorTransform(), DummyIndex);
+				int32 x_char = temptileprop.Row;
+				int32 y_char = temptileprop.Column;
+
+				// Cursor coordinates
+				FTransform CursorTransform;
+				CursorTransform.SetLocation(Owner->CursorLocation);
+				temptileprop = Owner->Grid->GetTilePropertiesFromTransform(CursorTransform, DummyIndex);
+				int32 x_curs = temptileprop.Row;
+				int32 y_curs = temptileprop.Column;
+
+				InitRangeGrid(x_char, y_char);
+				if (RangeDijkstraGrid[Owner->Grid->CoordToIndex(x_curs, y_curs)].NodeValue <= SelectedAbility->Range)
+				{
+					ResolveSphere(x_curs, y_curs);
+				}
 			}
 			// Cone
 			else if (AbilityAsAOE != nullptr && AbilityAsAOE->AreaEffectType == EAreaOfEffectType::Cone)
@@ -140,6 +157,41 @@ void UAbilityComponent::SelectAbility(UBaseAbility* AbilityToSelect)
 
 void UAbilityComponent::ResolveSphere(int32 x, int32 y)
 {
+	if (SphereDijkstraGrid.Num() > 0)
+	{
+		SphereDijkstraGrid.Empty();
+	}
+
+	for (int32 i = 0; i < Owner->Grid->Rows; i++)
+	{
+		for (int32 j = 0; j < Owner->Grid->Columns; j++)
+		{
+			FDijkstraNode node;
+			node.x = i;
+			node.y = j;
+			node.bWasProcessed = false;
+			node.bIsValidTerrain = true;
+
+			if (x == i && y == j)
+			{
+				node.NodeValue = 0;
+			}
+			else
+			{
+				node.NodeValue = Owner->Grid->Rows * Owner->Grid->Columns + 1;
+			}
+			SphereDijkstraGrid.Add(node);
+		}
+	}
+
+	TPair<int32, int32> s = TPair<int32, int32>(x, y);
+	SphereDijkstraQueue.Enqueue(s);
+	while (SphereDijkstraQueue.IsEmpty() == false)
+	{
+		TPair<int32, int32> pair;
+		SphereDijkstraQueue.Dequeue(pair);
+		ProcessNodeForSphere(pair.Key, pair.Value, SelectedAbility->OptionalRange);
+	}
 }
 
 void UAbilityComponent::ResolveLine(int32 x0, int32 y0, int32 x1, int32 y1)
@@ -240,6 +292,127 @@ void UAbilityComponent::ResetPathfinding()
 
 void UAbilityComponent::ProcessNodeForSphere(int32 x, int32 y, float range)
 {
+	FDijkstraNode CurrentNode = SphereDijkstraGrid[Owner->Grid->CoordToIndex(x, y)];
+	bool bQueueNeighbors = true;
+	if (FMath::CeilToFloat(CurrentNode.NodeValue) == range)
+	{
+		bQueueNeighbors = false;
+	}
+	//Left
+	if (y - 1 >= 0)
+	{
+		if (SphereDijkstraGrid[Owner->Grid->CoordToIndex(x, y - 1)].NodeValue > CurrentNode.NodeValue + 1.0f && SphereDijkstraGrid[Owner->Grid->CoordToIndex(x, y - 1)].bIsValidTerrain && !SphereDijkstraGrid[Owner->Grid->CoordToIndex(x, y - 1)].bWasProcessed)
+		{
+			SphereDijkstraGrid[Owner->Grid->CoordToIndex(x, y - 1)].NodeValue = CurrentNode.NodeValue + 1.0f;
+			if (bQueueNeighbors && CurrentNode.NodeValue + 1.0f <= range)
+			{
+				TPair<int32, int32> pair = TPair<int32, int32>(x, y - 1);
+				SphereDijkstraQueue.Enqueue(pair);
+			}
+		}
+	}
+	//Right
+	if (y + 1 <= Owner->Grid->Columns - 1)
+	{
+		if (SphereDijkstraGrid[Owner->Grid->CoordToIndex(x, y + 1)].NodeValue > CurrentNode.NodeValue + 1.0f && SphereDijkstraGrid[Owner->Grid->CoordToIndex(x, y + 1)].bIsValidTerrain && !SphereDijkstraGrid[Owner->Grid->CoordToIndex(x, y + 1)].bWasProcessed)
+		{
+			SphereDijkstraGrid[Owner->Grid->CoordToIndex(x, y + 1)].NodeValue = CurrentNode.NodeValue + 1.0f;
+			if (bQueueNeighbors && CurrentNode.NodeValue + 1.0f <= range)
+			{
+				TPair<int32, int32> pair = TPair<int32, int32>(x, y + 1);
+				SphereDijkstraQueue.Enqueue(pair);
+			}
+		}
+	}
+	// Top
+	if (x + 1 <= Owner->Grid->Rows - 1)
+	{
+		if (SphereDijkstraGrid[Owner->Grid->CoordToIndex(x + 1, y)].NodeValue > CurrentNode.NodeValue + 1.0f && SphereDijkstraGrid[Owner->Grid->CoordToIndex(x + 1, y)].bIsValidTerrain && !SphereDijkstraGrid[Owner->Grid->CoordToIndex(x + 1, y)].bWasProcessed)
+		{
+			SphereDijkstraGrid[Owner->Grid->CoordToIndex(x + 1, y)].NodeValue = CurrentNode.NodeValue + 1.0f;
+			if (bQueueNeighbors && CurrentNode.NodeValue + 1.0f <= range)
+			{
+				TPair<int32, int32> pair = TPair<int32, int32>(x + 1, y);
+				SphereDijkstraQueue.Enqueue(pair);
+			}
+		}
+	}
+	// Bottom
+	if (x - 1 >= 0)
+	{
+		if (SphereDijkstraGrid[Owner->Grid->CoordToIndex(x - 1, y)].NodeValue > CurrentNode.NodeValue + 1.0f && SphereDijkstraGrid[Owner->Grid->CoordToIndex(x - 1, y)].bIsValidTerrain && !SphereDijkstraGrid[Owner->Grid->CoordToIndex(x - 1, y)].bWasProcessed)
+		{
+			SphereDijkstraGrid[Owner->Grid->CoordToIndex(x - 1, y)].NodeValue = CurrentNode.NodeValue + 1.0f;
+			if (bQueueNeighbors && CurrentNode.NodeValue + 1.0f <= range)
+			{
+				TPair<int32, int32> pair = TPair<int32, int32>(x - 1, y);
+				SphereDijkstraQueue.Enqueue(pair);
+			}
+		}
+	}
+
+	// Top-Left
+	if (x + 1 <= Owner->Grid->Rows - 1 && y - 1 >= 0)
+	{
+		if (SphereDijkstraGrid[Owner->Grid->CoordToIndex(x + 1, y - 1)].NodeValue > CurrentNode.NodeValue + 1.5f && SphereDijkstraGrid[Owner->Grid->CoordToIndex(x + 1, y - 1)].bIsValidTerrain && !SphereDijkstraGrid[Owner->Grid->CoordToIndex(x + 1, y - 1)].bWasProcessed)
+		{
+			SphereDijkstraGrid[Owner->Grid->CoordToIndex(x + 1, y - 1)].NodeValue = CurrentNode.NodeValue + 1.5f;
+			if (bQueueNeighbors && CurrentNode.NodeValue + 1.5f <= range)
+			{
+				TPair<int32, int32> pair = TPair<int32, int32>(x + 1, y - 1);
+				SphereDijkstraQueue.Enqueue(pair);
+			}
+		}
+	}
+
+	// Top-Right
+	if (x + 1 <= Owner->Grid->Rows - 1 && y + 1 <= Owner->Grid->Columns - 1)
+	{
+		if (SphereDijkstraGrid[Owner->Grid->CoordToIndex(x + 1, y + 1)].NodeValue > CurrentNode.NodeValue + 1.5f && SphereDijkstraGrid[Owner->Grid->CoordToIndex(x + 1, y + 1)].bIsValidTerrain && !SphereDijkstraGrid[Owner->Grid->CoordToIndex(x + 1, y + 1)].bWasProcessed)
+		{
+			SphereDijkstraGrid[Owner->Grid->CoordToIndex(x + 1, y + 1)].NodeValue = CurrentNode.NodeValue + 1.5f;
+			if (bQueueNeighbors && CurrentNode.NodeValue + 1.5f <= range)
+			{
+				TPair<int32, int32> pair = TPair<int32, int32>(x + 1, y + 1);
+				SphereDijkstraQueue.Enqueue(pair);
+			}
+		}
+	}
+	// Bottom-Left
+	if (x - 1 >= 0 && y - 1 >= 0)
+	{
+		if (SphereDijkstraGrid[Owner->Grid->CoordToIndex(x - 1, y - 1)].NodeValue > CurrentNode.NodeValue + 1.5f && SphereDijkstraGrid[Owner->Grid->CoordToIndex(x - 1, y - 1)].bIsValidTerrain && !SphereDijkstraGrid[Owner->Grid->CoordToIndex(x - 1, y - 1)].bWasProcessed)
+		{
+			SphereDijkstraGrid[Owner->Grid->CoordToIndex(x - 1, y - 1)].NodeValue = CurrentNode.NodeValue + 1.5f;
+			if (bQueueNeighbors && CurrentNode.NodeValue + 1.5f <= range)
+			{
+				TPair<int32, int32> pair = TPair<int32, int32>(x - 1, y - 1);
+				SphereDijkstraQueue.Enqueue(pair);
+			}
+		}
+	}
+	// Bottom-Right
+	if (x - 1 >= 0 && y + 1 <= Owner->Grid->Columns - 1)
+	{
+
+		if (SphereDijkstraGrid[Owner->Grid->CoordToIndex(x - 1, y + 1)].NodeValue > CurrentNode.NodeValue + 1.5f && SphereDijkstraGrid[Owner->Grid->CoordToIndex(x - 1, y + 1)].bIsValidTerrain && !SphereDijkstraGrid[Owner->Grid->CoordToIndex(x - 1, y + 1)].bWasProcessed)
+		{
+			SphereDijkstraGrid[Owner->Grid->CoordToIndex(x - 1, y + 1)].NodeValue = CurrentNode.NodeValue + 1.5f;
+			if (bQueueNeighbors && CurrentNode.NodeValue + 1.5f <= range)
+			{
+				TPair<int32, int32> pair = TPair<int32, int32>(x - 1, y + 1);
+				SphereDijkstraQueue.Enqueue(pair);
+			}
+		}
+	}
+	SphereDijkstraGrid[Owner->Grid->CoordToIndex(x, y)].bWasProcessed = true;
+
+	if (Owner->Grid->IsValidCoord(x, y))
+	{
+		FTransform transform;
+		transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 2.0f));
+		Owner->OnAbilityAim(transform);
+	}
 }
 
 TEnumAsByte<EConeDirection> UAbilityComponent::GetConeDirection(int32 x_char, int32 y_char, int32 x_curs, int32 y_curs)

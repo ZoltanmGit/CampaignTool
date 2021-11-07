@@ -3,3 +3,7 @@
 
 #include "BaseAbility.h"
 
+UBaseAbility::UBaseAbility()
+{
+	OptionalRange = 0;
+}
