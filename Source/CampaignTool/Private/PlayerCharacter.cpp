@@ -2,11 +2,11 @@
 
 
 #include "PlayerCharacter.h"
-#include "../Public/HealthComponent.h"
-#include "../Public/AttributesComponent.h"
-#include "../Public/PathfinderComponent.h"
-#include "../Public/MoverComponent.h"
-#include "../Public/Grid.h"
+#include "HealthComponent.h"
+#include "AttributesComponent.h"
+#include "PathfinderComponent.h"
+#include "MoverComponent.h"
+#include "Grid.h"
 #include "AbilityComponent.h"
 #include "DiceRoller.h"
 #include "Components/WidgetComponent.h"
