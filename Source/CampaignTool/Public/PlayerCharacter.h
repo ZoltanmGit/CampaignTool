@@ -52,6 +52,7 @@ protected:
 	FVector2D savedMousePosition; // We save the mouse location and reset it when turning
 	bool bIsRightMouseDown;
 	bool bCastMouseLineTrace;
+	bool bIsAimingMovement;
 
 	FHitResult UnderCursorHitResult;
 	UPROPERTY()
@@ -71,16 +72,31 @@ protected:
 
 	void HandleLMBPress();
 	void ChangePossession(class ABaseCharacter* newCharacter);
+	bool IsCursorOnValidMovementTile(int32 x, int32 y);
+
+	/** Functions **/
+	//UFUNCTION(BlueprintCallable)
+		virtual void EndTurn() override;
+
+	/** For parametered bindaction use **/
+	DECLARE_DELEGATE_OneParam(FCustomInputDelegate, const int);
 
 	/**REDUNDANT FOR DEBUG PURPOSES**/
+	//Area of Effect
 	UPROPERTY(VisibleAnywhere)
 		class UBaseAoeTargetAbility* TestAbility01;
 	UPROPERTY(VisibleAnywhere)
 		class UBaseAoeTargetAbility* TestAbility02;
 	UPROPERTY(VisibleAnywhere)
 		class UBaseAoeTargetAbility* TestAbility03;
-	/** For parametered bindaction use **/
-	DECLARE_DELEGATE_OneParam(FCustomInputDelegate, const int);
+	//Single Target
+	UPROPERTY(VisibleAnywhere)
+		class UBaseSingleTargetAbility* TestAbility04;
+	UPROPERTY(VisibleAnywhere)
+		class UBaseSingleTargetAbility* TestAbility05;
+	UPROPERTY(VisibleAnywhere)
+		class UBaseSingleTargetAbility* TestAbility06;
+	
 public:
 	
 };

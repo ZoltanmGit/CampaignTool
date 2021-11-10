@@ -17,6 +17,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
 #include "BaseAoeTargetAbility.h"
+#include "BaseSingleTargetAbility.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -42,24 +43,42 @@ APlayerCharacter::APlayerCharacter()
 	CharacterType = ECharacterType::C_Ally;
 
 	/** DEBUG DELETE LATER **/
+	// TestLine
 	TestAbility01 = CreateDefaultSubobject<UBaseAoeTargetAbility>(TEXT("TestAbility01"));
-	TestAbility01->Range = 6;
+	TestAbility01->Range = 5;
 	TestAbility01->AreaEffectType = EAreaOfEffectType::Line;
 	TestAbility01->AfffectedTargetType = EAffectedTargetType::Everyone;
 	AbilityArray.Add(TestAbility01);
-
+	// TestCone
 	TestAbility02 = CreateDefaultSubobject<UBaseAoeTargetAbility>(TEXT("TestAbility02"));
 	TestAbility02->Range = 7;
 	TestAbility02->AreaEffectType = EAreaOfEffectType::Cone;
 	TestAbility02->AfffectedTargetType = EAffectedTargetType::Everyone;
 	AbilityArray.Add(TestAbility02);
-
+	// TestSphere
 	TestAbility03 = CreateDefaultSubobject<UBaseAoeTargetAbility>(TEXT("TestAbility03"));
 	TestAbility03->Range = 15;
 	TestAbility03->OptionalRange = 7;
 	TestAbility03->AreaEffectType = EAreaOfEffectType::Sphere;
 	TestAbility03->AfffectedTargetType = EAffectedTargetType::Everyone;
 	AbilityArray.Add(TestAbility03);
+	// TestMeleeAttack
+	TestAbility04 = CreateDefaultSubobject<UBaseSingleTargetAbility>(TEXT("TestAbility04"));
+	TestAbility04->SingleTargetType = ESingleTargetType::MeleeAttack;
+	TestAbility04->AfffectedTargetType = EAffectedTargetType::Everyone;
+	AbilityArray.Add(TestAbility04);
+	// TestNonAttack
+	TestAbility05 = CreateDefaultSubobject<UBaseSingleTargetAbility>(TEXT("TestAbility05"));
+	TestAbility05->Range = 15;
+	TestAbility05->SingleTargetType = ESingleTargetType::NonAttack;
+	TestAbility05->AfffectedTargetType = EAffectedTargetType::Everyone;
+	AbilityArray.Add(TestAbility05);
+	// TestRangedAttack
+	TestAbility06 = CreateDefaultSubobject<UBaseSingleTargetAbility>(TEXT("TestAbility06"));
+	TestAbility06->Range = 20;
+	TestAbility06->SingleTargetType = ESingleTargetType::RangedAttack;
+	TestAbility06->AfffectedTargetType = EAffectedTargetType::Everyone;
+	AbilityArray.Add(TestAbility06);
 }
 
 void APlayerCharacter::BeginPlay()
@@ -93,6 +112,9 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction<FCustomInputDelegate>("Hotkey01", IE_Pressed, this, &APlayerCharacter::HandleHotkey, 0);
 	PlayerInputComponent->BindAction<FCustomInputDelegate>("Hotkey02", IE_Pressed, this, &APlayerCharacter::HandleHotkey, 1);
 	PlayerInputComponent->BindAction<FCustomInputDelegate>("Hotkey03", IE_Pressed, this, &APlayerCharacter::HandleHotkey, 2);
+	PlayerInputComponent->BindAction<FCustomInputDelegate>("Hotkey04", IE_Pressed, this, &APlayerCharacter::HandleHotkey, 3);
+	PlayerInputComponent->BindAction<FCustomInputDelegate>("Hotkey05", IE_Pressed, this, &APlayerCharacter::HandleHotkey, 4);
+	PlayerInputComponent->BindAction<FCustomInputDelegate>("Hotkey06", IE_Pressed, this, &APlayerCharacter::HandleHotkey, 5);
 }
 
 void APlayerCharacter::Tick(float DeltaTime)
@@ -124,7 +146,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 					FTileProperties hitTileProperties = Grid->GetTilePropertiesFromTransform(TileTransform, tileIndex);
 					
 					
-					if (CursorLocation != TileTransform.GetLocation() && bCanMove)
+					if (CursorLocation != TileTransform.GetLocation() && (bCanMove || bIsAimingAbility))
 					{
 						
 						//UE_LOG(LogTemp, Warning, TEXT("New CursorLocation"));
@@ -136,18 +158,21 @@ void APlayerCharacter::Tick(float DeltaTime)
 							//UE_LOG(LogTemp, Warning, TEXT("______ChangedAim______"));
 							CharacterAbilityComponent->HandleTileChange();
 						}
-						// if aiming movement ...
-						if (Pathfinder->ValidIndexMap.Contains(hitTileProperties.Row*Grid->Columns + hitTileProperties.Column))
+						// if aiming movement ..
+						else if (bCanMove && bIsAimingMovement)
 						{
-							//UE_LOG(LogTemp, Warning, TEXT("New CursorLocation is Valid Movement"));
-							TArray<int32> Path = Pathfinder->GetRouteFromIndexes(hitTileProperties.Row, hitTileProperties.Column);
-							Mover->RefreshSpline();
-						}
-						else
-						{
-							if (Mover->MovementSplineMeshArray.Num() > 0)
+							if (IsCursorOnValidMovementTile(hitTileProperties.Row,hitTileProperties.Column))
 							{
-								Mover->CleanupSplineMesh();
+								//UE_LOG(LogTemp, Warning, TEXT("New CursorLocation is Valid Movement"));
+								Pathfinder->GetRouteFromIndexes(hitTileProperties.Row, hitTileProperties.Column);
+								Mover->RefreshSpline();
+							}
+							else
+							{
+								if (Mover->MovementSplineMeshArray.Num() > 0)
+								{
+									Mover->CleanupSplineMesh();
+								}
 							}
 						}
 					}
@@ -224,6 +249,34 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 void APlayerCharacter::HandleTestAction()
 {
+	if (CurrentSpeed >= 1 && bCanMove && !bIsAimingMovement)
+	{
+		if (bIsAimingAbility)
+		{
+			bIsAimingAbility = false;
+			CharacterAbilityComponent->CancelAbility();
+		}
+		bIsAimingMovement = true;
+		RefreshPathfinding();
+
+		
+		FTransform transform;
+		transform.SetLocation(CursorLocation);
+		int32 DummyIndex;
+		FTileProperties tileProp = Grid->GetTilePropertiesFromTransform(transform,DummyIndex);
+		if (IsCursorOnValidMovementTile(tileProp.Row, tileProp.Column))
+		{
+			//UE_LOG(LogTemp, Warning, TEXT("New CursorLocation is Valid Movement"));
+			Pathfinder->GetRouteFromIndexes(tileProp.Row, tileProp.Column);
+			Mover->RefreshSpline();
+		}
+	}
+	else if (bIsAimingMovement)
+	{
+		bIsAimingMovement = false;
+		CleanupPathfinding();
+		Mover->CleanupSplineMesh();
+	}
 	UE_LOG(LogTemp, Warning, TEXT("________"));
 	int32 testValue = DiceRoller->Roll(4);
 	UE_LOG(LogTemp, Warning, TEXT("d4: %i"), testValue);
@@ -239,10 +292,17 @@ void APlayerCharacter::HandleTestAction()
 	UE_LOG(LogTemp, Warning, TEXT("d20: %i"), testValue);
 	UE_LOG(LogTemp, Warning, TEXT("________"));
 }
+
 void APlayerCharacter::HandleHotkey(int index)
 {
 	if (AbilityArray.IsValidIndex(index))
 	{
+		if (bIsAimingMovement)
+		{
+			bIsAimingMovement = false;
+			CleanupPathfinding();
+			Mover->CleanupSplineMesh();
+		}
 		// If we're already aiming the same spell then the aim is canceled
 		if (bIsAimingAbility && CharacterAbilityComponent->SelectedAbility == AbilityArray[index])
 		{
@@ -377,5 +437,22 @@ void APlayerCharacter::ChangePossession(ABaseCharacter* newCharacter)
 	//Cleanup this pawn
 	this->CharacterSpringArm->SetWorldLocation(this->GetActorLocation());
 	this->DefaultController = nullptr;
+}
+
+bool APlayerCharacter::IsCursorOnValidMovementTile(int32 x, int32 y)
+{
+	if (Pathfinder != nullptr && Grid != nullptr)
+	{
+		return Pathfinder->ValidIndexMap.Contains(x * Grid->Columns + y);
+	}
+	return false;
+	
+}
+
+void APlayerCharacter::EndTurn()
+{
+	Super::EndTurn();
+	bIsAimingAbility = false;
+	bIsAimingMovement = false;
 }
 

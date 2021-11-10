@@ -112,18 +112,28 @@ void UAbilityComponent::HandleTileChange()
 			int32 y_char = temptileprop.Column;
 			InitRangeGrid(x_char, y_char);
 
+			FTransform CursorTransform;
+			CursorTransform.SetLocation(Owner->CursorLocation);
+			temptileprop = Owner->Grid->GetTilePropertiesFromTransform(CursorTransform, DummyIndex);
+			int32 x_curs = temptileprop.Row;
+			int32 y_curs = temptileprop.Column;
+
 			UBaseSingleTargetAbility* AbilityAsSingle = Cast<UBaseSingleTargetAbility>(SelectedAbility);
 			if (AbilityAsSingle != nullptr && AbilityAsSingle->SingleTargetType == ESingleTargetType::NonAttack)
 			{
-				// Non Attack
+				ResolveNonAttack(x_curs, y_curs);
 			}
-			if (AbilityAsSingle != nullptr && AbilityAsSingle->SingleTargetType == ESingleTargetType::MeleeAttack)
+			else if (AbilityAsSingle != nullptr && AbilityAsSingle->SingleTargetType == ESingleTargetType::MeleeAttack)
 			{
-				// Melee Attack
+				ResolveMelee(x_curs, y_curs);
 			}
-			if (AbilityAsSingle != nullptr && AbilityAsSingle->SingleTargetType == ESingleTargetType::RangedAttack)
+			else if (AbilityAsSingle != nullptr && AbilityAsSingle->SingleTargetType == ESingleTargetType::RangedAttack)
 			{
-				// Ranged Attack
+				ResolveRanged(x_curs, y_curs);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("AbilityAsSingle is nullptr."));
 			}
 		}
 	}
@@ -196,6 +206,7 @@ void UAbilityComponent::ResolveSphere(int32 x, int32 y)
 
 void UAbilityComponent::ResolveLine(int32 x0, int32 y0, int32 x1, int32 y1)
 {
+	InitRangeGrid(x0, y0);
 	if (abs(y1 - y0) < abs(x1 - x0))
 	{
 
@@ -263,6 +274,44 @@ void UAbilityComponent::ResolveCone(int32 x, int32 y, TEnumAsByte<EConeDirection
 		default:
 			break;
 		}
+	}
+}
+
+void UAbilityComponent::ResolveMelee(int32 x, int32 y)
+{
+	if (GetRangeValue(x, y) > 0 && GetRangeValue(x, y) < 2  )
+	{
+		AffectedTiles.Add(Owner->Grid->CoordToIndex(x, y));
+
+		FTransform transform;
+		transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
+		Owner->OnAbilityAim(transform);
+	}
+}
+
+void UAbilityComponent::ResolveRanged(int32 x, int32 y)
+{
+	if (GetRangeValue(x, y) > 0 && GetRangeValue(x, y) <= SelectedAbility->Range)
+	{
+		/** Check for line of sight **/
+
+		AffectedTiles.Add(Owner->Grid->CoordToIndex(x, y));
+
+		FTransform transform;
+		transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
+		Owner->OnAbilityAim(transform);
+	}
+}
+
+void UAbilityComponent::ResolveNonAttack(int32 x, int32 y)
+{
+	if (GetRangeValue(x, y) > 0 && GetRangeValue(x, y) <= SelectedAbility->Range)
+	{
+		AffectedTiles.Add(Owner->Grid->CoordToIndex(x, y));
+
+		FTransform transform;
+		transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
+		Owner->OnAbilityAim(transform);
 	}
 }
 
@@ -590,7 +639,7 @@ void UAbilityComponent::ResolveConeHorizontal(int32 x_char, int32 y_char, TEnumA
 	if (Direction == EConeDirection::D_Right)
 	{
 		y = y + 1;
-		for (int32 i = 1; i <= 6/* CHANGE TO ABILITY RANGE */; i++)
+		for (int32 i = 1; i <= SelectedAbility->Range; i++)
 		{
 			FTransform transform;
 			if (Owner->Grid->IsValidCoord(x, y))
@@ -631,7 +680,7 @@ void UAbilityComponent::ResolveConeHorizontal(int32 x_char, int32 y_char, TEnumA
 	else if(Direction == EConeDirection::D_Left)
 	{
 		y = y - 1;
-		for (int32 i = 1; i <= 6/* CHANGE TO ABILITY RANGE */; i++)
+		for (int32 i = 1; i <= SelectedAbility->Range; i++)
 		{
 			FTransform transform;
 			if (Owner->Grid->IsValidCoord(x, y))
@@ -678,7 +727,7 @@ void UAbilityComponent::ResolveConeVertical(int32 x_char, int32 y_char, TEnumAsB
 	if (Direction == EConeDirection::D_Up)
 	{
 		x = x + 1;
-		for (int32 i = 1; i <= 6/* CHANGE TO ABILITY RANGE */; i++)
+		for (int32 i = 1; i <= SelectedAbility->Range; i++)
 		{
 			FTransform transform;
 			if (Owner->Grid->IsValidCoord(x, y))
@@ -719,7 +768,7 @@ void UAbilityComponent::ResolveConeVertical(int32 x_char, int32 y_char, TEnumAsB
 	else if (Direction == EConeDirection::D_Down)
 	{
 		x = x - 1;
-		for (int32 i = 1; i <= 9/* CHANGE TO ABILITY RANGE*/; i++)
+		for (int32 i = 1; i <= SelectedAbility->Range; i++)
 		{
 			FTransform transform;
 			if (Owner->Grid->IsValidCoord(x, y))
@@ -773,14 +822,6 @@ void UAbilityComponent::ResolveConeDiagonal(int32 x_char, int32 y_char, TEnumAsB
 			node.y = j;
 			node.bWasProcessed = false;
 			node.bIsValidTerrain = true;
-			/*if (Owner->Grid->GetTilePropertiesFromCoord(i, j).TerrainType == TerrainType::Void)
-			{
-				node.bIsValidTerrain = false;
-			}
-			else
-			{
-				node.bIsValidTerrain = true;
-			}*/
 
 			if (x_char == i && y_char == j)
 			{
@@ -801,7 +842,7 @@ void UAbilityComponent::ResolveConeDiagonal(int32 x_char, int32 y_char, TEnumAsB
 	{
 		TPair<int32, int32> pair;
 		ConeDijkstraQueue.Dequeue(pair);
-		ProcessNodeForCone(pair.Key, pair.Value, 5/* RANGE */, Direction);
+		ProcessNodeForCone(pair.Key, pair.Value, SelectedAbility->Range-1, Direction);
 	}
 }
 
@@ -956,24 +997,28 @@ void UAbilityComponent::PlotTileLow(int32 x0, int32 y0, int32 x1, int32 y1, bool
 		if ((!bWasSwitched && x == x0 && y == y0) || (bWasSwitched && x == x1 && y == y1))
 		{
 			// Skip
-			UE_LOG(LogTemp, Warning, TEXT("P_LOW Skipped (%i,%i)"), x, y);
+			//UE_LOG(LogTemp, Warning, TEXT("P_LOW Skipped (%i,%i)"), x, y);
 		}
 		else
 		{
-			AffectedTiles.Add(Owner->Grid->CoordToIndex(x, y));
-			UE_LOG(LogTemp, Warning, TEXT("P_LOW (%i,%i)"), x, y);
-			FTransform transform;
-			transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 10.0f));
-			Owner->OnAbilityAim(transform);
-
-			FTileProperties AffectedTile = Owner->Grid->GetTilePropertiesFromCoord(x, y);
-			if (AffectedTile.ActorOnTile != nullptr)
+			if (Owner->Grid->IsValidCoord(x, y) && GetRangeValue(x, y) <= SelectedAbility->Range)
 			{
-				ABaseCharacter* CharacterToAdd = Cast<ABaseCharacter>(AffectedTile.ActorOnTile);
-				if (CharacterToAdd != nullptr)
+				AffectedTiles.Add(Owner->Grid->CoordToIndex(x, y));
+				//UE_LOG(LogTemp, Warning, TEXT("P_LOW (%i,%i)"), x, y);
+
+				FTransform transform;
+				transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 10.0f));
+				Owner->OnAbilityAim(transform);
+
+				FTileProperties AffectedTile = Owner->Grid->GetTilePropertiesFromCoord(x, y);
+				if (AffectedTile.ActorOnTile != nullptr)
 				{
-					AffectedCharacters.Add(CharacterToAdd);
-					UE_LOG(LogTemp, Warning, TEXT("Added character"));
+					ABaseCharacter* CharacterToAdd = Cast<ABaseCharacter>(AffectedTile.ActorOnTile);
+					if (CharacterToAdd != nullptr)
+					{
+						AffectedCharacters.Add(CharacterToAdd);
+						UE_LOG(LogTemp, Warning, TEXT("Added character"));
+					}
 				}
 			}
 		}
@@ -1008,25 +1053,28 @@ void UAbilityComponent::PlotTileHigh(int32 x0, int32 y0, int32 x1, int32 y1, boo
 		if ((!bWasSwitched && x == x0 && y == y0) || (bWasSwitched && x == x1 && y == y1))
 		{
 			// Skip
-			UE_LOG(LogTemp, Warning, TEXT("P_HIGH Skipped (%i,%i)"), x, y);
+			//UE_LOG(LogTemp, Warning, TEXT("P_HIGH Skipped (%i,%i)"), x, y);
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("P_HIGH (%i,%i)"), x, y);
-			AffectedTiles.Add(Owner->Grid->CoordToIndex(x, y));
-			//Display selection
-			FTransform transform;
-			transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 10.0f));
-			Owner->OnAbilityAim(transform);
-
-			FTileProperties AffectedTile = Owner->Grid->GetTilePropertiesFromCoord(x, y);
-			if (AffectedTile.ActorOnTile != nullptr)
+			if (Owner->Grid->IsValidCoord(x, y) && GetRangeValue(x, y) <= SelectedAbility->Range)
 			{
-				ABaseCharacter* CharacterToAdd = Cast<ABaseCharacter>(AffectedTile.ActorOnTile);
-				if (CharacterToAdd != nullptr)
+				//UE_LOG(LogTemp, Warning, TEXT("P_HIGH (%i,%i)"), x, y);
+				AffectedTiles.Add(Owner->Grid->CoordToIndex(x, y));
+				//Display selection
+				FTransform transform;
+				transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 10.0f));
+				Owner->OnAbilityAim(transform);
+
+				FTileProperties AffectedTile = Owner->Grid->GetTilePropertiesFromCoord(x, y);
+				if (AffectedTile.ActorOnTile != nullptr)
 				{
-					AffectedCharacters.Add(CharacterToAdd);
-					UE_LOG(LogTemp, Warning, TEXT("Added character"));
+					ABaseCharacter* CharacterToAdd = Cast<ABaseCharacter>(AffectedTile.ActorOnTile);
+					if (CharacterToAdd != nullptr)
+					{
+						AffectedCharacters.Add(CharacterToAdd);
+						UE_LOG(LogTemp, Warning, TEXT("Added character"));
+					}
 				}
 			}
 		}
@@ -1199,6 +1247,15 @@ void UAbilityComponent::ProcessNodeForRange(int32 x, int32 y, float range)
 		}
 	}
 	RangeDijkstraGrid[Owner->Grid->CoordToIndex(x, y)].bWasProcessed = true;
+}
+
+float UAbilityComponent::GetRangeValue(int32 x, int32 y)
+{
+	if (Owner != nullptr && Owner->Grid != nullptr)
+	{
+		return RangeDijkstraGrid[Owner->Grid->CoordToIndex(x, y)].NodeValue;
+	}
+	return -1.0f;
 }
 
 

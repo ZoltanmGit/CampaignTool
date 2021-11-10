@@ -87,7 +87,7 @@ void ABaseCharacter::BeginTurn()
 		bCanMove = true;
 		bIsActive = true;
 		CurrentSpeed = CharacterAttributes->Stats.Speed / 5.0f;
-		RefreshPathfinding();
+		//RefreshPathfinding();
 	}
 }
 
@@ -102,8 +102,9 @@ void ABaseCharacter::EndTurn()
 
 void ABaseCharacter::ChangeLocation(FVector newLocation)
 {
-	if (Grid && Pathfinder && Mover && bCanMove)
+	if (Grid && Pathfinder && Mover && bCanMove && bCanAct)
 	{
+		bCanAct = false;
 		bCanMove = false;
 		FTransform TempTransform;
 		TempTransform.SetLocation(newLocation);
@@ -133,6 +134,7 @@ void ABaseCharacter::ChangeLocation(FVector newLocation)
 		}
 		else
 		{
+			bCanAct = true;
 			bCanMove = true;
 			UE_LOG(LogTemp, Warning, TEXT("Invalid movement change."));
 		}
@@ -163,7 +165,6 @@ void ABaseCharacter::RefreshPathfinding()
 			Transform.SetLocation(FVector((i * Grid->fieldSize) + (Grid->fieldSize / 2), (j * Grid->fieldSize) + (Grid->fieldSize / 2), 5.0f));
 			OnPathfinding(Transform);
 		}
-		//UE_LOG(LogTemp, Warning, TEXT("Pathfinding refreshed"));
 	}
 	else
 	{

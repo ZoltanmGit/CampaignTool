@@ -75,6 +75,15 @@ public:
 	/** Cone Algorithm **/
 	UFUNCTION()
 		void ResolveCone(int32 x, int32 y, TEnumAsByte<EConeDirection> Direction);
+	/** Single Target Melee **/
+	UFUNCTION()
+		void ResolveMelee(int32 x, int32 y);
+	/** Single Target Ranged **/
+	UFUNCTION()
+		void ResolveRanged(int32 x, int32 y);
+	/** Single Target NonAttack **/
+	UFUNCTION()
+		void ResolveNonAttack(int32 x, int32 y);
 
 	
 	/** General Functionality **/
@@ -113,4 +122,5 @@ private:
 
 	void InitRangeGrid(int32 x_char, int32 y_char);
 	void ProcessNodeForRange(int32 x, int32 y, float range);
+	float GetRangeValue(int32 x, int32 y);
 };

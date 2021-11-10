@@ -82,6 +82,7 @@ void UMoverComponent::OnTimelineFinished()
 	if (OwnerCharacter->CurrentSpeed >= 1.0f)
 	{
 		OwnerCharacter->bCanMove = true;
+		OwnerCharacter->bCanAct = true;
 		OwnerCharacter->RefreshPathfinding();
 	}
 	MovementSpline->ClearSplinePoints();

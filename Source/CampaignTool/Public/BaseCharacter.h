@@ -79,7 +79,7 @@ public:
 	/// Ends the turn for the character
 	/// </summary>
 	UFUNCTION(BlueprintCallable)
-		void EndTurn();
+		virtual void EndTurn();
 	/// <summary>
 	/// Changes the supposed location of the character, which then gets moved by the MovementController
 	/// </summary>
