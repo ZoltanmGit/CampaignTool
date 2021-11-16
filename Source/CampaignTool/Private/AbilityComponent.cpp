@@ -459,7 +459,7 @@ void UAbilityComponent::ProcessNodeForSphere(int32 x, int32 y, float range)
 	if (Owner->Grid->IsValidCoord(x, y))
 	{
 		FTransform transform;
-		transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 2.0f));
+		transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
 		Owner->OnAbilityAim(transform);
 	}
 }
@@ -470,12 +470,12 @@ TEnumAsByte<EConeDirection> UAbilityComponent::GetConeDirection(int32 x_char, in
 	{
 		if (x_curs > x_char)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("UpRight"));
+			//UE_LOG(LogTemp, Warning, TEXT("UpRight"));
 			return EConeDirection::D_UpRight;
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("DownLeft"));
+			//UE_LOG(LogTemp, Warning, TEXT("DownLeft"));
 			return EConeDirection::D_DownLeft;
 		}
 		//UE_LOG(LogTemp, Warning, TEXT("Undefined"));
@@ -518,12 +518,12 @@ TEnumAsByte<EConeDirection> UAbilityComponent::GetConeDirection(int32 x_char, in
 
 				if (y_curs <= y_char - (x_curs - x_char) + displacement)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("UpLeft"));
+					//UE_LOG(LogTemp, Warning, TEXT("UpLeft"));
 					return EConeDirection::D_UpLeft;
 				}
 				else if (y_curs >= y_char + (x_curs - x_char) - displacement)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("UpRight"));
+					//UE_LOG(LogTemp, Warning, TEXT("UpRight"));
 					return EConeDirection::D_UpRight;
 				}
 			}
@@ -551,16 +551,16 @@ TEnumAsByte<EConeDirection> UAbilityComponent::GetConeDirection(int32 x_char, in
 
 				if (y_curs <= y_char - (x_char - x_curs) + displacement)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("DownLeft"));
+					//UE_LOG(LogTemp, Warning, TEXT("DownLeft"));
 					return EConeDirection::D_DownLeft;
 				}
 				else if (y_curs >= y_char + (x_char - x_curs) - displacement)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("DownRight"));
+					//UE_LOG(LogTemp, Warning, TEXT("DownRight"));
 					return EConeDirection::D_DownRight;
 				}
 			}
-			UE_LOG(LogTemp, Warning, TEXT("Down"));
+			//UE_LOG(LogTemp, Warning, TEXT("Down"));
 			return EConeDirection::D_Down;
 		}
 		// Right or displacement
@@ -582,16 +582,16 @@ TEnumAsByte<EConeDirection> UAbilityComponent::GetConeDirection(int32 x_char, in
 
 				if (x_curs <= x_char - (y_curs - y_char) + displacement )
 				{
-					UE_LOG(LogTemp, Warning, TEXT("DownRight"));
+					//UE_LOG(LogTemp, Warning, TEXT("DownRight"));
 					return EConeDirection::D_DownRight;
 				}
 				else if (x_curs >= x_char + (y_curs - y_char) - displacement)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("UpRight"));
+					//UE_LOG(LogTemp, Warning, TEXT("UpRight"));
 					return EConeDirection::D_UpRight;
 				}
 			}
-			UE_LOG(LogTemp, Warning, TEXT("Right"));
+			//UE_LOG(LogTemp, Warning, TEXT("Right"));
 			return EConeDirection::D_Right;
 		}
 		// Left or displacement
@@ -613,22 +613,22 @@ TEnumAsByte<EConeDirection> UAbilityComponent::GetConeDirection(int32 x_char, in
 
 				if (x_curs <= x_char - (y_char - y_curs) + displacement)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("DownLeft"));
+					//UE_LOG(LogTemp, Warning, TEXT("DownLeft"));
 					return EConeDirection::D_DownLeft;
 				}
 				else if (x_curs >= x_char + (y_char - y_curs) - displacement)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("UpLeft"));
+					//UE_LOG(LogTemp, Warning, TEXT("UpLeft"));
 					return EConeDirection::D_UpLeft;
 				}
 			}
-			UE_LOG(LogTemp, Warning, TEXT("Left"));
+			//UE_LOG(LogTemp, Warning, TEXT("Left"));
 			return EConeDirection::D_Left;
 		}
-		UE_LOG(LogTemp, Warning, TEXT("Undefined"));
+		//UE_LOG(LogTemp, Warning, TEXT("Undefined"));
 		return EConeDirection::D_Undefined; // Redundant if everything is covered
 	}
-	UE_LOG(LogTemp, Warning, TEXT("Undefined"));
+	//UE_LOG(LogTemp, Warning, TEXT("Undefined"));
 	return EConeDirection::D_Undefined; // Redundant
 }
 
@@ -644,7 +644,7 @@ void UAbilityComponent::ResolveConeHorizontal(int32 x_char, int32 y_char, TEnumA
 			FTransform transform;
 			if (Owner->Grid->IsValidCoord(x, y))
 			{
-				transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 10.0f));
+				transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
 				Owner->OnAbilityAim(transform);
 			}
 
@@ -663,14 +663,14 @@ void UAbilityComponent::ResolveConeHorizontal(int32 x_char, int32 y_char, TEnumA
 				// To the Up
 				if (Owner->Grid->IsValidCoord(x + j, y))
 				{
-					transform.SetLocation(FVector(((x+j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 10.0f));
+					transform.SetLocation(FVector(((x+j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
 					Owner->OnAbilityAim(transform);
 				}
 
 				// To the Down
 				if (Owner->Grid->IsValidCoord(x - j, y))
 				{
-					transform.SetLocation(FVector(((x-j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 10.0f));
+					transform.SetLocation(FVector(((x-j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
 					Owner->OnAbilityAim(transform);
 				}
 			}
@@ -685,7 +685,7 @@ void UAbilityComponent::ResolveConeHorizontal(int32 x_char, int32 y_char, TEnumA
 			FTransform transform;
 			if (Owner->Grid->IsValidCoord(x, y))
 			{
-				transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 10.0f));
+				transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
 				Owner->OnAbilityAim(transform);
 			}
 
@@ -704,14 +704,14 @@ void UAbilityComponent::ResolveConeHorizontal(int32 x_char, int32 y_char, TEnumA
 				// To the Up
 				if (Owner->Grid->IsValidCoord(x + j, y))
 				{
-					transform.SetLocation(FVector(((x+j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 10.0f));
+					transform.SetLocation(FVector(((x+j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
 					Owner->OnAbilityAim(transform);
 				}
 
 				// To the Down
 				if (Owner->Grid->IsValidCoord(x - j, y))
 				{
-					transform.SetLocation(FVector(((x-j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 10.0f));
+					transform.SetLocation(FVector(((x-j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
 					Owner->OnAbilityAim(transform);
 				}
 			}
@@ -732,7 +732,7 @@ void UAbilityComponent::ResolveConeVertical(int32 x_char, int32 y_char, TEnumAsB
 			FTransform transform;
 			if (Owner->Grid->IsValidCoord(x, y))
 			{
-				transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 10.0f));
+				transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
 				Owner->OnAbilityAim(transform);
 			}
 
@@ -751,14 +751,14 @@ void UAbilityComponent::ResolveConeVertical(int32 x_char, int32 y_char, TEnumAsB
 				// To the right
 				if (Owner->Grid->IsValidCoord(x, y + j))
 				{
-					transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), ((y + j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 10.0f));
+					transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), ((y + j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
 					Owner->OnAbilityAim(transform);
 				}
 				
 				// To the left
-				if (Owner->Grid->IsValidCoord(x, y - 1))
+				if (Owner->Grid->IsValidCoord(x, y - j))
 				{
-					transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), ((y - j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 10.0f));
+					transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), ((y - j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
 					Owner->OnAbilityAim(transform);
 				}
 			}
@@ -773,7 +773,7 @@ void UAbilityComponent::ResolveConeVertical(int32 x_char, int32 y_char, TEnumAsB
 			FTransform transform;
 			if (Owner->Grid->IsValidCoord(x, y))
 			{
-				transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 10.0f));
+				transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
 				Owner->OnAbilityAim(transform);
 			}
 
@@ -792,14 +792,14 @@ void UAbilityComponent::ResolveConeVertical(int32 x_char, int32 y_char, TEnumAsB
 				// To the right
 				if (Owner->Grid->IsValidCoord(x, y + j))
 				{
-					transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), ((y + j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 10.0f));
+					transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), ((y + j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
 					Owner->OnAbilityAim(transform);
 				}
 
 				// To the left
 				if (Owner->Grid->IsValidCoord(x, y - 1))
 				{
-					transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), ((y - j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 10.0f));
+					transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), ((y - j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
 					Owner->OnAbilityAim(transform);
 				}
 			}
@@ -842,7 +842,7 @@ void UAbilityComponent::ResolveConeDiagonal(int32 x_char, int32 y_char, TEnumAsB
 	{
 		TPair<int32, int32> pair;
 		ConeDijkstraQueue.Dequeue(pair);
-		ProcessNodeForCone(pair.Key, pair.Value, SelectedAbility->Range-1, Direction);
+		ProcessNodeForCone(pair.Key, pair.Value, SelectedAbility->Range - 1, Direction);
 	}
 }
 
@@ -953,9 +953,8 @@ void UAbilityComponent::ProcessNodeForCone(int32 x, int32 y, float range, TEnumA
 		}
 	}
 	// Bottom-Right
-	if (x - 1 >= 0 && y + 1 <= Columns - 1 && Direction == EConeDirection::D_DownRight)
+	if (x - 1 >= 0 && y + 1 <= Owner->Grid->Columns - 1 && Direction == EConeDirection::D_DownRight)
 	{
-
 		if (ConeDijkstraGrid[Owner->Grid->CoordToIndex(x - 1, y + 1)].NodeValue > CurrentNode.NodeValue + 1.5f && ConeDijkstraGrid[Owner->Grid->CoordToIndex(x - 1, y + 1)].bIsValidTerrain && !ConeDijkstraGrid[Owner->Grid->CoordToIndex(x - 1, y + 1)].bWasProcessed)
 		{
 			ConeDijkstraGrid[Owner->Grid->CoordToIndex(x - 1, y + 1)].NodeValue = CurrentNode.NodeValue + 1.5f;
@@ -963,7 +962,6 @@ void UAbilityComponent::ProcessNodeForCone(int32 x, int32 y, float range, TEnumA
 			{
 				TPair<int32, int32> pair = TPair<int32, int32>(x - 1, y + 1);
 				ConeDijkstraQueue.Enqueue(pair);
-				//UE_LOG(LogTemp, Warning, TEXT("Bottom Right Queued"));
 			}
 		}
 	}
@@ -973,7 +971,7 @@ void UAbilityComponent::ProcessNodeForCone(int32 x, int32 y, float range, TEnumA
 	if (Owner->Grid->IsValidCoord(x, y))
 	{
 		FTransform transform;
-		transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 2.0f));
+		transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
 		Owner->OnAbilityAim(transform);
 	}
 }
@@ -1007,7 +1005,7 @@ void UAbilityComponent::PlotTileLow(int32 x0, int32 y0, int32 x1, int32 y1, bool
 				//UE_LOG(LogTemp, Warning, TEXT("P_LOW (%i,%i)"), x, y);
 
 				FTransform transform;
-				transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 10.0f));
+				transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
 				Owner->OnAbilityAim(transform);
 
 				FTileProperties AffectedTile = Owner->Grid->GetTilePropertiesFromCoord(x, y);
@@ -1063,7 +1061,7 @@ void UAbilityComponent::PlotTileHigh(int32 x0, int32 y0, int32 x1, int32 y1, boo
 				AffectedTiles.Add(Owner->Grid->CoordToIndex(x, y));
 				//Display selection
 				FTransform transform;
-				transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 10.0f));
+				transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
 				Owner->OnAbilityAim(transform);
 
 				FTileProperties AffectedTile = Owner->Grid->GetTilePropertiesFromCoord(x, y);
@@ -1257,5 +1255,3 @@ float UAbilityComponent::GetRangeValue(int32 x, int32 y)
 	}
 	return -1.0f;
 }
-
-
