@@ -24,15 +24,20 @@ public:
 	/** IndicatorActor **/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Indicator)
 		TSubclassOf<class AIndicatorActor> Indicator;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Indicator)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Indicator)
 		class AIndicatorActor* Indicatorptr;
+
 	/** Grid **/
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Init)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Grid)
 		TSubclassOf<class AGrid> Grid; // type of grid
-	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Grid)
 		class AGrid* Gridptr; // actual reference to grid
+
+	/** Ability Storage **/
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = AbilityStorage)
+		TSubclassOf<class AAbilityStorage> AbilityStorage;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = AbilityStorage)
+		class AAbilityStorage* AbilityStorageptr;
 
 	/** Characters **/
 	//Assigned direct reference in BP
@@ -59,6 +64,7 @@ public:
 protected:
 	void InitializeGrid();
 	void InitializeIndicator();
+	void InitializeAbilityStorage();
 	void InitializeCharacters();
 	void SpawnCharacter(FCharacterStruct character, int32 x, int32 y);
 protected:

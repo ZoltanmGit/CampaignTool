@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
 class CAMPAIGNTOOL_API UBaseSingleTargetAbility : public UBaseAbility
 {
 	GENERATED_BODY()

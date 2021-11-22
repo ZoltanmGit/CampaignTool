@@ -15,5 +15,4 @@ public:
 		FString Name;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = ItemProp)
 		FString Description;
-
 };

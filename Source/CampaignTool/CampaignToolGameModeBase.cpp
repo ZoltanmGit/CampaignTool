@@ -4,6 +4,7 @@
 #include "CampaignToolGameModeBase.h"
 #include "Public/Grid.h"
 #include "Public/IndicatorActor.h"
+#include "AbilityStorage.h"
 #include "Public/PlayerCharacter.h"
 #include "Public/MapSaveObject.h"
 #include "Public/CampaignToolGameInstance.h"
@@ -16,12 +17,15 @@ ACampaignToolGameModeBase::ACampaignToolGameModeBase()
 	TestFighter.CharacterName = "BlackBetty";
 	TestFighter.Class = EClass::Fighter;
 	TestFighter.Speed = 30.0f;
+	TestFighter.SpellBook.Add("lightningstrike",true);
 
 	TestRogue.bIsPlayerCharacter = true;
 	TestRogue.ArmorClass = 10;
 	TestRogue.CharacterName = "Bames Jond";
 	TestRogue.Class = EClass::Rogue;
 	TestRogue.Speed = 25.0f;
+	TestRogue.SpellBook.Add("fireball", true);
+	TestRogue.SpellBook.Add("firebreath", true);
 }
 
 void ACampaignToolGameModeBase::BeginPlay()
@@ -36,6 +40,9 @@ void ACampaignToolGameModeBase::BeginPlay()
 
 		/** Indicator Init **/
 		InitializeIndicator();
+
+		/** AbilityStorageInit **/
+		InitializeAbilityStorage();
 
 		/** Character Init **/
 		InitializeCharacters(); //requires grid and indicator to be initialized beforehand
@@ -89,6 +96,15 @@ void ACampaignToolGameModeBase::InitializeIndicator()
 	Indicatorptr = GetWorld()->SpawnActor<AIndicatorActor>(Indicator, TransformParams, SpawnParams);
 }
 
+void ACampaignToolGameModeBase::InitializeAbilityStorage()
+{
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	FTransform TransformParams;
+	TransformParams.SetLocation(FVector(0.0f, 0.0f, 0.0f));
+	AbilityStorageptr = GetWorld()->SpawnActor<AAbilityStorage>(AbilityStorage, TransformParams, SpawnParams);
+}
+
 void ACampaignToolGameModeBase::InitializeCharacters()
 {
 	SpawnCharacter(TestFighter, 0, 0);
@@ -110,6 +126,7 @@ void ACampaignToolGameModeBase::SpawnCharacter(FCharacterStruct character, int32
 	TransformParams.SetLocation(FVector((x*Gridptr->fieldSize)+(Gridptr->fieldSize/2), (y* Gridptr->fieldSize) + (Gridptr->fieldSize / 2), 50.0f));
 	Gridptr->GridDataArray[(x * Gridptr->Columns) + y].bIsOccupied = true;
 	ABaseCharacter* newCharacter = nullptr;
+	// Spawn Character from template
 	switch (character.Class)
 	{
 	case EClass::Fighter:
@@ -122,10 +139,11 @@ void ACampaignToolGameModeBase::SpawnCharacter(FCharacterStruct character, int32
 		newCharacter = GetWorld()->SpawnActor<APlayerCharacter>(RogueClass, TransformParams, SpawnParams);
 		break;
 	}
+	// Initialize Character
 	if (newCharacter != nullptr)
 	{
 		Gridptr->GridDataArray[(x * Gridptr->Columns) + y].ActorOnTile = newCharacter;
-		newCharacter->InitializeCharacter(character,Gridptr,Indicatorptr);
+		newCharacter->InitializeCharacter(character,Gridptr,Indicatorptr, AbilityStorageptr);
 	}
 	Characters.Add(newCharacter);
 }

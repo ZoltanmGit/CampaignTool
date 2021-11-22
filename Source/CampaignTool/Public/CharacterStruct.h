@@ -93,8 +93,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
 		TArray<TEnumAsByte<ELanguage>> LanguageArray;
 
-
-
 	//Skills
 	//Skills - Strength
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Skills)
@@ -137,5 +135,9 @@ public:
 		int32 Performance;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Skills)
 		int32 Persuasion;
-
+	// Abilities
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = SpellCasting)
+		TMap<FString, bool> SpellBook;
+	// Inventory
+	// TODO
 };

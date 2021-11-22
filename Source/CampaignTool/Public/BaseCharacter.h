@@ -99,7 +99,7 @@ public:
 		/// </summary>
 		/// <param name="Character"></param>
 		/// <param name="ArgGrid"></param>
-		void InitializeCharacter(FCharacterStruct Character, class AGrid* ArgGrid, class AIndicatorActor* ArgIndicator);
+		void InitializeCharacter(FCharacterStruct Character, class AGrid* ArgGrid, class AIndicatorActor* ArgIndicator, class AAbilityStorage* ArgAbilityStorage);
 public:
 
 	//Getters

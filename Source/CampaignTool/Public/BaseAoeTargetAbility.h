@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
 class CAMPAIGNTOOL_API UBaseAoeTargetAbility : public UBaseAbility
 {
 	GENERATED_BODY()

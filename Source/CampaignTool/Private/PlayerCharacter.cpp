@@ -44,7 +44,7 @@ APlayerCharacter::APlayerCharacter()
 
 	/** DEBUG DELETE LATER **/
 	// TestLine
-	TestAbility01 = CreateDefaultSubobject<UBaseAoeTargetAbility>(TEXT("TestAbility01"));
+	/*TestAbility01 = CreateDefaultSubobject<UBaseAoeTargetAbility>(TEXT("TestAbility01"));
 	TestAbility01->Range = 5;
 	TestAbility01->AreaEffectType = EAreaOfEffectType::Line;
 	TestAbility01->AfffectedTargetType = EAffectedTargetType::Everyone;
@@ -78,7 +78,7 @@ APlayerCharacter::APlayerCharacter()
 	TestAbility06->Range = 20;
 	TestAbility06->SingleTargetType = ESingleTargetType::RangedAttack;
 	TestAbility06->AfffectedTargetType = EAffectedTargetType::Everyone;
-	AbilityArray.Add(TestAbility06);
+	AbilityArray.Add(TestAbility06);*/
 }
 
 void APlayerCharacter::BeginPlay()

@@ -7,3 +7,5 @@ UBaseAbility::UBaseAbility()
 {
 	OptionalRange = 0;
 }
+
+void UBaseAbility::OnExecute_Implementation() { } // This is not redundant.

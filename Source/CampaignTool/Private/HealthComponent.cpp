@@ -48,6 +48,7 @@ void UHealthComponent::HandleDamage(float Damage, EDamageType DamageType)
 				//If not resistant nor immune than take the full damage | TODO: Saving throw
 				SetCurrentHealth(GetCurrentHealth() - Damage);
 			}
+			Owner->OnHealthChange();
 		}
 		break;
 	}

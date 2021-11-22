@@ -87,6 +87,16 @@ public:
 		bool bIsConcentration;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = AbilityDetails)
 		bool bHasCollision;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = AbilityDetails)
+		bool bHasDamageType;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = AbilityDetails, meta=(EditCondition="bHasDamageType"))
+		TEnumAsByte<EDamageType> DamageType;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = AbilityDetails)
+		bool bHasValue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = AbilityDetails, meta=(EditCondition="bHasValue"))
+		float AbilityValue;
+
 
 	//Enum properties
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = AbilityDetails)
@@ -106,4 +116,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		virtual void Execute() {};
+	UFUNCTION(BlueprintNativeEvent)
+		void OnExecute();
 };

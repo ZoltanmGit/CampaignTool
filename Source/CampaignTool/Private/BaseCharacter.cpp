@@ -10,6 +10,7 @@
 #include "../Public/MoverComponent.h"
 #include "../Public/Grid.h"
 #include "IndicatorActor.h"
+#include "AbilityStorage.h"
 #include "DiceRoller.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -172,26 +173,50 @@ void ABaseCharacter::RefreshPathfinding()
 	}
 }
 
-void ABaseCharacter::InitializeCharacter(FCharacterStruct Character, AGrid* ArgGrid, AIndicatorActor* ArgIndicator)
+void ABaseCharacter::InitializeCharacter(FCharacterStruct Character, AGrid* ArgGrid, AIndicatorActor* ArgIndicator, AAbilityStorage* ArgAbilityStorage)
 {
+	/** General Init **/
 	Grid = ArgGrid;
 	Indicator = ArgIndicator;
 	Pathfinder->Rows = Grid->Rows;
 	Pathfinder->Columns = Grid->Columns;
+	
+	/** Owner Init **/
 	CharacterHealth->Owner = this;
 	CharacterAbilityComponent->Owner = this;
-	if (CharacterAbilityComponent->Owner != nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("ABility Component has Owner"));
-	}
+	
 	if (CharacterAttributes)
 	{
 		CharacterAttributes->InitComponent(Character);
 		if (CharacterHealth)
 		{
-			//TODO
+			CharacterHealth->SetFullHealth(120);
+			CharacterHealth->SetCurrentHealth(120);
+			OnHealthChange();
 		}
 	}
+	for (auto It = CharacterAttributes->Stats.SpellBook.CreateConstIterator(); It; ++It)
+	{
+		if (It.Value() == true)
+		{
+			UBaseAbility* NewAbilityInstance = ArgAbilityStorage->GetAbilityPtr(It.Key());
+			if (NewAbilityInstance != nullptr)
+			{
+				AbilityArray.Add(NewAbilityInstance);
+				UE_LOG(LogTemp, Warning, TEXT("Spell Added to Abilities"));
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Spell not added because nullptr"));
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Value false"));
+		}
+	}
+
+	
 }
 
 UHealthComponent* ABaseCharacter::GetCharacterHealth() const

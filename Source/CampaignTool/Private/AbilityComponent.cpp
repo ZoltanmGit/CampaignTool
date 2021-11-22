@@ -141,22 +141,25 @@ void UAbilityComponent::HandleTileChange()
 
 void UAbilityComponent::ExecuteAbility()
 {
-	if (SelectedAbility != nullptr && AffectedCharacters.Num() > 0)
+	if (SelectedAbility != nullptr)
 	{
 		if (SelectedAbility->TargetType == ETargetType::AOE)
 		{
 			UBaseAoeTargetAbility* AOEAbility = Cast<UBaseAoeTargetAbility>(SelectedAbility);
 			AOEAbility->AffectedCharacters = AffectedCharacters;
 			AOEAbility->Execute();
+			AOEAbility->OnExecute();
 		}
 		else if (SelectedAbility->TargetType == ETargetType::Single && AffectedCharacters[0] != nullptr)
 		{
 			UBaseSingleTargetAbility* SingleTargetAbility = Cast<UBaseSingleTargetAbility>(SelectedAbility);
 			SingleTargetAbility->Target = AffectedCharacters[0];
 			SingleTargetAbility->Execute();
+			SingleTargetAbility->OnExecute();
 		}
 		CancelAbility();
 		Owner->bIsAimingAbility = false;
+
 	}
 }
 
@@ -458,9 +461,25 @@ void UAbilityComponent::ProcessNodeForSphere(int32 x, int32 y, float range)
 
 	if (Owner->Grid->IsValidCoord(x, y))
 	{
+		/** Add Tiles **/
+		AffectedTiles.Add(Owner->Grid->CoordToIndex(x, y));
+
+		/** Display Indicators **/
 		FTransform transform;
-		transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
+		transform.SetLocation(FVector((x* Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y* Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
 		Owner->OnAbilityAim(transform);
+
+		/** Add Characters **/
+		FTileProperties AffectedTile = Owner->Grid->GetTilePropertiesFromCoord(x, y);
+		if (AffectedTile.ActorOnTile != nullptr)
+		{
+			ABaseCharacter* CharacterToAdd = Cast<ABaseCharacter>(AffectedTile.ActorOnTile);
+			if (CharacterToAdd != nullptr)
+			{
+				AffectedCharacters.Add(CharacterToAdd);
+				UE_LOG(LogTemp, Warning, TEXT("Added character"));
+			}
+		}
 	}
 }
 
@@ -644,8 +663,24 @@ void UAbilityComponent::ResolveConeHorizontal(int32 x_char, int32 y_char, TEnumA
 			FTransform transform;
 			if (Owner->Grid->IsValidCoord(x, y))
 			{
+				/** Add Tiles **/
+				AffectedTiles.Add(Owner->Grid->CoordToIndex(x, y));
+
+				/** Display Indicators **/
 				transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
 				Owner->OnAbilityAim(transform);
+
+				/** Add Characters **/
+				FTileProperties AffectedTile = Owner->Grid->GetTilePropertiesFromCoord(x, y);
+				if (AffectedTile.ActorOnTile != nullptr)
+				{
+					ABaseCharacter* CharacterToAdd = Cast<ABaseCharacter>(AffectedTile.ActorOnTile);
+					if (CharacterToAdd != nullptr)
+					{
+						AffectedCharacters.Add(CharacterToAdd);
+						UE_LOG(LogTemp, Warning, TEXT("Added character"));
+					}
+				}
 			}
 
 			int32 width;
@@ -663,15 +698,47 @@ void UAbilityComponent::ResolveConeHorizontal(int32 x_char, int32 y_char, TEnumA
 				// To the Up
 				if (Owner->Grid->IsValidCoord(x + j, y))
 				{
-					transform.SetLocation(FVector(((x+j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
+					/** Add Tiles **/
+					AffectedTiles.Add(Owner->Grid->CoordToIndex(x + j, y));
+
+					/** Display Indicators **/
+					transform.SetLocation(FVector(((x + j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
 					Owner->OnAbilityAim(transform);
+
+					/** Add Characters **/
+					FTileProperties AffectedTile = Owner->Grid->GetTilePropertiesFromCoord(x + j, y);
+					if (AffectedTile.ActorOnTile != nullptr)
+					{
+						ABaseCharacter* CharacterToAdd = Cast<ABaseCharacter>(AffectedTile.ActorOnTile);
+						if (CharacterToAdd != nullptr)
+						{
+							AffectedCharacters.Add(CharacterToAdd);
+							UE_LOG(LogTemp, Warning, TEXT("Added character"));
+						}
+					}
 				}
 
 				// To the Down
 				if (Owner->Grid->IsValidCoord(x - j, y))
 				{
-					transform.SetLocation(FVector(((x-j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
+					/** Add Tiles **/
+					AffectedTiles.Add(Owner->Grid->CoordToIndex(x - j, y));
+
+					/** Display Indicators **/
+					transform.SetLocation(FVector(((x - j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
 					Owner->OnAbilityAim(transform);
+
+					/** Add Characters **/
+					FTileProperties AffectedTile = Owner->Grid->GetTilePropertiesFromCoord(x - j, y);
+					if (AffectedTile.ActorOnTile != nullptr)
+					{
+						ABaseCharacter* CharacterToAdd = Cast<ABaseCharacter>(AffectedTile.ActorOnTile);
+						if (CharacterToAdd != nullptr)
+						{
+							AffectedCharacters.Add(CharacterToAdd);
+							UE_LOG(LogTemp, Warning, TEXT("Added character"));
+						}
+					}
 				}
 			}
 			y = y + 1;
@@ -685,8 +752,24 @@ void UAbilityComponent::ResolveConeHorizontal(int32 x_char, int32 y_char, TEnumA
 			FTransform transform;
 			if (Owner->Grid->IsValidCoord(x, y))
 			{
+				/** Add Tiles **/
+				AffectedTiles.Add(Owner->Grid->CoordToIndex(x, y));
+
+				/** Display Indicators **/
 				transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
 				Owner->OnAbilityAim(transform);
+
+				/** Add Characters **/
+				FTileProperties AffectedTile = Owner->Grid->GetTilePropertiesFromCoord(x, y);
+				if (AffectedTile.ActorOnTile != nullptr)
+				{
+					ABaseCharacter* CharacterToAdd = Cast<ABaseCharacter>(AffectedTile.ActorOnTile);
+					if (CharacterToAdd != nullptr)
+					{
+						AffectedCharacters.Add(CharacterToAdd);
+						UE_LOG(LogTemp, Warning, TEXT("Added character"));
+					}
+				}
 			}
 
 			int32 width;
@@ -704,15 +787,47 @@ void UAbilityComponent::ResolveConeHorizontal(int32 x_char, int32 y_char, TEnumA
 				// To the Up
 				if (Owner->Grid->IsValidCoord(x + j, y))
 				{
-					transform.SetLocation(FVector(((x+j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
+					/** Add Tiles **/
+					AffectedTiles.Add(Owner->Grid->CoordToIndex(x + j, y));
+
+					/** Display Indicators **/
+					transform.SetLocation(FVector(((x + j)* Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y* Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
 					Owner->OnAbilityAim(transform);
+
+					/** Add Characters **/
+					FTileProperties AffectedTile = Owner->Grid->GetTilePropertiesFromCoord(x + j, y);
+					if (AffectedTile.ActorOnTile != nullptr)
+					{
+						ABaseCharacter* CharacterToAdd = Cast<ABaseCharacter>(AffectedTile.ActorOnTile);
+						if (CharacterToAdd != nullptr)
+						{
+							AffectedCharacters.Add(CharacterToAdd);
+							UE_LOG(LogTemp, Warning, TEXT("Added character"));
+						}
+					}
 				}
 
 				// To the Down
 				if (Owner->Grid->IsValidCoord(x - j, y))
 				{
-					transform.SetLocation(FVector(((x-j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
+					/** Add Tiles **/
+					AffectedTiles.Add(Owner->Grid->CoordToIndex(x - j, y));
+
+					/** Display Indicators **/
+					transform.SetLocation(FVector(((x - j)* Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y* Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
 					Owner->OnAbilityAim(transform);
+
+					/** Add Characters **/
+					FTileProperties AffectedTile = Owner->Grid->GetTilePropertiesFromCoord(x - j, y);
+					if (AffectedTile.ActorOnTile != nullptr)
+					{
+						ABaseCharacter* CharacterToAdd = Cast<ABaseCharacter>(AffectedTile.ActorOnTile);
+						if (CharacterToAdd != nullptr)
+						{
+							AffectedCharacters.Add(CharacterToAdd);
+							UE_LOG(LogTemp, Warning, TEXT("Added character"));
+						}
+					}
 				}
 			}
 			y = y - 1;
@@ -732,8 +847,24 @@ void UAbilityComponent::ResolveConeVertical(int32 x_char, int32 y_char, TEnumAsB
 			FTransform transform;
 			if (Owner->Grid->IsValidCoord(x, y))
 			{
+				/** Add Tiles **/
+				AffectedTiles.Add(Owner->Grid->CoordToIndex(x, y));
+
+				/** Display Indicators **/
 				transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
 				Owner->OnAbilityAim(transform);
+
+				/** Add Characters **/
+				FTileProperties AffectedTile = Owner->Grid->GetTilePropertiesFromCoord(x, y);
+				if (AffectedTile.ActorOnTile != nullptr)
+				{
+					ABaseCharacter* CharacterToAdd = Cast<ABaseCharacter>(AffectedTile.ActorOnTile);
+					if (CharacterToAdd != nullptr)
+					{
+						AffectedCharacters.Add(CharacterToAdd);
+						UE_LOG(LogTemp, Warning, TEXT("Added character"));
+					}
+				}
 			}
 
 			int32 width;
@@ -751,15 +882,47 @@ void UAbilityComponent::ResolveConeVertical(int32 x_char, int32 y_char, TEnumAsB
 				// To the right
 				if (Owner->Grid->IsValidCoord(x, y + j))
 				{
+					/** Add Tiles **/
+					AffectedTiles.Add(Owner->Grid->CoordToIndex(x, y + j));
+
+					/** Display Indicators **/
 					transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), ((y + j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
 					Owner->OnAbilityAim(transform);
+
+					/** Add Characters **/
+					FTileProperties AffectedTile = Owner->Grid->GetTilePropertiesFromCoord(x, y + j);
+					if (AffectedTile.ActorOnTile != nullptr)
+					{
+						ABaseCharacter* CharacterToAdd = Cast<ABaseCharacter>(AffectedTile.ActorOnTile);
+						if (CharacterToAdd != nullptr)
+						{
+							AffectedCharacters.Add(CharacterToAdd);
+							UE_LOG(LogTemp, Warning, TEXT("Added character"));
+						}
+					}
 				}
 				
 				// To the left
 				if (Owner->Grid->IsValidCoord(x, y - j))
 				{
+					/** Add Tiles **/
+					AffectedTiles.Add(Owner->Grid->CoordToIndex(x, y - j));
+
+					/** Display Indicators **/
 					transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), ((y - j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
 					Owner->OnAbilityAim(transform);
+
+					/** Add Characters **/
+					FTileProperties AffectedTile = Owner->Grid->GetTilePropertiesFromCoord(x, y - j);
+					if (AffectedTile.ActorOnTile != nullptr)
+					{
+						ABaseCharacter* CharacterToAdd = Cast<ABaseCharacter>(AffectedTile.ActorOnTile);
+						if (CharacterToAdd != nullptr)
+						{
+							AffectedCharacters.Add(CharacterToAdd);
+							UE_LOG(LogTemp, Warning, TEXT("Added character"));
+						}
+					}
 				}
 			}
 			x = x + 1;
@@ -773,8 +936,24 @@ void UAbilityComponent::ResolveConeVertical(int32 x_char, int32 y_char, TEnumAsB
 			FTransform transform;
 			if (Owner->Grid->IsValidCoord(x, y))
 			{
+				/** Add Tiles **/
+				AffectedTiles.Add(Owner->Grid->CoordToIndex(x, y));
+
+				/** Display Indicators **/
 				transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
 				Owner->OnAbilityAim(transform);
+
+				/** Add Characters **/
+				FTileProperties AffectedTile = Owner->Grid->GetTilePropertiesFromCoord(x, y);
+				if (AffectedTile.ActorOnTile != nullptr)
+				{
+					ABaseCharacter* CharacterToAdd = Cast<ABaseCharacter>(AffectedTile.ActorOnTile);
+					if (CharacterToAdd != nullptr)
+					{
+						AffectedCharacters.Add(CharacterToAdd);
+						UE_LOG(LogTemp, Warning, TEXT("Added character"));
+					}
+				}
 			}
 
 			int32 width;
@@ -792,15 +971,47 @@ void UAbilityComponent::ResolveConeVertical(int32 x_char, int32 y_char, TEnumAsB
 				// To the right
 				if (Owner->Grid->IsValidCoord(x, y + j))
 				{
-					transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), ((y + j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
+					/** Add Tiles **/
+					AffectedTiles.Add(Owner->Grid->CoordToIndex(x, y + j));
+
+					/** Display Indicators **/
+					transform.SetLocation(FVector((x* Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), ((y + j)* Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
 					Owner->OnAbilityAim(transform);
+
+					/** Add Characters **/
+					FTileProperties AffectedTile = Owner->Grid->GetTilePropertiesFromCoord(x, y + j);
+					if (AffectedTile.ActorOnTile != nullptr)
+					{
+						ABaseCharacter* CharacterToAdd = Cast<ABaseCharacter>(AffectedTile.ActorOnTile);
+						if (CharacterToAdd != nullptr)
+						{
+							AffectedCharacters.Add(CharacterToAdd);
+							UE_LOG(LogTemp, Warning, TEXT("Added character"));
+						}
+					}
 				}
 
 				// To the left
-				if (Owner->Grid->IsValidCoord(x, y - 1))
+				if (Owner->Grid->IsValidCoord(x, y - j))
 				{
-					transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), ((y - j) * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
+					/** Add Tiles **/
+					AffectedTiles.Add(Owner->Grid->CoordToIndex(x, y - j));
+
+					/** Display Indicators **/
+					transform.SetLocation(FVector((x* Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), ((y - j)* Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
 					Owner->OnAbilityAim(transform);
+
+					/** Add Characters **/
+					FTileProperties AffectedTile = Owner->Grid->GetTilePropertiesFromCoord(x, y - j);
+					if (AffectedTile.ActorOnTile != nullptr)
+					{
+						ABaseCharacter* CharacterToAdd = Cast<ABaseCharacter>(AffectedTile.ActorOnTile);
+						if (CharacterToAdd != nullptr)
+						{
+							AffectedCharacters.Add(CharacterToAdd);
+							UE_LOG(LogTemp, Warning, TEXT("Added character"));
+						}
+					}
 				}
 			}
 			x = x - 1;
@@ -970,9 +1181,25 @@ void UAbilityComponent::ProcessNodeForCone(int32 x, int32 y, float range, TEnumA
 	
 	if (Owner->Grid->IsValidCoord(x, y))
 	{
+		/** Add Tiles **/
+		AffectedTiles.Add(Owner->Grid->CoordToIndex(x, y));
+
+		/** Display Indicators **/
 		FTransform transform;
 		transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
 		Owner->OnAbilityAim(transform);
+
+		/** Add Characters **/
+		FTileProperties AffectedTile = Owner->Grid->GetTilePropertiesFromCoord(x, y);
+		if (AffectedTile.ActorOnTile != nullptr)
+		{
+			ABaseCharacter* CharacterToAdd = Cast<ABaseCharacter>(AffectedTile.ActorOnTile);
+			if (CharacterToAdd != nullptr)
+			{
+				AffectedCharacters.Add(CharacterToAdd);
+				UE_LOG(LogTemp, Warning, TEXT("Added character"));
+			}
+		}
 	}
 }
 
@@ -1001,13 +1228,15 @@ void UAbilityComponent::PlotTileLow(int32 x0, int32 y0, int32 x1, int32 y1, bool
 		{
 			if (Owner->Grid->IsValidCoord(x, y) && GetRangeValue(x, y) <= SelectedAbility->Range)
 			{
+				/** Add Tiles **/
 				AffectedTiles.Add(Owner->Grid->CoordToIndex(x, y));
-				//UE_LOG(LogTemp, Warning, TEXT("P_LOW (%i,%i)"), x, y);
 
+				/** Display Indicators **/
 				FTransform transform;
 				transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
 				Owner->OnAbilityAim(transform);
 
+				/** Add Characters **/
 				FTileProperties AffectedTile = Owner->Grid->GetTilePropertiesFromCoord(x, y);
 				if (AffectedTile.ActorOnTile != nullptr)
 				{
@@ -1057,13 +1286,15 @@ void UAbilityComponent::PlotTileHigh(int32 x0, int32 y0, int32 x1, int32 y1, boo
 		{
 			if (Owner->Grid->IsValidCoord(x, y) && GetRangeValue(x, y) <= SelectedAbility->Range)
 			{
-				//UE_LOG(LogTemp, Warning, TEXT("P_HIGH (%i,%i)"), x, y);
+				/** Add Tiles **/
 				AffectedTiles.Add(Owner->Grid->CoordToIndex(x, y));
-				//Display selection
+
+				/** Display Indicators **/
 				FTransform transform;
 				transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
 				Owner->OnAbilityAim(transform);
 
+				/** Add Characters **/
 				FTileProperties AffectedTile = Owner->Grid->GetTilePropertiesFromCoord(x, y);
 				if (AffectedTile.ActorOnTile != nullptr)
 				{
