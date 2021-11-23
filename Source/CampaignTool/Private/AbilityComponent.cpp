@@ -33,6 +33,7 @@ void UAbilityComponent::HandleTileChange()
 {
 	if (SelectedAbility!= nullptr && Owner != nullptr && Owner->Grid != nullptr)
 	{
+		ResetSelectionData();
 		Owner->CleanupAbilityIndicators();
 		if (SelectedAbility->TargetType == ETargetType::AOE)
 		{
@@ -153,7 +154,7 @@ void UAbilityComponent::ExecuteAbility()
 		else if (SelectedAbility->TargetType == ETargetType::Single && AffectedCharacters[0] != nullptr)
 		{
 			UBaseSingleTargetAbility* SingleTargetAbility = Cast<UBaseSingleTargetAbility>(SelectedAbility);
-			SingleTargetAbility->Target = AffectedCharacters[0];
+			SingleTargetAbility->TargetCharacter = AffectedCharacters[0];
 			SingleTargetAbility->Execute();
 			SingleTargetAbility->OnExecute();
 		}
@@ -284,11 +285,29 @@ void UAbilityComponent::ResolveMelee(int32 x, int32 y)
 {
 	if (GetRangeValue(x, y) > 0 && GetRangeValue(x, y) < 2  )
 	{
-		AffectedTiles.Add(Owner->Grid->CoordToIndex(x, y));
+		/** CHEKC FOR LINE OF SIGHT **/
+		if (Owner->Grid->IsValidCoord(x, y))
+		{
+			/** Add Tiles **/
+			AffectedTiles.Add(Owner->Grid->CoordToIndex(x, y));
 
-		FTransform transform;
-		transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
-		Owner->OnAbilityAim(transform);
+			/** Display Indicators **/
+			FTransform transform;
+			transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
+			Owner->OnAbilityAim(transform);
+
+			/** Add Characters **/
+			FTileProperties AffectedTile = Owner->Grid->GetTilePropertiesFromCoord(x, y);
+			if (AffectedTile.ActorOnTile != nullptr)
+			{
+				ABaseCharacter* CharacterToAdd = Cast<ABaseCharacter>(AffectedTile.ActorOnTile);
+				if (CharacterToAdd != nullptr)
+				{
+					AffectedCharacters.Add(CharacterToAdd);
+					UE_LOG(LogTemp, Warning, TEXT("Added character"));
+				}
+			}
+		}
 	}
 }
 
@@ -321,12 +340,12 @@ void UAbilityComponent::ResolveNonAttack(int32 x, int32 y)
 void UAbilityComponent::CancelAbility()
 {
 	SelectedAbility = nullptr;
-	ResetPathfinding();
+	ResetSelectionData();
 	Owner->CleanupAbilityIndicators();
 	UE_LOG(LogTemp, Warning, TEXT("Ability Canceled"));
 }
 
-void UAbilityComponent::ResetPathfinding()
+void UAbilityComponent::ResetSelectionData()
 {
 	// Tiles and characters
 	AffectedCharacters.Empty();

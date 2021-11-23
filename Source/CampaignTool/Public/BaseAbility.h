@@ -96,6 +96,8 @@ public:
 		bool bHasValue;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = AbilityDetails, meta=(EditCondition="bHasValue"))
 		float AbilityValue;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = AbilityDetails)
+		class ABaseCharacter* OwnerCharacter; // This character is only used to access the caster's Roller class in Blueprints
 
 
 	//Enum properties

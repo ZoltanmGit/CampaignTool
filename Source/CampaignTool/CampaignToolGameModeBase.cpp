@@ -18,12 +18,14 @@ ACampaignToolGameModeBase::ACampaignToolGameModeBase()
 	TestFighter.Class = EClass::Fighter;
 	TestFighter.Speed = 30.0f;
 	TestFighter.SpellBook.Add("lightningstrike",true);
+	TestFighter.SpellBook.Add("curewounds", true);
 
 	TestRogue.bIsPlayerCharacter = true;
 	TestRogue.ArmorClass = 10;
 	TestRogue.CharacterName = "Bames Jond";
 	TestRogue.Class = EClass::Rogue;
 	TestRogue.Speed = 25.0f;
+	TestRogue.DamageResistanceArray.Add(EDamageType::Fire);
 	TestRogue.SpellBook.Add("fireball", true);
 	TestRogue.SpellBook.Add("firebreath", true);
 }

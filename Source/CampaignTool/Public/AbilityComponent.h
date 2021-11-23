@@ -88,7 +88,7 @@ public:
 	
 	/** General Functionality **/
 	void CancelAbility();
-	void ResetPathfinding();
+	void ResetSelectionData();
 
 private:
 	/** Sphere Algorithm **/

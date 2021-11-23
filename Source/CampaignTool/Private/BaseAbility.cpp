@@ -2,6 +2,7 @@
 
 
 #include "BaseAbility.h"
+#include "BaseCharacter.h"
 
 UBaseAbility::UBaseAbility()
 {

@@ -30,6 +30,7 @@ void UHealthComponent::HandleDamage(float Damage, EDamageType DamageType)
 				SetCurrentHealth(GetCurrentHealth() + Damage);
 			}
 		}
+		Owner->OnHealthChange();
 		break;
 	default:
 		if (Owner != nullptr)
@@ -41,7 +42,7 @@ void UHealthComponent::HandleDamage(float Damage, EDamageType DamageType)
 			else if(Owner->CharacterAttributes->Stats.DamageResistanceArray.Contains(DamageType))
 			{
 				//If resistant then take half damage
-				SetCurrentHealth(GetCurrentHealth() - (Damage / 2));
+				SetCurrentHealth(GetCurrentHealth() - (FMath::Floor(Damage / 2)));
 			}
 			else
 			{
