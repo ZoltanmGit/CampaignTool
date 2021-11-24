@@ -317,11 +317,28 @@ void UAbilityComponent::ResolveRanged(int32 x, int32 y)
 	{
 		/** Check for line of sight **/
 
-		AffectedTiles.Add(Owner->Grid->CoordToIndex(x, y));
+		if (Owner->Grid->IsValidCoord(x, y))
+		{
+			/** Add Tiles **/
+			AffectedTiles.Add(Owner->Grid->CoordToIndex(x, y));
 
-		FTransform transform;
-		transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
-		Owner->OnAbilityAim(transform);
+			/** Display Indicators **/
+			FTransform transform;
+			transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
+			Owner->OnAbilityAim(transform);
+
+			/** Add Characters **/
+			FTileProperties AffectedTile = Owner->Grid->GetTilePropertiesFromCoord(x, y);
+			if (AffectedTile.ActorOnTile != nullptr)
+			{
+				ABaseCharacter* CharacterToAdd = Cast<ABaseCharacter>(AffectedTile.ActorOnTile);
+				if (CharacterToAdd != nullptr)
+				{
+					AffectedCharacters.Add(CharacterToAdd);
+					UE_LOG(LogTemp, Warning, TEXT("Added character"));
+				}
+			}
+		}
 	}
 }
 
