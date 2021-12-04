@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "Public/CharacterStruct.h"
+#include "Character/CharacterStruct.h"
 #include "CampaignToolGameModeBase.generated.h"
 
 /**

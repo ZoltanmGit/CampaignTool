@@ -2,11 +2,11 @@
 
 
 #include "CampaignToolGameModeBase.h"
-#include "Public/Grid.h"
-#include "Public/IndicatorActor.h"
-#include "AbilityStorage.h"
-#include "Public/PlayerCharacter.h"
-#include "Public/MapSaveObject.h"
+#include "GridSystem/Grid.h"
+#include "Utilities/IndicatorActor.h"
+#include "AbilitySystem/AbilityStorage.h"
+#include "Character/PlayerCharacter.h"
+#include "Persistence/MapSaveObject.h"
 #include "Public/CampaignToolGameInstance.h"
 #include <Runtime/Engine/Classes/Kismet/GameplayStatics.h>
 
