@@ -39,9 +39,6 @@ ABaseCharacter::ABaseCharacter()
 	DiceRoller = CreateDefaultSubobject<UDiceRoller>(TEXT("DiceRoller"));
 	CharacterAbilityComponent = CreateDefaultSubobject<UAbilityComponent>(TEXT("AbilityComponent"));
 	Grid = nullptr; // TODO: Check if redundant
-
-	// Subscribe to HandleTakeDamage to OnTakeAnyDamage event
-	OnTakeAnyDamage.AddDynamic(this, &ABaseCharacter::HandleTakeDamage); //Might be redundant soon
 }
 
 // Called when the game starts or when spawned
@@ -68,15 +65,6 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-}
-
-void ABaseCharacter::HandleTakeDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
-{
-	if (CharacterHealth)
-	{
-		CharacterHealth->HandleTakeDamage(Damage);
-		OnHealthChange();
-	}
 }
 
 void ABaseCharacter::BeginTurn()

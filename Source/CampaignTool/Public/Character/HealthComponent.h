@@ -30,9 +30,7 @@ public:
 	UPROPERTY()
 		class ABaseCharacter* Owner;
 	UFUNCTION(BlueprintCallable)
-		void HandleDamage(float Damage, EDamageType DamageType);
-	UFUNCTION(BlueprintCallable)
-		void HandleTakeDamage(float Damage);
+		void HandleDamage(class ABaseCharacter* Instigator ,float Damage, EDamageType DamageType);
 public:
 	// Getters, we need to be able to call them from blueprint
 	// as to represent them for the User Interface widgets

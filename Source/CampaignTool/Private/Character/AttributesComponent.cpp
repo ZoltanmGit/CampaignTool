@@ -20,7 +20,86 @@ void UAttributesComponent::InitComponent(FCharacterStruct charstruct)
 	Stats = charstruct;
 }
 
-int32 UAttributesComponent::GetModifier(int32 value)
+int32 UAttributesComponent::GetModifier(TEnumAsByte<EAbilityType> Ability)
 {
-	return (value-10)/2;
+	switch (Ability)
+	{
+	case EAbilityType::Strength:
+		return FMath::FloorToInt((Stats.Strength - 10) / 2);
+		break;
+	case EAbilityType::Dexterity:
+		return FMath::FloorToInt((Stats.Dexterity - 10) / 2);
+		break;
+	case EAbilityType::Constitution:
+		return FMath::FloorToInt((Stats.Constitution - 10) / 2);
+		break;
+	case EAbilityType::Intelligence:
+		return FMath::FloorToInt((Stats.Intelligence - 10) / 2);
+		break;
+	case EAbilityType::Wisdom:
+		return FMath::FloorToInt((Stats.Wisdom - 10) / 2);
+		break;
+	case EAbilityType::Charsima:
+		return FMath::FloorToInt((Stats.Charisma - 10) / 2);
+		break;
+	default:
+		return 0;
+		break;
+	}
+	return 0;
+}
+int32 UAttributesComponent::GetProficiencyBonus()
+{
+	return FMath::Clamp(Stats.ProficiencyBonus, 0, 6); // I think technically the minimum is +2 but it needs some digging
+}
+
+bool UAttributesComponent::IsProficientWith(TEnumAsByte<EWeapon> weapon)
+{
+	if (Stats.ProficiencyWeaponArray.Contains(weapon))
+	{
+		return true;
+	}
+	return false;
+}
+bool UAttributesComponent::IsProficientWith(TEnumAsByte<EArmor> armor)
+{
+	if (Stats.ProficiencyArmorArray.Contains(armor))
+	{
+		return true;
+	}
+	return false;
+}
+bool UAttributesComponent::IsProficientWith(TEnumAsByte<ETool> tool)
+{
+	if (Stats.ProficiencyToolArray.Contains(tool))
+	{
+		return true;
+	}
+	return false;
+}
+
+bool UAttributesComponent::IsImmuneTo(TEnumAsByte<EDamageType> damageType)
+{
+	if (Stats.DamageImmunities.Contains(damageType))
+	{
+		return true;
+	}
+	return false;
+}
+bool UAttributesComponent::IsImmuneTo(TEnumAsByte<ECondition> condition)
+{
+	if (Stats.ConditionImmunities.Contains(condition))
+	{
+		return true;
+	}
+	return false;
+}
+
+bool UAttributesComponent::IsResistantTo(TEnumAsByte<EDamageType> damageType)
+{
+	if (Stats.DamageResistanceArray.Contains(damageType))
+	{
+		return true;
+	}
+	return false;
 }

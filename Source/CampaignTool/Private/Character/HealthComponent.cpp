@@ -16,7 +16,7 @@ void UHealthComponent::BeginPlay()
 {
 	Super::BeginPlay();
 }
-void UHealthComponent::HandleDamage(float Damage, EDamageType DamageType)
+void UHealthComponent::HandleDamage(ABaseCharacter* Instigator ,float Damage, EDamageType DamageType)
 {
 	switch (DamageType)
 	{
@@ -53,10 +53,6 @@ void UHealthComponent::HandleDamage(float Damage, EDamageType DamageType)
 		}
 		break;
 	}
-}
-void UHealthComponent::HandleTakeDamage(float Damage)
-{
-	SetCurrentHealth(GetCurrentHealth() - Damage);
 }
 
 float UHealthComponent::GetCurrentHealth()

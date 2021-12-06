@@ -13,5 +13,4 @@ UCLASS()
 class CAMPAIGNTOOL_API UBaseConsumableItem : public UBaseItem
 {
 	GENERATED_BODY()
-	
 };

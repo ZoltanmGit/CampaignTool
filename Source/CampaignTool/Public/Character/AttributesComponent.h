@@ -27,7 +27,22 @@ public:
 		FCharacterStruct Stats;
 public:
 	UFUNCTION(BlueprintCallable)
-		int32 GetModifier(int32 value);
+		int32 GetModifier(TEnumAsByte<EAbilityType> Ability);
+	UFUNCTION(BlueprintCallable)
+		int32 GetProficiencyBonus();
+	UFUNCTION(BlueprintCallable)
+		bool IsProficientWith(TEnumAsByte<EWeapon> weapon);
+	UFUNCTION(BlueprintCallable)
+		bool IsProficientWith(TEnumAsByte<EArmor> armor);
+	UFUNCTION(BlueprintCallable)
+		bool IsProficientWith(TEnumAsByte<ETool> tool);
+	UFUNCTION(BlueprintCallable)
+		bool IsImmuneTo(TEnumAsByte<EDamageType> damageType);
+	UFUNCTION(BlueprintCallable)
+		bool IsImmuneTo(TEnumAsByte<ECondition> condition);
+	UFUNCTION(BlueprintCallable)
+		bool IsResistantTo(TEnumAsByte<EDamageType> damageType);
+
 
 	void InitComponent(FCharacterStruct character);
 };

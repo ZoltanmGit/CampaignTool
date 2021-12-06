@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BaseItem.h"
+#include "BaseEquippableItem.h"
 #include "BaseArmorItem.generated.h"
 
 /**
  * 
  */
 UCLASS(Blueprintable)
-class CAMPAIGNTOOL_API UBaseArmorItem : public UBaseItem
+class CAMPAIGNTOOL_API UBaseArmorItem : public UBaseEquippableItem
 {
 	GENERATED_BODY()
 	

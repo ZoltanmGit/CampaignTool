@@ -65,40 +65,15 @@ public:
 	bool bCanAct;
 	bool bIsActive;
 	bool bIsAimingAbility;
-	/// <summary>
-	/// Function that handles changes in health, healing and damage both
-	/// </summary>
-	UFUNCTION()
-		void HandleTakeDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser);
-	/// <summary>
-	/// Initiates pathfinding, resets actions and advances cooldowns
-	/// </summary>
 	UFUNCTION()
 		void BeginTurn();
-	/// <summary>
-	/// Ends the turn for the character
-	/// </summary>
 	UFUNCTION(BlueprintCallable)
 		virtual void EndTurn();
-	/// <summary>
-	/// Changes the supposed location of the character, which then gets moved by the MovementController
-	/// </summary>
 	UFUNCTION()
-		/// <summary>
-		/// Moves the character to a new location
-		/// </summary>
-		/// <param name="newLocation">The new location for the character</param>
 		void ChangeLocation(FVector newLocation);
 	UFUNCTION()
 		void RefreshPathfinding();
 	UFUNCTION()
-		/// <summary>
-		/// Initializes the attributes of a character
-		/// Passes a pointer of the grid to the character
-		/// Tells the pathfinder how large the grid is
-		/// </summary>
-		/// <param name="Character"></param>
-		/// <param name="ArgGrid"></param>
 		void InitializeCharacter(FCharacterStruct Character, class AGrid* ArgGrid, class AIndicatorActor* ArgIndicator, class AAbilityStorage* ArgAbilityStorage);
 public:
 
