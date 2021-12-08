@@ -3,7 +3,7 @@
 
 #include "Utilities/DiceRoller.h"
 
-int32 UDiceRoller::Roll(int32 dice, int32 multiplier)
+int32 UDiceRoller::Roll(int32 dice, int32 multiplier, bool bWithAdvantage, bool bWithDisadvantage)
 {
 	int32 result = 0;
 	FRandomStream stream(FMath::Rand());

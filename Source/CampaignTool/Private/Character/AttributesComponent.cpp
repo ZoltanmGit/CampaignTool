@@ -48,6 +48,20 @@ int32 UAttributesComponent::GetModifier(TEnumAsByte<EAbilityType> Ability)
 	}
 	return 0;
 }
+int32 UAttributesComponent::GetSavingThrowModifier(TEnumAsByte<EAbilityType> Ability)
+{
+	int32 result = 0;
+	result += GetModifier(Ability);
+
+	if (Stats.SavingThrowProficiencyArray.Contains(Ability))
+	{
+		result += Stats.ProficiencyBonus;
+	}
+
+	return result;
+}
+
+
 int32 UAttributesComponent::GetProficiencyBonus()
 {
 	return FMath::Clamp(Stats.ProficiencyBonus, 0, 6); // I think technically the minimum is +2 but it needs some digging

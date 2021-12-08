@@ -13,5 +13,5 @@ class CAMPAIGNTOOL_API UDiceRoller : public UObject
 	
 public:
 	UFUNCTION(BlueprintCallable)
-		int32 Roll(int32 dice,int32 multiplier = 1);
+		int32 Roll(int32 dice,int32 multiplier = 1, bool bWithAdvantage = false, bool bWithDisadvantage = false);
 };

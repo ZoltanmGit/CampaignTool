@@ -8,6 +8,14 @@
 #include "Utilities/AttributeEnums.h"
 #include "AttributesComponent.generated.h"
 
+USTRUCT()
+struct FSavingThrow
+{
+	GENERATED_BODY()
+public:
+	TEnumAsByte<EAbilityType> Ability;
+	bool bHasAdvantage;
+};
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class CAMPAIGNTOOL_API UAttributesComponent : public UActorComponent
@@ -25,23 +33,21 @@ protected:
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
 		FCharacterStruct Stats;
+		
 public:
 	UFUNCTION(BlueprintCallable)
 		int32 GetModifier(TEnumAsByte<EAbilityType> Ability);
 	UFUNCTION(BlueprintCallable)
+		int32 GetSavingThrowModifier(TEnumAsByte<EAbilityType> Ability);
+	UFUNCTION(BlueprintCallable)
 		int32 GetProficiencyBonus();
-	UFUNCTION(BlueprintCallable)
-		bool IsProficientWith(TEnumAsByte<EWeapon> weapon);
-	UFUNCTION(BlueprintCallable)
-		bool IsProficientWith(TEnumAsByte<EArmor> armor);
-	UFUNCTION(BlueprintCallable)
-		bool IsProficientWith(TEnumAsByte<ETool> tool);
-	UFUNCTION(BlueprintCallable)
-		bool IsImmuneTo(TEnumAsByte<EDamageType> damageType);
-	UFUNCTION(BlueprintCallable)
-		bool IsImmuneTo(TEnumAsByte<ECondition> condition);
-	UFUNCTION(BlueprintCallable)
-		bool IsResistantTo(TEnumAsByte<EDamageType> damageType);
+
+	bool IsProficientWith(TEnumAsByte<EWeapon> weapon);
+	bool IsProficientWith(TEnumAsByte<EArmor> armor);
+	bool IsProficientWith(TEnumAsByte<ETool> tool);
+	bool IsImmuneTo(TEnumAsByte<EDamageType> damageType);
+	bool IsImmuneTo(TEnumAsByte<ECondition> condition);
+	bool IsResistantTo(TEnumAsByte<EDamageType> damageType);
 
 
 	void InitComponent(FCharacterStruct character);
