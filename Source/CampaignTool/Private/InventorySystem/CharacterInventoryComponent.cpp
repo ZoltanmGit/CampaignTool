@@ -42,7 +42,7 @@ void UCharacterInventoryComponent::UpdateArmorClass()
 	}
 	else
 	{
-		/** If they're not wearing any armor then all hell breaks loose Oof **/
+		/** If they're not wearing any armor then all hell breaks loose oof **/
 	}
 }
 
