@@ -8,6 +8,7 @@
 #include "Character/AttributesComponent.h"
 #include "MovementSystem/PathfinderComponent.h"
 #include "MovementSystem/MoverComponent.h"
+#include "InventorySystem/CharacterInventoryComponent.h"
 #include "GridSystem/Grid.h"
 #include "Utilities/IndicatorActor.h"
 #include "AbilitySystem/AbilityStorage.h"
@@ -36,6 +37,7 @@ ABaseCharacter::ABaseCharacter()
 	/** General Components **/
 	CharacterHealth = CreateDefaultSubobject<UHealthComponent>(TEXT("CharacterHealth"));
 	CharacterAttributes = CreateDefaultSubobject<UAttributesComponent>(TEXT("CharacterAttributes"));
+	CharacterInventory = CreateDefaultSubobject<UCharacterInventoryComponent>(TEXT("CharacterInventory"));
 	DiceRoller = CreateDefaultSubobject<UDiceRoller>(TEXT("DiceRoller"));
 	CharacterAbilityComponent = CreateDefaultSubobject<UAbilityComponent>(TEXT("AbilityComponent"));
 	Grid = nullptr; // TODO: Check if redundant
@@ -50,6 +52,10 @@ void ABaseCharacter::BeginPlay()
 	{
 		CharacterHealth->SetCurrentHealth(CharacterHealth->GetFullHealth());
 		OnHealthChange();
+	}
+	if (CharacterInventory != nullptr)
+	{
+		OnStatChange();
 	}
 }
 
@@ -233,6 +239,9 @@ UAttributesComponent* ABaseCharacter::GetCharacterAttributes() const
 }
 
 void ABaseCharacter::OnHealthChange_Implementation()
+{
+}
+void ABaseCharacter::OnStatChange_Implementation()
 {
 }
 void ABaseCharacter::OnPathfinding_Implementation(const FTransform transform)

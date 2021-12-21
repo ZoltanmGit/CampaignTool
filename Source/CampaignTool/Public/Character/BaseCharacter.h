@@ -36,6 +36,8 @@ public:
 		class UAttributesComponent* CharacterAttributes;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
 		class UAbilityComponent* CharacterAbilityComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Inventory)
+		class UCharacterInventoryComponent* CharacterInventory;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Pathfinding)
 		class UPathfinderComponent* Pathfinder;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Movement)
@@ -86,6 +88,8 @@ public:
 	//Public Events
 	UFUNCTION(BlueprintNativeEvent)
 		void OnHealthChange(); //Event that notifies the Widget to reflect value changes
+	UFUNCTION(BlueprintNativeEvent)
+		void OnStatChange(); //Event that notifies the Widget to reflect value changes
 
 	UFUNCTION(BlueprintNativeEvent)
 		void OnPathfinding(const FTransform transform);

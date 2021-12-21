@@ -20,18 +20,22 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+private:
+	
+	/** Statistics **/
+	int32 armorClass;
+	int32 mainHandAttackBonus;
+	int32 offHandAttackBonus;
+	
+	/** Update Functions **/
+	void UpdateArmorClass();
+	void UpdateMainAttackBonus();
+	void UpdateOffhandAttackBonus();
 
 public:
 	/** General **/
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = General)
 		class ABaseCharacter* Owner;
-	/** Statistics **/
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Statistics)
-		int32 ArmorClass;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Statistics)
-		int32 MainHandAttackBonus;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Statistics)
-		int32 OffHandAttackBonus;
 	/** Equipment **/
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipment)
 		class UBaseWeaponItem* MainHandWeapon;
@@ -39,29 +43,12 @@ public:
 		class UBaseWeaponItem* OffHandWeapon;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipment)
 		class UBaseArmorItem* Armor;
-	/*UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipment)
-		class UBaseAccessoryItem* Helmet;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipment)
-		class UBaseAccessoryItem* Ring1;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipment)
-		class UBaseAccessoryItem* Ring2;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipment)
-		class UBaseAccessoryItem* Cloak;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipment)
-		class UBaseAccessoryItem* Boots;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipment)
-		class UBaseAccessoryItem* Gloves;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipment)
-		TArray<class UBaseAmmunitionItem> EquippedAmmunitionArray; // Array of 2
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipment)
-		TArray<class UBaseConsumableItem> EquippedConsumableArray;*/ // Array of 3
 public:
 	/** Functions **/
 	UFUNCTION(BlueprintCallable)
-		void UpdateArmorClass();
+		int32 GetArmorClass();
 	UFUNCTION(BlueprintCallable)
-		void UpdateMainAttackBonus();
+		int32 GetMainAttackBonus();
 	UFUNCTION(BlueprintCallable)
-		void UpdateOffhandAttackBonus();
-
+		int32 GetOffhandAttackBonus();
 };

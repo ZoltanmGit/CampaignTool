@@ -23,21 +23,22 @@ void UCharacterInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	UpdateArmorClass();
 	// ...
 }
 
 void UCharacterInventoryComponent::UpdateArmorClass()
 {
-	ArmorClass = 0;
+	armorClass = Owner->CharacterAttributes->Stats.ArmorClass;
 	/** First we check if the character is wearing armor **/
 	if (Armor != nullptr)
 	{
 		/** If he's wearing armor then we start off by it's armor value **/
-		ArmorClass = Armor->ArmorClass;
+		armorClass = Armor->ArmorClass;
 		/** We add Dexterity if applicable **/
 		if (Armor->ArmorType != EArmor::HeavyArmor)
 		{
-			ArmorClass += FMath::Clamp(Owner->CharacterAttributes->GetModifier(EAbilityType::Dexterity), -5, Armor->MaxDexterity);
+			armorClass += FMath::Clamp(Owner->CharacterAttributes->GetModifier(EAbilityType::Dexterity), -5, Armor->MaxDexterity);
 		}
 	}
 	else
@@ -48,7 +49,7 @@ void UCharacterInventoryComponent::UpdateArmorClass()
 
 void UCharacterInventoryComponent::UpdateMainAttackBonus()
 {
-	MainHandAttackBonus = 0;
+	mainHandAttackBonus = 0;
 	/** If we have a weapon equipped **/
 	if (MainHandWeapon != nullptr)
 	{
@@ -57,22 +58,22 @@ void UCharacterInventoryComponent::UpdateMainAttackBonus()
 		{
 			if (Owner->CharacterAttributes->GetModifier(EAbilityType::Strength) > Owner->CharacterAttributes->GetModifier(EAbilityType::Dexterity))
 			{
-				MainHandAttackBonus = Owner->CharacterAttributes->GetModifier(EAbilityType::Strength);
+				mainHandAttackBonus = Owner->CharacterAttributes->GetModifier(EAbilityType::Strength);
 			}
 			else //If it's equal than it doesn't matter
 			{
-				MainHandAttackBonus = Owner->CharacterAttributes->GetModifier(EAbilityType::Dexterity);
+				mainHandAttackBonus = Owner->CharacterAttributes->GetModifier(EAbilityType::Dexterity);
 			}
 		}
 		/** If it doesn't have finesse then we just add the STR modifier **/
 		else 
 		{
-			MainHandAttackBonus = Owner->CharacterAttributes->GetModifier(EAbilityType::Dexterity);
+			mainHandAttackBonus = Owner->CharacterAttributes->GetModifier(EAbilityType::Dexterity);
 		}
 		/** If he's proficient then we also add the proficiency bonus **/
 		if (Owner->CharacterAttributes->IsProficientWith(MainHandWeapon->WeaponType))
 		{
-			MainHandAttackBonus += Owner->CharacterAttributes->GetProficiencyBonus();
+			mainHandAttackBonus += Owner->CharacterAttributes->GetProficiencyBonus();
 		}
 	}
 	else // it'd count as unarmed
@@ -86,4 +87,23 @@ void UCharacterInventoryComponent::UpdateOffhandAttackBonus()
 	{
 
 	}
+	else // I think it might count as nothing.
+	{
+
+	}
+}
+
+int32 UCharacterInventoryComponent::GetArmorClass()
+{
+	return FMath::Clamp(armorClass,0,100);
+}
+
+int32 UCharacterInventoryComponent::GetMainAttackBonus()
+{
+	return FMath::Clamp(mainHandAttackBonus,-99,99);
+}
+
+int32 UCharacterInventoryComponent::GetOffhandAttackBonus()
+{
+	return FMath::Clamp(offHandAttackBonus, -99, 99);
 }

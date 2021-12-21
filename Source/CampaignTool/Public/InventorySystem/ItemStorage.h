@@ -4,24 +4,23 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "AbilityStorage.generated.h"
+#include "ItemStorage.generated.h"
 
 UCLASS()
-class CAMPAIGNTOOL_API AAbilityStorage : public AActor
+class CAMPAIGNTOOL_API AItemStorage : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AAbilityStorage();
+	AItemStorage();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Abilities)
-		TMap<FString,TSubclassOf<class UBaseAbility>> AbilityMap;
+public:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
 
-	class UBaseAbility* GetAbilityPtr(FString AbilityCode);
 };

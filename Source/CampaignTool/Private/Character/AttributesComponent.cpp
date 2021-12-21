@@ -57,7 +57,6 @@ int32 UAttributesComponent::GetSavingThrowModifier(TEnumAsByte<EAbilityType> Abi
 	{
 		result += Stats.ProficiencyBonus;
 	}
-
 	return result;
 }
 
