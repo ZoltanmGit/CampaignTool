@@ -169,18 +169,18 @@ void ABaseCharacter::RefreshPathfinding()
 
 void ABaseCharacter::InitializeCharacter(FCharacterStruct Character, AGrid* ArgGrid, AIndicatorActor* ArgIndicator, AAbilityStorage* ArgAbilityStorage)
 {
-	/** General Init **/
+	/** Initializing utility actors **/
 	Grid = ArgGrid;
 	Indicator = ArgIndicator;
+	
+	/** Passing Grid information to pathfinder **/
 	Pathfinder->Rows = Grid->Rows;
 	Pathfinder->Columns = Grid->Columns;
 	
-	/** Owner Init **/
-	CharacterHealth->Owner = this;
-	CharacterAbilityComponent->Owner = this;
-	
-	if (CharacterAttributes)
+	/** Initializing Health and Attributes **/
+	if (CharacterAttributes != nullptr && CharacterHealth != nullptr)
 	{
+		CharacterHealth->Owner = this;
 		CharacterAttributes->InitComponent(Character);
 		if (CharacterHealth)
 		{
@@ -189,6 +189,19 @@ void ABaseCharacter::InitializeCharacter(FCharacterStruct Character, AGrid* ArgG
 			OnHealthChange();
 		}
 	}
+	if (CharacterInventory != nullptr)
+	{
+		CharacterInventory->Owner = this;
+		CharacterInventory->UpdateArmorClass();
+		OnStatChange();
+	}
+	
+	/** Ability Initialization **/
+	if (CharacterAbilityComponent != nullptr)
+	{
+		CharacterAbilityComponent->Owner = this;
+	}
+	
 	for (auto It = CharacterAttributes->Stats.SpellBook.CreateConstIterator(); It; ++It)
 	{
 		if (It.Value() == true)
@@ -210,8 +223,6 @@ void ABaseCharacter::InitializeCharacter(FCharacterStruct Character, AGrid* ArgG
 			UE_LOG(LogTemp, Warning, TEXT("Value false"));
 		}
 	}
-
-	
 }
 
 UHealthComponent* ABaseCharacter::GetCharacterHealth() const

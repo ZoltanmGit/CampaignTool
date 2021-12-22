@@ -5,7 +5,6 @@
 #include "MovementSystem/PathfinderComponent.h"
 #include "MovementSystem/MoverComponent.h"
 #include "GridSystem/Grid.h"
-#include "AbilitySystem/AbilityComponent.h"
 #include "Utilities/DiceRoller.h"
 #include "Components/WidgetComponent.h"
 #include "Components/StaticMeshComponent.h"
@@ -14,8 +13,13 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
+#include "AbilitySystem/AbilityComponent.h"
 #include "AbilitySystem/BaseAoeTargetAbility.h"
 #include "AbilitySystem/BaseSingleTargetAbility.h"
+#include "InventorySystem/BaseItem.h"
+#include "InventorySystem/BaseArmorItem.h"
+#include "InventorySystem/BaseWeaponItem.h"
+#include "InventorySystem/ItemStorage.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -41,42 +45,7 @@ APlayerCharacter::APlayerCharacter()
 	CharacterType = ECharacterType::C_Ally;
 
 	/** DEBUG DELETE LATER **/
-	// TestLine
-	/*TestAbility01 = CreateDefaultSubobject<UBaseAoeTargetAbility>(TEXT("TestAbility01"));
-	TestAbility01->Range = 5;
-	TestAbility01->AreaEffectType = EAreaOfEffectType::Line;
-	TestAbility01->AfffectedTargetType = EAffectedTargetType::Everyone;
-	AbilityArray.Add(TestAbility01);
-	// TestCone
-	TestAbility02 = CreateDefaultSubobject<UBaseAoeTargetAbility>(TEXT("TestAbility02"));
-	TestAbility02->Range = 7;
-	TestAbility02->AreaEffectType = EAreaOfEffectType::Cone;
-	TestAbility02->AfffectedTargetType = EAffectedTargetType::Everyone;
-	AbilityArray.Add(TestAbility02);
-	// TestSphere
-	TestAbility03 = CreateDefaultSubobject<UBaseAoeTargetAbility>(TEXT("TestAbility03"));
-	TestAbility03->Range = 15;
-	TestAbility03->OptionalRange = 7;
-	TestAbility03->AreaEffectType = EAreaOfEffectType::Sphere;
-	TestAbility03->AfffectedTargetType = EAffectedTargetType::Everyone;
-	AbilityArray.Add(TestAbility03);
-	// TestMeleeAttack
-	TestAbility04 = CreateDefaultSubobject<UBaseSingleTargetAbility>(TEXT("TestAbility04"));
-	TestAbility04->SingleTargetType = ESingleTargetType::MeleeAttack;
-	TestAbility04->AfffectedTargetType = EAffectedTargetType::Everyone;
-	AbilityArray.Add(TestAbility04);
-	// TestNonAttack
-	TestAbility05 = CreateDefaultSubobject<UBaseSingleTargetAbility>(TEXT("TestAbility05"));
-	TestAbility05->Range = 15;
-	TestAbility05->SingleTargetType = ESingleTargetType::NonAttack;
-	TestAbility05->AfffectedTargetType = EAffectedTargetType::Everyone;
-	AbilityArray.Add(TestAbility05);
-	// TestRangedAttack
-	TestAbility06 = CreateDefaultSubobject<UBaseSingleTargetAbility>(TEXT("TestAbility06"));
-	TestAbility06->Range = 20;
-	TestAbility06->SingleTargetType = ESingleTargetType::RangedAttack;
-	TestAbility06->AfffectedTargetType = EAffectedTargetType::Everyone;
-	AbilityArray.Add(TestAbility06);*/
+	
 }
 
 void APlayerCharacter::BeginPlay()
@@ -92,6 +61,8 @@ void APlayerCharacter::BeginPlay()
 	CharacterLocation = GetActorLocation();
 
 	Super::BeginPlay();
+
+	/** DEBUG DELETE LATER **/
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

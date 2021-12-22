@@ -26,11 +26,6 @@ private:
 	int32 armorClass;
 	int32 mainHandAttackBonus;
 	int32 offHandAttackBonus;
-	
-	/** Update Functions **/
-	void UpdateArmorClass();
-	void UpdateMainAttackBonus();
-	void UpdateOffhandAttackBonus();
 
 public:
 	/** General **/
@@ -51,4 +46,12 @@ public:
 		int32 GetMainAttackBonus();
 	UFUNCTION(BlueprintCallable)
 		int32 GetOffhandAttackBonus();
+
+	/** Update Functions **/
+	UFUNCTION()
+		void UpdateArmorClass();
+	UFUNCTION()
+		void UpdateMainAttackBonus();
+	UFUNCTION()
+		void UpdateOffhandAttackBonus();
 };

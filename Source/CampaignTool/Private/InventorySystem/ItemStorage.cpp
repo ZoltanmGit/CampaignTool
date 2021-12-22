@@ -2,26 +2,42 @@
 
 
 #include "InventorySystem/ItemStorage.h"
+#include "InventorySystem/BaseItem.h"
 
 // Sets default values
 AItemStorage::AItemStorage()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
+	PrimaryActorTick.bCanEverTick = false;
 }
 
 // Called when the game starts or when spawned
 void AItemStorage::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
-// Called every frame
-void AItemStorage::Tick(float DeltaTime)
+UBaseItem* AItemStorage::GetItemPtr(FString itemCode)
 {
-	Super::Tick(DeltaTime);
-
+	TSubclassOf<UBaseItem> itemTemplate = nullptr;
+	switch (itemCode[0])
+	{
+	case 'a':
+		itemTemplate = ArmorMap.Find(itemCode)->Get();
+		break;
+	case 'w':
+		itemTemplate = WeaponMap.Find(itemCode)->Get();
+		break;
+	case 'c':
+		itemTemplate = ArmorMap.Find(itemCode)->Get();
+		break;
+	default:
+		break;
+	}
+	if (itemTemplate != nullptr)
+	{
+		return NewObject<UBaseItem>(this, itemTemplate);
+	}
+	return nullptr;
 }
 

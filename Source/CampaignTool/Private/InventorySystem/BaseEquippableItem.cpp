@@ -6,3 +6,5 @@
 void UBaseEquippableItem::OnEquip_Implementation() {}
 
 void UBaseEquippableItem::OnUnEquip_Implementation() {}
+
+void UBaseEquippableItem::OnHitEffect_Implementation() {}

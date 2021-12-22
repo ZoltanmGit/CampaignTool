@@ -22,8 +22,6 @@ UCharacterInventoryComponent::UCharacterInventoryComponent()
 void UCharacterInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	UpdateArmorClass();
 	// ...
 }
 

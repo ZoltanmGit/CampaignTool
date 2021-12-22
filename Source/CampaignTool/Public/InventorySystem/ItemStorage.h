@@ -18,9 +18,16 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
+public:
+	
+	/** Properties **/
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Items)
+		TMap<FString, TSubclassOf<class UBaseItem>> ArmorMap;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Items)
+		TMap<FString, TSubclassOf<class UBaseItem>> WeaponMap;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Items)
+		TMap<FString, TSubclassOf<class UBaseItem>> ConsumableMap;
+	
+	/** Functions **/
+	class UBaseItem* GetItemPtr(FString itemName);
 };

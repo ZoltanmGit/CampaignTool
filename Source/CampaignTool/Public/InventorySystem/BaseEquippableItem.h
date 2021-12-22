@@ -19,4 +19,6 @@ public:
 		void OnEquip();
 	UFUNCTION(BlueprintNativeEvent)
 		void OnUnEquip();
+	UFUNCTION(BlueprintNativeEvent)
+		void OnHitEffect();
 };

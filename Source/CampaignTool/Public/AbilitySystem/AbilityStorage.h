@@ -20,8 +20,10 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	
+	/** Properties **/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Abilities)
 		TMap<FString,TSubclassOf<class UBaseAbility>> AbilityMap;
-
+	/** Functions **/
 	class UBaseAbility* GetAbilityPtr(FString AbilityCode);
 };
