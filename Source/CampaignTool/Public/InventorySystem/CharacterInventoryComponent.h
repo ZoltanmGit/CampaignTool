@@ -47,6 +47,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 		int32 GetOffhandAttackBonus();
 
+	UFUNCTION(BlueprintCallable)
+		class UBaseWeaponItem* GetMainHandWeapon();
+	UFUNCTION(BlueprintCallable)
+		class UBaseWeaponItem* GetOffhandWeapon();
 	/** Update Functions **/
 	UFUNCTION()
 		void UpdateArmorClass();

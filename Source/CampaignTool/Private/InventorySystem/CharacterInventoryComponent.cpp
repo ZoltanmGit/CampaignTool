@@ -52,7 +52,7 @@ void UCharacterInventoryComponent::UpdateMainAttackBonus()
 	if (MainHandWeapon != nullptr)
 	{
 		/** If the weapon has finesse then we use STR or DEX whichever is highest **/
-		if (!MainHandWeapon->bIsFinesseWeapon)
+		if (MainHandWeapon->PropertiesArray.Contains(EWeaponProperty::WP_Finesse))
 		{
 			if (Owner->CharacterAttributes->GetModifier(EAbilityType::Strength) > Owner->CharacterAttributes->GetModifier(EAbilityType::Dexterity))
 			{
@@ -69,9 +69,21 @@ void UCharacterInventoryComponent::UpdateMainAttackBonus()
 			mainHandAttackBonus = Owner->CharacterAttributes->GetModifier(EAbilityType::Dexterity);
 		}
 		/** If he's proficient then we also add the proficiency bonus **/
-		if (Owner->CharacterAttributes->IsProficientWith(MainHandWeapon->WeaponType))
+		bool bIsProficientWithAny = false;
+		int32 loopVar = 0;
+		do
+		{
+			bIsProficientWithAny = Owner->CharacterAttributes->IsProficientWith(MainHandWeapon->WeaponTypeArray[loopVar]);
+			loopVar++;
+		} while (!bIsProficientWithAny && loopVar < MainHandWeapon->WeaponTypeArray.Num());
+		if (bIsProficientWithAny)
 		{
 			mainHandAttackBonus += Owner->CharacterAttributes->GetProficiencyBonus();
+		}
+		/** If the weapon is magical, then we add that to the bonus **/
+		if (MainHandWeapon->bIsMagical)
+		{
+			mainHandAttackBonus += MainHandWeapon->MagicBonus;
 		}
 	}
 	else // it'd count as unarmed
@@ -104,4 +116,14 @@ int32 UCharacterInventoryComponent::GetMainAttackBonus()
 int32 UCharacterInventoryComponent::GetOffhandAttackBonus()
 {
 	return FMath::Clamp(offHandAttackBonus, -99, 99);
+}
+
+UBaseWeaponItem* UCharacterInventoryComponent::GetMainHandWeapon()
+{
+	return MainHandWeapon;
+}
+
+UBaseWeaponItem* UCharacterInventoryComponent::GetOffhandWeapon()
+{
+	return OffHandWeapon;
 }

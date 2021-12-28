@@ -14,6 +14,16 @@ enum EArmor
 };
 
 UENUM(BlueprintType)
+enum EWeaponProperty
+{
+	WP_Finesse UMETA(DisplayName = "Finesse"),
+	WP_Heavy UMETA(DisplayName = "Heavy"),
+	WP_Light UMETA(DisplayName = "Light"),
+	WP_Loading UMETA(DisplayName = "Loading"),
+	WP_Thrown UMETA(DisplayName = "Thrown")
+};
+
+UENUM(BlueprintType)
 enum EWeapon
 {
 	SimpleWeapons UMETA(DisplayName = "Simple Weapons"),
@@ -184,6 +194,7 @@ enum EDamageType
 	Lightning UMETA(DisplayName = "Lightning"),
 	Bludgeoning UMETA(DisplayName = "Bludgeoning"),
 	Slashing UMETA(DisplayName = "Slashing"),
+	Piercing UMETA(DisplayName = "Piercing"),
 	Force UMETA(DisplayName = "Force"),
 	Thunder UMETA(DisplayName = "Thunder"),
 	Necrotic UMETA(DisplayName = "Necrotic"),
