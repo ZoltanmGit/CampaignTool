@@ -7,31 +7,7 @@
 #include "Utilities/AttributeEnums.h"
 #include "BaseItem.generated.h"
 
-UENUM(BlueprintType)
-enum EItemType
-{
-	ItemType_Armor UMETA(DisplayName = "Armor"),
-	ItemType_Weapon UMETA(DisplayName = "Weapon"),
-	ItemType_Consumable UMETA(DisplayName = "Consumable"),
-	ItemType_Accessory UMETA(DisplayName = "Accessory"),
-	ItemType_Ammunation UMETA(DisplayName = "Ammunation"),
-	ItemType_Shield UMETA(DisplayName = "Shield")
-};
 
-UENUM(BlueprintType)
-enum EAmmunitionType
-{
-	Arrow UMETA(DisplayName = "Arrow"),
-	Bolt UMETA(DisplayName = "Bolt"),
-	Bullet UMETA(DisplayName = "Bullet")
-};
-
-UENUM(BlueprintType)
-enum ERangeType
-{
-	Melee UMETA(DisplayName = "Melee"),
-	Ranged UMETA(DisplayName = "Ranged"),
-};
 
 UCLASS()
 class CAMPAIGNTOOL_API UBaseItem : public UObject

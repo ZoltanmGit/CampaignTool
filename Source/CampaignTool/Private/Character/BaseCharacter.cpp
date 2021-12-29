@@ -5,13 +5,14 @@
 #include "Components/SplineComponent.h"
 #include "Character/HealthComponent.h"
 #include "AbilitySystem/AbilityComponent.h"
+#include "AbilitySystem/AbilityStorage.h"
 #include "Character/AttributesComponent.h"
 #include "MovementSystem/PathfinderComponent.h"
 #include "MovementSystem/MoverComponent.h"
 #include "InventorySystem/CharacterInventoryComponent.h"
+#include "InventorySystem/ItemStorage.h"
 #include "GridSystem/Grid.h"
 #include "Utilities/IndicatorActor.h"
-#include "AbilitySystem/AbilityStorage.h"
 #include "Utilities/DiceRoller.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -111,7 +112,6 @@ void ABaseCharacter::ChangeLocation(FVector newLocation)
 			CurrentSpeed = CurrentSpeed - minusSpeed;
 			//UE_LOG(LogTemp, Warning, TEXT("Speed is %f"), CurrentSpeed);
 
-
 			int32 CurrentIndex;
 			FTileProperties CurrentTileData = Grid->GetTilePropertiesFromTransform(this->GetActorTransform(), CurrentIndex);
 			Grid->GridDataArray[CurrentIndex].bIsOccupied = false;
@@ -167,7 +167,7 @@ void ABaseCharacter::RefreshPathfinding()
 	}
 }
 
-void ABaseCharacter::InitializeCharacter(FCharacterStruct Character, AGrid* ArgGrid, AIndicatorActor* ArgIndicator, AAbilityStorage* ArgAbilityStorage)
+void ABaseCharacter::InitializeCharacter(FCharacterStruct Character, AGrid* ArgGrid, AIndicatorActor* ArgIndicator, AAbilityStorage* ArgAbilityStorage, AItemStorage* ArgItemStorage)
 {
 	/** Initializing utility actors **/
 	Grid = ArgGrid;
@@ -201,7 +201,6 @@ void ABaseCharacter::InitializeCharacter(FCharacterStruct Character, AGrid* ArgG
 	{
 		CharacterAbilityComponent->Owner = this;
 	}
-	
 	for (auto It = CharacterAttributes->Stats.SpellBook.CreateConstIterator(); It; ++It)
 	{
 		if (It.Value() == true)
@@ -220,8 +219,30 @@ void ABaseCharacter::InitializeCharacter(FCharacterStruct Character, AGrid* ArgG
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Value false"));
+			UE_LOG(LogTemp, Warning, TEXT("AbilityMapValue false"));
 		}
+	}
+	/** Inventory Initialization **/
+	if (CharacterInventory != nullptr)
+	{
+		CharacterInventory->Owner = this;
+		for (auto It = CharacterAttributes->Stats.Inventory.CreateConstIterator(); It; ++It)
+		{
+			UBaseItem* NewItemInstance = ArgItemStorage->GetItemPtr(It.Key());
+			if (NewItemInstance != nullptr)
+			{
+				CharacterInventory->ItemArray.Add(NewItemInstance);
+				UE_LOG(LogTemp, Warning, TEXT("Item Added to character inventory."));
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Item query from storage returned nullptr."));
+			}
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Character inventory is not initialized."));
 	}
 }
 

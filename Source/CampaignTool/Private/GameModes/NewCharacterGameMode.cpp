@@ -122,13 +122,13 @@ void ANewCharacterGameMode::OnFighterChoice()
 	NewCharacter.HitDie = 10;
 	NewCharacter.PerLevelHitDie = 6;
 	//Armor: All armor, shields
-	AddArmorProficiency(EArmor::Shields);
 	AddArmorProficiency(EArmor::LightArmor);
 	AddArmorProficiency(EArmor::MediumArmor);
 	AddArmorProficiency(EArmor::HeavyArmor);
 	//Weapons: Simple Weapons, Martial Weapons
 	AddWeaponProficiency(EWeapon::SimpleWeapons);
 	AddWeaponProficiency(EWeapon::MartialWeapons);
+	AddWeaponProficiency(EWeapon::Shield);
 	//Tools: None
 	//Saving Throws: Strength, Constitution
 	AddAbilitySavingThrowProficiency(EAbilityType::Strength);

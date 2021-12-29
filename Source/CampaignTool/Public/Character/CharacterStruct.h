@@ -139,5 +139,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = SpellCasting)
 		TMap<FString, bool> SpellBook;
 	// Inventory
-	// TODO
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Inventory)
+		TMap<FString, int32> Inventory;
 };

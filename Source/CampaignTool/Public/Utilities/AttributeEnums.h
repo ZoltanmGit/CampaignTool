@@ -9,8 +9,7 @@ enum EArmor
 	Unarmored UMETA(DisplayName = "Unarmored"),
 	LightArmor UMETA(DisplayName = "Light Armor"),
 	MediumArmor UMETA(DisplayName = "Medium Armor"),
-	HeavyArmor UMETA(DisplayName = "Heavy Armor"),
-	Shields UMETA(DisplayName = "Shields")
+	HeavyArmor UMETA(DisplayName = "Heavy Armor")
 };
 
 UENUM(BlueprintType)
@@ -49,7 +48,8 @@ enum EWeapon
 	Battleaxe UMETA(DisplayName = "Battleaxe"),
 	Handaxe UMETA(DisplayName = "Handaxe"),
 	LightHammer UMETA(DisplayName = "LightHammer"),
-	Warhammer UMETA(DisplayName = "Warhammer")
+	Warhammer UMETA(DisplayName = "Warhammer"),
+	Shield UMETA(DisplayName = "Shield")
 };
 
 UENUM(BlueprintType)
@@ -261,5 +261,31 @@ enum ECharacterType
 	C_Ally,
 	C_Hostile,
 	C_Self
+};
+
+UENUM(BlueprintType)
+enum EItemType
+{
+	ItemType_Armor UMETA(DisplayName = "Armor"),
+	ItemType_Weapon UMETA(DisplayName = "Weapon"),
+	ItemType_Consumable UMETA(DisplayName = "Consumable"),
+	ItemType_Accessory UMETA(DisplayName = "Accessory"),
+	ItemType_Ammunation UMETA(DisplayName = "Ammunation"),
+	ItemType_Shield UMETA(DisplayName = "Shield")
+};
+
+UENUM(BlueprintType)
+enum EAmmunitionType
+{
+	Arrow UMETA(DisplayName = "Arrow"),
+	Bolt UMETA(DisplayName = "Bolt"),
+	Bullet UMETA(DisplayName = "Bullet")
+};
+
+UENUM(BlueprintType)
+enum ERangeType
+{
+	Melee UMETA(DisplayName = "Melee"),
+	Ranged UMETA(DisplayName = "Ranged"),
 };
 // Ctrl+C: UMETA(DisplayName = ""),

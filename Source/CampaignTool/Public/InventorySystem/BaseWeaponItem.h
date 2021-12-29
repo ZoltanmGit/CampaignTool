@@ -35,6 +35,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = WeaponProperties, meta = (EditCondition = "bIsVersatile"))
 		int32 VersatileDieMultiplier;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = WeaponProperties, meta = (EditCondition = "!bIsVersatile"))
+		bool bIsTwoHanded;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = WeaponProperties)
 		TEnumAsByte<EDamageType> DamageType;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = WeaponProperties)

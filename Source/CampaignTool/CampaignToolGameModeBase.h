@@ -29,9 +29,9 @@ public:
 
 	/** Grid **/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Grid)
-		TSubclassOf<class AGrid> Grid; // type of grid
+		TSubclassOf<class AGrid> Grid;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Grid)
-		class AGrid* Gridptr; // actual reference to grid
+		class AGrid* Gridptr;
 
 	/** Ability Storage **/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = AbilityStorage)
@@ -39,8 +39,13 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = AbilityStorage)
 		class AAbilityStorage* AbilityStorageptr;
 
+	/** ItemStorage **/
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = ItemStorage)
+		TSubclassOf<class AItemStorage> ItemStorage;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = ItemStorage)
+		class AItemStorage* ItemStorageptr;
+
 	/** Characters **/
-	//Assigned direct reference in BP
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Characters)
 		TSubclassOf<class APlayerCharacter> FighterClass;
 	
@@ -65,6 +70,7 @@ protected:
 	void InitializeGrid();
 	void InitializeIndicator();
 	void InitializeAbilityStorage();
+	void InitializeItemStorage();
 	void InitializeCharacters();
 	void SpawnCharacter(FCharacterStruct character, int32 x, int32 y);
 protected:

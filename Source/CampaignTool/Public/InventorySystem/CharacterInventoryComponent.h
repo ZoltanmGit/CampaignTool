@@ -35,9 +35,12 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipment)
 		class UBaseWeaponItem* MainHandWeapon;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipment)
-		class UBaseWeaponItem* OffHandWeapon;
+		class UBaseEquippableItem* OffHandWeapon;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipment)
 		class UBaseArmorItem* Armor;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Invnetory)
+		TArray<class UBaseItem*> ItemArray;
 public:
 	/** Functions **/
 	UFUNCTION(BlueprintCallable)
@@ -46,11 +49,15 @@ public:
 		int32 GetMainAttackBonus();
 	UFUNCTION(BlueprintCallable)
 		int32 GetOffhandAttackBonus();
+	UFUNCTION(BlueprintCallable)
+		void EquipItem(class UBaseItem* itemToEquip);
+	UFUNCTION(BlueprintCallable)
+		void UnequipItem(class UBaseItem* itemToUnequip);
 
 	UFUNCTION(BlueprintCallable)
 		class UBaseWeaponItem* GetMainHandWeapon();
 	UFUNCTION(BlueprintCallable)
-		class UBaseWeaponItem* GetOffhandWeapon();
+		class UBaseEquippableItem* GetOffhandWeapon();
 	/** Update Functions **/
 	UFUNCTION()
 		void UpdateArmorClass();

@@ -38,6 +38,7 @@ public:
 		class UAbilityComponent* CharacterAbilityComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Inventory)
 		class UCharacterInventoryComponent* CharacterInventory;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Pathfinding)
 		class UPathfinderComponent* Pathfinder;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Movement)
@@ -76,7 +77,7 @@ public:
 	UFUNCTION()
 		void RefreshPathfinding();
 	UFUNCTION()
-		void InitializeCharacter(FCharacterStruct Character, class AGrid* ArgGrid, class AIndicatorActor* ArgIndicator, class AAbilityStorage* ArgAbilityStorage);
+		void InitializeCharacter(FCharacterStruct Character, class AGrid* ArgGrid, class AIndicatorActor* ArgIndicator, class AAbilityStorage* ArgAbilityStorage, class AItemStorage* ArgItemStorage);
 public:
 
 	//Getters

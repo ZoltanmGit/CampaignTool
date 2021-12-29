@@ -4,6 +4,7 @@
 #include "InventorySystem/CharacterInventoryComponent.h"
 #include "InventorySystem/BaseArmorItem.h"
 #include "InventorySystem/BaseWeaponItem.h"
+#include "InventorySystem/BaseShieldItem.h"
 #include "Character/BaseCharacter.h"
 #include "Character/AttributesComponent.h"
 
@@ -118,12 +119,61 @@ int32 UCharacterInventoryComponent::GetOffhandAttackBonus()
 	return FMath::Clamp(offHandAttackBonus, -99, 99);
 }
 
+void UCharacterInventoryComponent::EquipItem(UBaseItem* itemToEquip)
+{
+	UBaseEquippableItem* itemAsEquippable = Cast<UBaseEquippableItem>(itemToEquip);
+	if (itemAsEquippable != nullptr)
+	{
+		UBaseWeaponItem* equippableAsWeapon = Cast<UBaseWeaponItem>(itemAsEquippable);
+		if (equippableAsWeapon != nullptr)
+		{
+			/** If it's a weapon **/
+			if (MainHandWeapon == nullptr && OffHandWeapon != nullptr)
+			{
+
+			}
+		}
+		else
+		{
+			/** If it's not a weapon then we check if it's an armor **/
+			UBaseArmorItem* equippableAsArmor = Cast<UBaseArmorItem>(itemAsEquippable);
+			if (equippableAsArmor != nullptr)
+			{
+				/** If it's an armor **/
+			}
+			else
+			{
+				/** If it's not an armor then we check if it's a shield **/
+				UBaseShieldItem* equippableAsShield = Cast<UBaseShieldItem>(itemAsEquippable);
+				if (equippableAsShield != nullptr)
+				{
+					/** If it's a shield **/
+				}
+				else
+				{
+					/** If it's not a shield then we check if it's an accessory **/
+				}
+			}
+		}
+		/** If the item is successfully equipped then we remove it from the inventory **/
+		ItemArray.Remove(itemToEquip);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("InventoryComponent: Item is not equippable."))
+	}
+}
+
+void UCharacterInventoryComponent::UnequipItem(UBaseItem* itemToUnequip)
+{
+}
+
 UBaseWeaponItem* UCharacterInventoryComponent::GetMainHandWeapon()
 {
 	return MainHandWeapon;
 }
 
-UBaseWeaponItem* UCharacterInventoryComponent::GetOffhandWeapon()
+UBaseEquippableItem* UCharacterInventoryComponent::GetOffhandWeapon()
 {
 	return OffHandWeapon;
 }

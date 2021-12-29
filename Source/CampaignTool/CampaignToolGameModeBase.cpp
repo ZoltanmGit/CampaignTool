@@ -5,6 +5,7 @@
 #include "GridSystem/Grid.h"
 #include "Utilities/IndicatorActor.h"
 #include "AbilitySystem/AbilityStorage.h"
+#include "InventorySystem/ItemStorage.h"
 #include "Character/PlayerCharacter.h"
 #include "Persistence/MapSaveObject.h"
 #include "Public/CampaignToolGameInstance.h"
@@ -20,6 +21,8 @@ ACampaignToolGameModeBase::ACampaignToolGameModeBase()
 	TestFighter.Speed = 30.0f;
 	TestFighter.SpellBook.Add("lightningstrike",true);
 	TestFighter.SpellBook.Add("curewounds", true);
+	TestFighter.Inventory.Add("a_plate",1);
+	TestFighter.Inventory.Add("w_longsword",1);
 
 	TestRogue.bIsPlayerCharacter = true;
 	TestRogue.ArmorClass = 10;
@@ -29,8 +32,10 @@ ACampaignToolGameModeBase::ACampaignToolGameModeBase()
 	TestRogue.Class = EClass::Rogue;
 	TestRogue.Speed = 25.0f;
 	TestRogue.DamageResistanceArray.Add(EDamageType::Fire);
-	TestRogue.SpellBook.Add("fireball", true);
+	TestRogue.SpellBook.Add("g_mainattack", true);
 	TestRogue.SpellBook.Add("firebreath", true);
+	TestRogue.Inventory.Add("a_leather", 1);
+	TestRogue.Inventory.Add("w_dagger", 1);
 }
 
 void ACampaignToolGameModeBase::BeginPlay()
@@ -46,8 +51,11 @@ void ACampaignToolGameModeBase::BeginPlay()
 		/** Indicator Init **/
 		InitializeIndicator();
 
-		/** AbilityStorageInit **/
+		/** AbilityStorage Init **/
 		InitializeAbilityStorage();
+
+		/** ItemStorage Init **/
+		InitializeItemStorage();
 
 		/** Character Init **/
 		InitializeCharacters(); //requires grid and indicator to be initialized beforehand
@@ -109,7 +117,14 @@ void ACampaignToolGameModeBase::InitializeAbilityStorage()
 	TransformParams.SetLocation(FVector(0.0f, 0.0f, 0.0f));
 	AbilityStorageptr = GetWorld()->SpawnActor<AAbilityStorage>(AbilityStorage, TransformParams, SpawnParams);
 }
-
+void ACampaignToolGameModeBase::InitializeItemStorage()
+{
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	FTransform TransformParams;
+	TransformParams.SetLocation(FVector(0.0f, 0.0f, 0.0f));
+	ItemStorageptr = GetWorld()->SpawnActor<AItemStorage>(ItemStorage, TransformParams, SpawnParams);
+}
 void ACampaignToolGameModeBase::InitializeCharacters()
 {
 	SpawnCharacter(TestFighter, 0, 0);
@@ -145,10 +160,10 @@ void ACampaignToolGameModeBase::SpawnCharacter(FCharacterStruct character, int32
 		break;
 	}
 	// Initialize Character
-	if (newCharacter != nullptr)
+	if (newCharacter != nullptr && Gridptr != nullptr && Indicatorptr != nullptr && AbilityStorageptr != nullptr && ItemStorageptr != nullptr)
 	{
 		Gridptr->GridDataArray[(x * Gridptr->Columns) + y].ActorOnTile = newCharacter;
-		newCharacter->InitializeCharacter(character,Gridptr,Indicatorptr, AbilityStorageptr);
+		newCharacter->InitializeCharacter(character,Gridptr,Indicatorptr, AbilityStorageptr, ItemStorageptr);
 	}
 	Characters.Add(newCharacter);
 }

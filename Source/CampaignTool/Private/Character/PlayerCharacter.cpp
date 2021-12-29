@@ -20,6 +20,7 @@
 #include "InventorySystem/BaseArmorItem.h"
 #include "InventorySystem/BaseWeaponItem.h"
 #include "InventorySystem/ItemStorage.h"
+#include "InventorySystem/CharacterInventoryComponent.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -218,7 +219,19 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 void APlayerCharacter::HandleTestAction()
 {
-	if (CurrentSpeed >= 1 && bCanMove && !bIsAimingMovement)
+	if (CharacterInventory != nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Inventory has %i items"), CharacterInventory->ItemArray.Num());
+		for (int32 i = 0; i < CharacterInventory->ItemArray.Num(); i++)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("%i. %s"), i, *CharacterInventory->ItemArray[i]->ItemName);
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Character Inventory is nullptr."))
+	}
+	/*if (CurrentSpeed >= 1 && bCanMove && !bIsAimingMovement)
 	{
 		if (bIsAimingAbility)
 		{
@@ -259,7 +272,7 @@ void APlayerCharacter::HandleTestAction()
 	UE_LOG(LogTemp, Warning, TEXT("d12: %i"), testValue);
 	testValue = DiceRoller->Roll(20);
 	UE_LOG(LogTemp, Warning, TEXT("d20: %i"), testValue);
-	UE_LOG(LogTemp, Warning, TEXT("________"));
+	UE_LOG(LogTemp, Warning, TEXT("________"));*/
 }
 
 void APlayerCharacter::HandleHotkey(int index)
