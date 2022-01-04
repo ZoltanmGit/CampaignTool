@@ -231,18 +231,17 @@ void ABaseCharacter::InitializeCharacter(FCharacterStruct Character, AGrid* ArgG
 			UBaseItem* NewItemInstance = ArgItemStorage->GetItemPtr(It.Key());
 			if (NewItemInstance != nullptr)
 			{
-				CharacterInventory->ItemArray.Add(NewItemInstance);
-				UE_LOG(LogTemp, Warning, TEXT("Item Added to character inventory."));
+				CharacterInventory->AddItemToInventory(NewItemInstance);
 			}
 			else
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Item query from storage returned nullptr."));
+				UE_LOG(LogTemp, Warning, TEXT("BaseCharacter - InitializeCharacter(): Item query from storage returned nullptr."));
 			}
 		}
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Character inventory is not initialized."));
+		UE_LOG(LogTemp, Warning, TEXT("BaseCharacter - InitializeCharacter(): Character inventory is not initialized."));
 	}
 }
 

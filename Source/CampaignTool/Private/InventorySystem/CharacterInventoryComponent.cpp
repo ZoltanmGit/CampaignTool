@@ -15,9 +15,24 @@ UCharacterInventoryComponent::UCharacterInventoryComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
 
-	// ...
-}
+	/** Initialize possible equipment slots **/
+	EquipmentMap.Add(EEquipmentSlot::EquipmentSlot_MainHand, nullptr);
+	EquipmentMap.Add(EEquipmentSlot::EquipmentSlot_Armor, nullptr);
+	EquipmentMap.Add(EEquipmentSlot::EquipmentSlot_Offhand, nullptr);
+	EquipmentMap.Add(EEquipmentSlot::EquipmentSlot_Ring1, nullptr);
+	EquipmentMap.Add(EEquipmentSlot::EquipmentSlot_Ring2, nullptr);
+	EquipmentMap.Add(EEquipmentSlot::EquipmentSlot_Boots, nullptr);
+	EquipmentMap.Add(EEquipmentSlot::EquipmentSlot_Gloves, nullptr);
+	EquipmentMap.Add(EEquipmentSlot::EquipmentSlot_Helmet, nullptr);
+	EquipmentMap.Add(EEquipmentSlot::EquipmentSlot_Ammunition1, nullptr);
+	EquipmentMap.Add(EEquipmentSlot::EquipmentSlot_Ammunition2, nullptr);
+	EquipmentMap.Add(EEquipmentSlot::EquipmentSlot_Cape, nullptr);
 
+	Inventory.Init(nullptr, 32);
+	bHasMainHand = false;
+	bHasOffhand = false;
+	bHasShieldEquipped = false;
+}
 
 // Called when the game starts
 void UCharacterInventoryComponent::BeginPlay()
@@ -29,6 +44,7 @@ void UCharacterInventoryComponent::BeginPlay()
 void UCharacterInventoryComponent::UpdateArmorClass()
 {
 	armorClass = Owner->CharacterAttributes->Stats.ArmorClass;
+	UBaseArmorItem* Armor = Cast<UBaseArmorItem>(GetEquipment(EEquipmentSlot::EquipmentSlot_Armor));
 	/** First we check if the character is wearing armor **/
 	if (Armor != nullptr)
 	{
@@ -42,13 +58,24 @@ void UCharacterInventoryComponent::UpdateArmorClass()
 	}
 	else
 	{
-		/** If they're not wearing any armor then all hell breaks loose oof **/
+		UE_LOG(LogTemp, Warning, TEXT("CharacterInventory - UpdateAC: Character is not wearing armor"));
+	}
+
+	/** Check if character is wearing any shield **/
+	if (bHasShieldEquipped)
+	{
+		UBaseShieldItem* equippedShield = Cast<UBaseShieldItem>(GetEquipment(EEquipmentSlot::EquipmentSlot_Offhand));
+		if (equippedShield != nullptr)
+		{
+			armorClass += equippedShield->ArmorClassBonus + equippedShield->MagicBonus;
+		}
 	}
 }
 
 void UCharacterInventoryComponent::UpdateMainAttackBonus()
 {
 	mainHandAttackBonus = 0;
+	UBaseWeaponItem* MainHandWeapon = Cast<UBaseWeaponItem>(*EquipmentMap.Find(EEquipmentSlot::EquipmentSlot_MainHand));
 	/** If we have a weapon equipped **/
 	if (MainHandWeapon != nullptr)
 	{
@@ -67,7 +94,7 @@ void UCharacterInventoryComponent::UpdateMainAttackBonus()
 		/** If it doesn't have finesse then we just add the STR modifier **/
 		else 
 		{
-			mainHandAttackBonus = Owner->CharacterAttributes->GetModifier(EAbilityType::Dexterity);
+			mainHandAttackBonus = Owner->CharacterAttributes->GetModifier(EAbilityType::Strength);
 		}
 		/** If he's proficient then we also add the proficiency bonus **/
 		bool bIsProficientWithAny = false;
@@ -92,16 +119,65 @@ void UCharacterInventoryComponent::UpdateMainAttackBonus()
 
 	}
 }
+
 void UCharacterInventoryComponent::UpdateOffhandAttackBonus()
 {
-	if (OffHandWeapon != nullptr)
+	offHandAttackBonus = 0;
+	/** In the event that the character is wearing a shield then we skip **/
+	if (!bHasShieldEquipped)
 	{
-
+		UBaseWeaponItem* OffhandWeapon = Cast<UBaseWeaponItem>(*EquipmentMap.Find(EEquipmentSlot::EquipmentSlot_Offhand));
+		if (OffhandWeapon != nullptr)
+		{
+			/** For two weapon fighting we only consider negative modifiers **/
+			if (OffhandWeapon->PropertiesArray.Contains(EWeaponProperty::WP_Finesse))
+			{
+				if (Owner->CharacterAttributes->GetModifier(EAbilityType::Strength) > Owner->CharacterAttributes->GetModifier(EAbilityType::Dexterity))
+				{
+					offHandAttackBonus = Owner->CharacterAttributes->GetModifier(EAbilityType::Strength);
+				}
+				else //If it's equal than it doesn't matter
+				{
+					offHandAttackBonus = Owner->CharacterAttributes->GetModifier(EAbilityType::Dexterity);
+				}
+			}
+			else
+			{
+				offHandAttackBonus += FMath::Clamp(Owner->CharacterAttributes->GetModifier(EAbilityType::Strength), -5, 0);
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("CharacterInventory - UpdateOffhandAttackBonus(): No offhand equipped."));
+		}
 	}
-	else // I think it might count as nothing.
+}
+
+int32 UCharacterInventoryComponent::GetFirstNullIndex()
+{
+	/** Returns the index of the first Inventory slot that holds no items and is therefore nullptr **/
+	int32 loopVar = 0;
+	do
 	{
+		if (Inventory[loopVar] == nullptr)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("CharacterInventory - GetFirstNullIndex(): First null index is %i"), loopVar);
+			return loopVar;
+		}
+		loopVar++;
+	} while (loopVar < Inventory.Num());
+	UE_LOG(LogTemp, Warning, TEXT("CharacterInventory - GetFirstNullIndex(): No null index was found in inventory."), loopVar);
+	return -1;
+}
 
-	}
+int32 UCharacterInventoryComponent::GetFirstNonFullStackIndex(FString ItemName)
+{
+	return int32();
+}
+
+UBaseEquippableItem* UCharacterInventoryComponent::GetEquipment(TEnumAsByte<EEquipmentSlot> EquipmentSlot)
+{
+	return *EquipmentMap.Find(EquipmentSlot);
 }
 
 int32 UCharacterInventoryComponent::GetArmorClass()
@@ -111,6 +187,7 @@ int32 UCharacterInventoryComponent::GetArmorClass()
 
 int32 UCharacterInventoryComponent::GetMainAttackBonus()
 {
+	int32 MainAttackBonus = 0;
 	return FMath::Clamp(mainHandAttackBonus,-99,99);
 }
 
@@ -119,61 +196,200 @@ int32 UCharacterInventoryComponent::GetOffhandAttackBonus()
 	return FMath::Clamp(offHandAttackBonus, -99, 99);
 }
 
-void UCharacterInventoryComponent::EquipItem(UBaseItem* itemToEquip)
+bool UCharacterInventoryComponent::EquipItem(UBaseEquippableItem* itemToEquip, TEnumAsByte<EEquipmentSlot> toSlot)
 {
-	UBaseEquippableItem* itemAsEquippable = Cast<UBaseEquippableItem>(itemToEquip);
-	if (itemAsEquippable != nullptr)
+	if (itemToEquip != nullptr)
 	{
-		UBaseWeaponItem* equippableAsWeapon = Cast<UBaseWeaponItem>(itemAsEquippable);
-		if (equippableAsWeapon != nullptr)
+		/** Place it on the Equipment Map **/
+		EquipmentMap.Emplace(toSlot, itemToEquip);
+		/** Apply unique OnEquip rules (Blueprint Script) **/
+		itemToEquip->OnEquip();
+		
+		/** Set utility booleans accordingly **/
+		switch (toSlot)
 		{
-			/** If it's a weapon **/
-			if (MainHandWeapon == nullptr && OffHandWeapon != nullptr)
+		case EEquipmentSlot::EquipmentSlot_MainHand:
+			bHasMainHand = true;
+			break;
+		case EEquipmentSlot::EquipmentSlot_Offhand:
+			if (itemToEquip->ItemType == EItemType::ItemType_Shield)
 			{
+				bHasShieldEquipped = true;
+			}
+			bHasOffhand = true;
+			break;
+		}
 
-			}
-		}
-		else
-		{
-			/** If it's not a weapon then we check if it's an armor **/
-			UBaseArmorItem* equippableAsArmor = Cast<UBaseArmorItem>(itemAsEquippable);
-			if (equippableAsArmor != nullptr)
-			{
-				/** If it's an armor **/
-			}
-			else
-			{
-				/** If it's not an armor then we check if it's a shield **/
-				UBaseShieldItem* equippableAsShield = Cast<UBaseShieldItem>(itemAsEquippable);
-				if (equippableAsShield != nullptr)
-				{
-					/** If it's a shield **/
-				}
-				else
-				{
-					/** If it's not a shield then we check if it's an accessory **/
-				}
-			}
-		}
-		/** If the item is successfully equipped then we remove it from the inventory **/
-		ItemArray.Remove(itemToEquip);
+		/** Remove item from the inventory **/
+		RemoveItemFromInventory(itemToEquip);
+		
+		UE_LOG(LogTemp, Warning, TEXT("CharacterInventory - EquipItem: %s equipped."), *itemToEquip->ItemName);
+		return true;
 	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("InventoryComponent: Item is not equippable."))
-	}
+	return false;
 }
 
-void UCharacterInventoryComponent::UnequipItem(UBaseItem* itemToUnequip)
+bool UCharacterInventoryComponent::ResolveEquipItem(UBaseEquippableItem* itemToEquip)
 {
+	/** If item type is ARMOR **/
+	if (itemToEquip->ItemType == EItemType::ItemType_Armor)
+	{
+		return ResolveArmorEquipItem(itemToEquip);
+	}
+	/** If item type is WEAPON **/
+	else if (itemToEquip->ItemType == EItemType::ItemType_Weapon)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CharacterInventory - ResolveEquipItem: Weapon Equip is not implemented."));
+	}
+	else if (itemToEquip->ItemType == EItemType::ItemType_Shield)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CharacterInventory - ResolveEquipItem: Shield Equip is not implemented."));
+	}
+	return false;
+}
+
+bool UCharacterInventoryComponent::ResolveShieldEquipItem(UBaseEquippableItem* shieldToEquip)
+{
+	return false;
+}
+
+bool UCharacterInventoryComponent::ResolveWeaponEquipItem(UBaseEquippableItem* weaponToEquip)
+{
+	return false;
+}
+
+bool UCharacterInventoryComponent::ResolveArmorEquipItem(UBaseEquippableItem* armorToEquip)
+{
+	UBaseArmorItem* itemAsArmor = Cast<UBaseArmorItem>(armorToEquip);
+	if (itemAsArmor != nullptr)
+	{
+		UBaseArmorItem* EquippedArmor = Cast<UBaseArmorItem>(GetEquipment(EEquipmentSlot::EquipmentSlot_Armor));
+		
+		/** If there's already an armor equipped we unequip it **/
+		if (EquippedArmor != nullptr)
+		{
+			BucketEquippable = EquippedArmor;
+			UnequipItemFromSlot(EquippedArmor, EEquipmentSlot::EquipmentSlot_Armor); // This function adds the item to the inventory and calls it's unequip rules.
+		}
+		
+		/** Equip the item **/
+		EquipItem(armorToEquip, EEquipmentSlot::EquipmentSlot_Armor);
+
+		UpdateArmorClass();
+
+		return true;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("CharacterInventory - ResolveArmorItem: itemAsArmor is nullptr."));
+	return false;
+}
+
+bool UCharacterInventoryComponent::EquipItemToSlot(UBaseEquippableItem* itemToEquip, TEnumAsByte<EEquipmentSlot> toSlot)
+{
+	/** Todo **/
+	return false;
+}
+
+bool UCharacterInventoryComponent::UnequipItemFromSlot(UBaseEquippableItem* itemToUnequip, TEnumAsByte<EEquipmentSlot> fromSlot)
+{
+	if (itemToUnequip != nullptr)
+	{
+		/** Add equipped item to inventory **/
+		if (AddItemToInventory(itemToUnequip))
+		{
+			/** Remove unique item rules **/
+			itemToUnequip->OnUnEquip();
+			EquipmentMap.Emplace(fromSlot, nullptr);
+			switch (fromSlot)
+			{
+			case EEquipmentSlot::EquipmentSlot_MainHand:
+				bHasMainHand = false;
+			case EEquipmentSlot::EquipmentSlot_Offhand:
+				bHasOffhand = false;
+				bHasShieldEquipped = false;
+			default:
+				break;
+			}
+
+			/** Log **/
+			UE_LOG(LogTemp, Warning, TEXT("CharacterInventory - UnequipItemFromSlot: %s was successfully unequipped."), *itemToUnequip->ItemName);
+			return true;
+		}
+		UE_LOG(LogTemp, Warning, TEXT("CharacterInventory - UnequipItemFromSlot: Could not unequip item because AddItemToInventory failed."));
+		return false;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("CharacterInventory - UnequipItemFromSlot: Argument item was nullptr."));
+	return false;
+}
+
+bool UCharacterInventoryComponent::RemoveItemFromInventory(UBaseItem* itemToRemove)
+{
+	if (itemToRemove != nullptr)
+	{
+		for (int32 i = 0; i < Inventory.Num(); i++)
+		{
+			if (Inventory[i] == itemToRemove)
+			{
+				Inventory[i] = nullptr;
+				UE_LOG(LogTemp, Warning, TEXT("CharacterInventory - RemoveItemFromInventory: %s was removed from the Inventory at %i."), *itemToRemove->ItemName,i);
+				return true;
+			}
+		}
+		UE_LOG(LogTemp, Warning, TEXT("CharacterInventory - RemoveItemFromInventory: itemToRemove was not found in Inventory."));
+		return false;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("CharacterInventory - RemoveItemFromInventory: Argument item was nullptr."));
+	return false;
+}
+
+bool UCharacterInventoryComponent::RemoveItemFromInventoryByIndex(int32 index)
+{
+	if (Inventory[index] != nullptr)
+	{
+		Inventory[index] = nullptr;
+		return true;
+	}
+	return false;
+}
+
+bool UCharacterInventoryComponent::AddItemToInventory(UBaseItem* itemToAdd)
+{
+	if (itemToAdd != nullptr)
+	{
+		/** Get first null index and place the item in its place **/
+		int32 firstNullIndex = GetFirstNullIndex();
+
+		if (firstNullIndex != -1 && firstNullIndex < Inventory.Num())
+		{
+			Inventory[firstNullIndex] = itemToAdd;
+			UE_LOG(LogTemp, Warning, TEXT("CharacterInventory - AddItemToInventory(): %s was added to inventory at %i"),*itemToAdd->ItemName,firstNullIndex);
+			return true;
+		}
+		/** If the inventory is full or the returned index is out of range then the addition is unsuccessful **/
+		UE_LOG(LogTemp, Warning, TEXT("CharacterInventory - AddItemToInventory: FirstNullIndex was out of range or -1"));
+		return false;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("CharacterInventory - AddItemToInventory: Argument item was nullptr"));
+	return false;
+}
+
+bool UCharacterInventoryComponent::SwapEquippedWithInventory(UBaseEquippableItem* equippedItem, UBaseEquippableItem* itemToEquip)
+{
+	return false;
+}
+
+bool UCharacterInventoryComponent::AddItemFromItemStorage(FString itemCode)
+{
+	return false;
 }
 
 UBaseWeaponItem* UCharacterInventoryComponent::GetMainHandWeapon()
 {
-	return MainHandWeapon;
+	return Cast<UBaseWeaponItem>(*EquipmentMap.Find(EEquipmentSlot::EquipmentSlot_MainHand));
 }
 
 UBaseEquippableItem* UCharacterInventoryComponent::GetOffhandWeapon()
 {
-	return OffHandWeapon;
+	return Cast<UBaseWeaponItem>(*EquipmentMap.Find(EEquipmentSlot::EquipmentSlot_Offhand));
 }
+
+

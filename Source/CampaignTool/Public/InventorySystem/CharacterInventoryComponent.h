@@ -7,7 +7,6 @@
 #include "Utilities/AttributeEnums.h"
 #include "CharacterInventoryComponent.generated.h"
 
-
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class CAMPAIGNTOOL_API UCharacterInventoryComponent : public UActorComponent
 {
@@ -33,16 +32,22 @@ public:
 		class ABaseCharacter* Owner;
 	/** Equipment **/
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipment)
-		class UBaseWeaponItem* MainHandWeapon;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipment)
-		class UBaseEquippableItem* OffHandWeapon;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipment)
-		class UBaseArmorItem* Armor;
+		TMap<TEnumAsByte<EEquipmentSlot>, class UBaseEquippableItem*> EquipmentMap;
 	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipment)
+		bool bHasShieldEquipped;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipment)
+		bool bHasMainHand;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipment)
+		bool bHasOffhand;
+	
+	/** MainInventoryArray **/
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Invnetory)
-		TArray<class UBaseItem*> ItemArray;
+		TArray<class UBaseItem*> Inventory;
 public:
-	/** Functions **/
+	/** Get **/
+	UFUNCTION(BlueprintCallable)
+		class UBaseEquippableItem* GetEquipment(TEnumAsByte<EEquipmentSlot> EquipmentSlot);
 	UFUNCTION(BlueprintCallable)
 		int32 GetArmorClass();
 	UFUNCTION(BlueprintCallable)
@@ -50,14 +55,36 @@ public:
 	UFUNCTION(BlueprintCallable)
 		int32 GetOffhandAttackBonus();
 	UFUNCTION(BlueprintCallable)
-		void EquipItem(class UBaseItem* itemToEquip);
-	UFUNCTION(BlueprintCallable)
-		void UnequipItem(class UBaseItem* itemToUnequip);
-
-	UFUNCTION(BlueprintCallable)
 		class UBaseWeaponItem* GetMainHandWeapon();
 	UFUNCTION(BlueprintCallable)
 		class UBaseEquippableItem* GetOffhandWeapon();
+	
+	/** Inventory Management **/
+	UFUNCTION(BlueprintCallable)
+		bool ResolveEquipItem(class UBaseEquippableItem* itemToEquip);
+	UFUNCTION(BlueprintCallable)
+		bool ResolveArmorEquipItem(class UBaseEquippableItem* armorToEquip);
+	UFUNCTION(BlueprintCallable)
+		bool ResolveShieldEquipItem(class UBaseEquippableItem* shieldToEquip);
+	UFUNCTION(BlueprintCallable)
+		bool ResolveWeaponEquipItem(class UBaseEquippableItem* weaponToEquip);
+	UFUNCTION(BlueprintCallable)
+		bool EquipItem(class UBaseEquippableItem* itemToEquip, TEnumAsByte<EEquipmentSlot> toSlot);
+	UFUNCTION(BlueprintCallable)
+		bool EquipItemToSlot(class UBaseEquippableItem* itemToEquip, TEnumAsByte<EEquipmentSlot> toSlot);
+	UFUNCTION(BlueprintCallable)
+		bool UnequipItemFromSlot(class UBaseEquippableItem* itemToUnequip, TEnumAsByte<EEquipmentSlot> fromSlot);
+	UFUNCTION(BlueprintCallable)
+		bool RemoveItemFromInventory(class UBaseItem* itemToRemove);
+	UFUNCTION(BlueprintCallable)
+		bool RemoveItemFromInventoryByIndex(int32 index);
+	UFUNCTION(BlueprintCallable)
+		bool AddItemToInventory(class UBaseItem* itemToAdd);
+	UFUNCTION(BlueprintCallable)
+		bool SwapEquippedWithInventory(class UBaseEquippableItem* equippedItem, class UBaseEquippableItem* itemToEquip );
+	UFUNCTION(BlueprintCallable)
+		bool AddItemFromItemStorage(FString itemCode);
+	
 	/** Update Functions **/
 	UFUNCTION()
 		void UpdateArmorClass();
@@ -65,4 +92,9 @@ public:
 		void UpdateMainAttackBonus();
 	UFUNCTION()
 		void UpdateOffhandAttackBonus();
+private:
+	int32 GetFirstNullIndex();
+	int32 GetFirstNonFullStackIndex(FString ItemName);
+	UPROPERTY()
+		class UBaseEquippableItem* BucketEquippable;
 };

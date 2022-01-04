@@ -17,8 +17,10 @@
 #include "AbilitySystem/BaseAoeTargetAbility.h"
 #include "AbilitySystem/BaseSingleTargetAbility.h"
 #include "InventorySystem/BaseItem.h"
+#include "InventorySystem/BaseEquippableItem.h"
 #include "InventorySystem/BaseArmorItem.h"
 #include "InventorySystem/BaseWeaponItem.h"
+#include "InventorySystem/BaseShieldItem.h"
 #include "InventorySystem/ItemStorage.h"
 #include "InventorySystem/CharacterInventoryComponent.h"
 
@@ -221,11 +223,9 @@ void APlayerCharacter::HandleTestAction()
 {
 	if (CharacterInventory != nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Inventory has %i items"), CharacterInventory->ItemArray.Num());
-		for (int32 i = 0; i < CharacterInventory->ItemArray.Num(); i++)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("%i. %s"), i, *CharacterInventory->ItemArray[i]->ItemName);
-		}
+		CharacterInventory->ResolveEquipItem(Cast<UBaseEquippableItem>(CharacterInventory->Inventory[0]));
+		CharacterInventory->ResolveEquipItem(Cast<UBaseEquippableItem>(CharacterInventory->Inventory[1]));
+		OnStatChange();
 	}
 	else
 	{

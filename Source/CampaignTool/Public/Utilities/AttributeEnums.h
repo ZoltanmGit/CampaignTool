@@ -23,6 +23,22 @@ enum EWeaponProperty
 };
 
 UENUM(BlueprintType)
+enum EEquipmentSlot
+{
+	EquipmentSlot_Armor UMETA(DisplayName = "ArmorSlot"),
+	EquipmentSlot_MainHand UMETA(DisplayName = "MainHandSlot"),
+	EquipmentSlot_Offhand UMETA(DisplayName = "OffhandSlot"),
+	EquipmentSlot_Helmet UMETA(DisplayName = "HelmetSlot"),
+	EquipmentSlot_Gloves UMETA(DisplayName = "GlovesSlot"),
+	EquipmentSlot_Boots UMETA(DisplayName = "BootsSlot"),
+	EquipmentSlot_Cape UMETA(DisplayName = "CapeSlot"),
+	EquipmentSlot_Ammunition1 UMETA(DisplayName = "Ammunition1Slot"),
+	EquipmentSlot_Ammunition2 UMETA(DisplayName = "Ammunition2Slot"),
+	EquipmentSlot_Ring1 UMETA(DisplayName = "Ring1Slot"),
+	EquipmentSlot_Ring2 UMETA(DisplayName = "Ring2Slot")
+};
+
+UENUM(BlueprintType)
 enum EWeapon
 {
 	SimpleWeapons UMETA(DisplayName = "Simple Weapons"),

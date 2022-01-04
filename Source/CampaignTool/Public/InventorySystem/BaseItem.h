@@ -7,8 +7,6 @@
 #include "Utilities/AttributeEnums.h"
 #include "BaseItem.generated.h"
 
-
-
 UCLASS()
 class CAMPAIGNTOOL_API UBaseItem : public UObject
 {
@@ -27,6 +25,8 @@ public:
 		TEnumAsByte<EItemType> ItemType;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = ItemProperties)
 		UTexture2D* ItemTexture;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = ItemProperties)
+		class ABaseCharacter* ItemOwner;
 
 	UFUNCTION(BlueprintCallable)
 		void AddToStack(int32 amount);
