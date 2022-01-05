@@ -7,7 +7,7 @@
 #include "Utilities/AttributeEnums.h"
 #include "BaseItem.generated.h"
 
-UCLASS()
+UCLASS(Blueprintable)
 class CAMPAIGNTOOL_API UBaseItem : public UObject
 {
 	GENERATED_BODY()

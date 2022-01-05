@@ -24,7 +24,9 @@ private:
 	/** Statistics **/
 	int32 armorClass;
 	int32 mainHandAttackBonus;
+	int32 mainHandDamageBonus;
 	int32 offHandAttackBonus;
+	int32 offHandDamagebonus;
 
 public:
 	/** General **/
@@ -54,6 +56,10 @@ public:
 		int32 GetMainAttackBonus();
 	UFUNCTION(BlueprintCallable)
 		int32 GetOffhandAttackBonus();
+	UFUNCTION(BlueprintCallable)
+		int32 GetMainDamageBonus();
+	UFUNCTION(BlueprintCallable)
+		int32 GetOffhandDamageBonus();
 	UFUNCTION(BlueprintCallable)
 		class UBaseWeaponItem* GetMainHandWeapon();
 	UFUNCTION(BlueprintCallable)
@@ -90,6 +96,10 @@ public:
 		void UpdateArmorClass();
 	UFUNCTION()
 		void UpdateMainAttackBonus();
+	UFUNCTION()
+		void UpdateMainDamageBonus();
+	UFUNCTION()
+		void UpdateOffhandDamageBonus();
 	UFUNCTION()
 		void UpdateOffhandAttackBonus();
 private:

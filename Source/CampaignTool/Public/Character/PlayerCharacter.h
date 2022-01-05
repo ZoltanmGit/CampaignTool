@@ -44,6 +44,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		TEnumAsByte<CursorState> PlayerCursorState;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool bIsInventoryCollapsed;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		class ABaseCharacter* TargetedCharacter;
 protected:
@@ -79,7 +82,7 @@ protected:
 		virtual void EndTurn() override;
 
 	/** For parametered bindaction use **/
-	DECLARE_DELEGATE_OneParam(FCustomInputDelegate, const int);
+	DECLARE_DELEGATE_OneParam(FCustomInputDelegate, const int); /** Used for hotkey input bindings **/
 
 	/**REDUNDANT FOR DEBUG PURPOSES**/
 	//Area of Effect
@@ -97,6 +100,8 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 		class UBaseSingleTargetAbility* TestAbility06;
 	
+	UFUNCTION(BlueprintNativeEvent)
+		void OnInventoryChange();
 public:
 	
 };

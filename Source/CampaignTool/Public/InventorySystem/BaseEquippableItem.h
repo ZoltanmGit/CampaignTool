@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
 class CAMPAIGNTOOL_API UBaseEquippableItem : public UBaseItem
 {
 	GENERATED_BODY()

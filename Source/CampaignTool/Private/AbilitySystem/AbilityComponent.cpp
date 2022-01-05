@@ -25,6 +25,7 @@ void UAbilityComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	ResetSelectionData();
 	// ...
 	
 }
@@ -151,12 +152,15 @@ void UAbilityComponent::ExecuteAbility()
 			AOEAbility->Execute();
 			AOEAbility->OnExecute();
 		}
-		else if (SelectedAbility->TargetType == ETargetType::Single && AffectedCharacters[0] != nullptr)
+		else if (SelectedAbility->TargetType == ETargetType::Single && AffectedCharacters.Num() != 0)
 		{
-			UBaseSingleTargetAbility* SingleTargetAbility = Cast<UBaseSingleTargetAbility>(SelectedAbility);
-			SingleTargetAbility->TargetCharacter = AffectedCharacters[0];
-			SingleTargetAbility->Execute();
-			SingleTargetAbility->OnExecute();
+			if (AffectedCharacters[0] != nullptr)
+			{
+				UBaseSingleTargetAbility* SingleTargetAbility = Cast<UBaseSingleTargetAbility>(SelectedAbility);
+				SingleTargetAbility->TargetCharacter = AffectedCharacters[0];
+				SingleTargetAbility->Execute();
+				SingleTargetAbility->OnExecute();
+			}
 		}
 		CancelAbility();
 		Owner->bIsAimingAbility = false;

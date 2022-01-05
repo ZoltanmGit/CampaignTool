@@ -120,6 +120,42 @@ void UCharacterInventoryComponent::UpdateMainAttackBonus()
 	}
 }
 
+void UCharacterInventoryComponent::UpdateMainDamageBonus()
+{
+	mainHandDamageBonus = 0;
+	UBaseWeaponItem* MainHandWeapon = Cast<UBaseWeaponItem>(GetEquipment(EEquipmentSlot::EquipmentSlot_MainHand));
+	if (MainHandWeapon != nullptr)
+	{
+		/** Determine Finesse **/
+		if (MainHandWeapon->PropertiesArray.Contains(EWeaponProperty::WP_Finesse))
+		{
+			if (Owner->CharacterAttributes->GetModifier(EAbilityType::Dexterity) > Owner->CharacterAttributes->GetModifier(EAbilityType::Strength))
+			{
+				mainHandDamageBonus += Owner->CharacterAttributes->GetModifier(EAbilityType::Dexterity);
+			}
+			else
+			{
+				mainHandDamageBonus += Owner->CharacterAttributes->GetModifier(EAbilityType::Strength);
+			}
+		}
+		else
+		{
+			mainHandDamageBonus += Owner->CharacterAttributes->GetModifier(EAbilityType::Strength);
+		}
+
+		/** Determine Magical Bonus **/
+		if (MainHandWeapon->bIsMagical)
+		{
+			mainHandDamageBonus += MainHandWeapon->MagicBonus;
+		}
+	}
+}
+
+void UCharacterInventoryComponent::UpdateOffhandDamageBonus()
+{
+
+}
+
 void UCharacterInventoryComponent::UpdateOffhandAttackBonus()
 {
 	offHandAttackBonus = 0;
@@ -196,6 +232,16 @@ int32 UCharacterInventoryComponent::GetOffhandAttackBonus()
 	return FMath::Clamp(offHandAttackBonus, -99, 99);
 }
 
+int32 UCharacterInventoryComponent::GetMainDamageBonus()
+{
+	return mainHandDamageBonus;
+}
+
+int32 UCharacterInventoryComponent::GetOffhandDamageBonus()
+{
+	return offHandDamagebonus;
+}
+
 bool UCharacterInventoryComponent::EquipItem(UBaseEquippableItem* itemToEquip, TEnumAsByte<EEquipmentSlot> toSlot)
 {
 	if (itemToEquip != nullptr)
@@ -210,6 +256,8 @@ bool UCharacterInventoryComponent::EquipItem(UBaseEquippableItem* itemToEquip, T
 		{
 		case EEquipmentSlot::EquipmentSlot_MainHand:
 			bHasMainHand = true;
+			UpdateMainAttackBonus();
+			UpdateMainDamageBonus();
 			break;
 		case EEquipmentSlot::EquipmentSlot_Offhand:
 			if (itemToEquip->ItemType == EItemType::ItemType_Shield)
@@ -231,15 +279,20 @@ bool UCharacterInventoryComponent::EquipItem(UBaseEquippableItem* itemToEquip, T
 
 bool UCharacterInventoryComponent::ResolveEquipItem(UBaseEquippableItem* itemToEquip)
 {
+	bool result = false;
 	/** If item type is ARMOR **/
 	if (itemToEquip->ItemType == EItemType::ItemType_Armor)
 	{
-		return ResolveArmorEquipItem(itemToEquip);
+		result = ResolveArmorEquipItem(itemToEquip);
+		Owner->OnStatChange();
+		return result;
 	}
 	/** If item type is WEAPON **/
 	else if (itemToEquip->ItemType == EItemType::ItemType_Weapon)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("CharacterInventory - ResolveEquipItem: Weapon Equip is not implemented."));
+		result = ResolveWeaponEquipItem(itemToEquip);
+		Owner->OnStatChange();
+		return result;
 	}
 	else if (itemToEquip->ItemType == EItemType::ItemType_Shield)
 	{
@@ -255,6 +308,27 @@ bool UCharacterInventoryComponent::ResolveShieldEquipItem(UBaseEquippableItem* s
 
 bool UCharacterInventoryComponent::ResolveWeaponEquipItem(UBaseEquippableItem* weaponToEquip)
 {
+	UBaseWeaponItem* itemAsWeapon = Cast<UBaseWeaponItem>(weaponToEquip);
+	if (itemAsWeapon != nullptr)
+	{
+		/** If there's nothing equipped **/
+		if (!bHasMainHand && !bHasOffhand)
+		{
+			EquipItem(itemAsWeapon, EEquipmentSlot::EquipmentSlot_MainHand);
+			return true;
+		}
+		/** If only mainhand is equipped **/
+		else if (bHasMainHand && !bHasOffhand)
+		{
+
+		}
+		/** If only offhand is equipped **/
+		else if (!bHasMainHand && bHasOffhand)
+		{
+
+		}
+	}
+	UE_LOG(LogTemp, Warning, TEXT("CharacterInventory - ResolveWeaponItem: itemAsWeapon is nullptr."));
 	return false;
 }
 
@@ -303,6 +377,8 @@ bool UCharacterInventoryComponent::UnequipItemFromSlot(UBaseEquippableItem* item
 			{
 			case EEquipmentSlot::EquipmentSlot_MainHand:
 				bHasMainHand = false;
+				UpdateMainAttackBonus();
+				UpdateMainDamageBonus();
 			case EEquipmentSlot::EquipmentSlot_Offhand:
 				bHasOffhand = false;
 				bHasShieldEquipped = false;

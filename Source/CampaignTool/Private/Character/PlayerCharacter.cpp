@@ -44,6 +44,7 @@ APlayerCharacter::APlayerCharacter()
 	TargetedTile = nullptr;
 	bIsRightMouseDown = false;
 	bCastMouseLineTrace = true;
+	bIsInventoryCollapsed = false;
 	PlayerCursorState = CursorState::OverGameWorld;
 	CharacterType = ECharacterType::C_Ally;
 
@@ -438,3 +439,4 @@ void APlayerCharacter::EndTurn()
 	bIsAimingMovement = false;
 }
 
+void APlayerCharacter::OnInventoryChange_Implementation(){}
