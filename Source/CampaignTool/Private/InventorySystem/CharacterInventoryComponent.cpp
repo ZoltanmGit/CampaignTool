@@ -301,6 +301,26 @@ bool UCharacterInventoryComponent::ResolveEquipItem(UBaseEquippableItem* itemToE
 	return false;
 }
 
+bool UCharacterInventoryComponent::ResolveDragOperation(UBaseItem* draggedItem, int32 draggedRow, int32 draggedColumn, UBaseItem* droppedItem, int32 droppedRow, int32 droppedColumn)
+{
+	int32 draggedIndex = (draggedRow * 8) + draggedColumn;
+	int32 droppedIndex = (droppedRow * 8) + droppedColumn;
+	
+	if (Inventory[droppedIndex] == nullptr)
+	{
+		Inventory[draggedIndex] = nullptr;
+		Inventory[droppedIndex] = draggedItem;
+		return true;
+	}
+	else
+	{
+		Inventory[draggedIndex] = droppedItem;
+		Inventory[droppedIndex] = draggedItem;
+		return true;
+	}
+	return false;
+}
+
 bool UCharacterInventoryComponent::ResolveShieldEquipItem(UBaseEquippableItem* shieldToEquip)
 {
 	return false;

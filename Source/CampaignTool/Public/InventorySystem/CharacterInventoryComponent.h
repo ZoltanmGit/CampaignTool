@@ -69,6 +69,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 		bool ResolveEquipItem(class UBaseEquippableItem* itemToEquip);
 	UFUNCTION(BlueprintCallable)
+		bool ResolveDragOperation(class UBaseItem* draggedItem, int32 draggedRow, int32 draggedColumn, class UBaseItem* droppedItem, int32 droppedRow, int32 droppedColumn);
+	UFUNCTION(BlueprintCallable)
 		bool ResolveArmorEquipItem(class UBaseEquippableItem* armorToEquip);
 	UFUNCTION(BlueprintCallable)
 		bool ResolveShieldEquipItem(class UBaseEquippableItem* shieldToEquip);

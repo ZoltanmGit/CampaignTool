@@ -128,6 +128,8 @@ void ABaseCharacter::ChangeLocation(FVector newLocation)
 			Mover->Timeline->SetPlayRate((1/minusSpeed)*4);
 			Mover->MoveCharacter(newLocation);
 			CharacterLocation = newLocation;
+
+			OnStatChange(); // To update UI about speed
 		}
 		else
 		{

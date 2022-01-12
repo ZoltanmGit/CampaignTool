@@ -78,6 +78,7 @@ protected:
 	bool IsCursorOnValidMovementTile(int32 x, int32 y);
 
 	/** Functions **/
+	void HandleInventoryToogle();
 	//UFUNCTION(BlueprintCallable)
 		virtual void EndTurn() override;
 
@@ -100,8 +101,13 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 		class UBaseSingleTargetAbility* TestAbility06;
 	
+	/** Events **/
 	UFUNCTION(BlueprintNativeEvent)
 		void OnInventoryChange();
+	UFUNCTION(BlueprintNativeEvent)
+		void OnInventoryOpen();
+	UFUNCTION(BlueprintNativeEvent)
+		void OnInventoryClose();
 public:
 	
 };

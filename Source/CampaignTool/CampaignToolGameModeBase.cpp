@@ -16,7 +16,7 @@ ACampaignToolGameModeBase::ACampaignToolGameModeBase()
 	TestFighter.bIsPlayerCharacter = true;
 	TestFighter.ArmorClass = 10;
 	TestFighter.Dexterity = 8;
-	TestFighter.Strength = 15;
+	TestFighter.Strength = 16;
 	TestFighter.CharacterName = "BlackBetty";
 	TestFighter.Class = EClass::Fighter;
 	TestFighter.Speed = 30.0f;
@@ -30,7 +30,7 @@ ACampaignToolGameModeBase::ACampaignToolGameModeBase()
 	TestRogue.bIsPlayerCharacter = true;
 	TestRogue.ArmorClass = 10;
 	TestRogue.Dexterity = 20;
-	TestRogue.Strength = 15;
+	TestRogue.Strength = 8;
 	TestRogue.CharacterName = "Bames Jond";
 	TestRogue.Class = EClass::Rogue;
 	TestRogue.Speed = 25.0f;

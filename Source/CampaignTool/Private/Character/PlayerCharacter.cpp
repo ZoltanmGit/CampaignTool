@@ -80,6 +80,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction("RMBAction", IE_Pressed, this, &APlayerCharacter::HandleRMBPress);
 	PlayerInputComponent->BindAction("RMBAction", IE_Released, this, &APlayerCharacter::HandleRMBRelease);
 	PlayerInputComponent->BindAction("LMBAction", IE_Pressed, this, &APlayerCharacter::HandleLMBPress);
+	PlayerInputComponent->BindAction("ToogleInventory", IE_Pressed, this, &APlayerCharacter::HandleInventoryToogle);
 	PlayerInputComponent->BindAction<FCustomInputDelegate>("Hotkey01", IE_Pressed, this, &APlayerCharacter::HandleHotkey, 0);
 	PlayerInputComponent->BindAction<FCustomInputDelegate>("Hotkey02", IE_Pressed, this, &APlayerCharacter::HandleHotkey, 1);
 	PlayerInputComponent->BindAction<FCustomInputDelegate>("Hotkey03", IE_Pressed, this, &APlayerCharacter::HandleHotkey, 2);
@@ -220,17 +221,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 void APlayerCharacter::HandleTestAction()
 {
-	if (CharacterInventory != nullptr)
-	{
-		CharacterInventory->ResolveEquipItem(Cast<UBaseEquippableItem>(CharacterInventory->Inventory[0]));
-		CharacterInventory->ResolveEquipItem(Cast<UBaseEquippableItem>(CharacterInventory->Inventory[1]));
-		OnStatChange();
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Character Inventory is nullptr."))
-	}
-	/*if (CurrentSpeed >= 1 && bCanMove && !bIsAimingMovement)
+	if (CurrentSpeed >= 1 && bCanMove && !bIsAimingMovement)
 	{
 		if (bIsAimingAbility)
 		{
@@ -271,7 +262,7 @@ void APlayerCharacter::HandleTestAction()
 	UE_LOG(LogTemp, Warning, TEXT("d12: %i"), testValue);
 	testValue = DiceRoller->Roll(20);
 	UE_LOG(LogTemp, Warning, TEXT("d20: %i"), testValue);
-	UE_LOG(LogTemp, Warning, TEXT("________"));*/
+	UE_LOG(LogTemp, Warning, TEXT("________"));
 }
 
 void APlayerCharacter::HandleHotkey(int index)
@@ -431,6 +422,20 @@ bool APlayerCharacter::IsCursorOnValidMovementTile(int32 x, int32 y)
 	
 }
 
+void APlayerCharacter::HandleInventoryToogle()
+{
+	if (bIsInventoryCollapsed)
+	{
+		bIsInventoryCollapsed = false;
+		OnInventoryOpen();
+	}
+	else
+	{
+		bIsInventoryCollapsed = true;
+		OnInventoryClose();
+	}
+}
+
 void APlayerCharacter::EndTurn()
 {
 	Super::EndTurn();
@@ -439,3 +444,5 @@ void APlayerCharacter::EndTurn()
 }
 
 void APlayerCharacter::OnInventoryChange_Implementation(){}
+void APlayerCharacter::OnInventoryOpen_Implementation() {}
+void APlayerCharacter::OnInventoryClose_Implementation() {}
