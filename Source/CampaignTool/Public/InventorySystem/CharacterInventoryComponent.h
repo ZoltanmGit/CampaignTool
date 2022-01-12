@@ -105,6 +105,7 @@ public:
 private:
 	int32 GetFirstNullIndex();
 	int32 GetFirstNonFullStackIndex(FString ItemName);
+	
 	UPROPERTY()
 		class UBaseEquippableItem* BucketEquippable;
 };

@@ -84,6 +84,8 @@ void ABaseCharacter::BeginTurn()
 		bIsActive = true;
 		CurrentSpeed = CharacterAttributes->Stats.Speed / 5.0f;
 		//RefreshPathfinding();
+
+		OnStatChange();
 	}
 }
 

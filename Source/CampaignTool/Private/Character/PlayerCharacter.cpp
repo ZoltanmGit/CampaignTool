@@ -34,7 +34,6 @@ APlayerCharacter::APlayerCharacter()
 	CharacterSpringArm->bEnableCameraLag = true;
 	CharacterSpringArm->SetRelativeRotation(FRotator(-70.0f, 0.0f, 0.0f));
 	CharacterSpringArm->SetUsingAbsoluteLocation(true);
-	//CharacterSpringArm->SetupAttachment(RootComponent);
 
 	CharacterCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("CharacterCamera"));
 	CharacterCamera->SetupAttachment(CharacterSpringArm, USpringArmComponent::SocketName); //Attach the camera to the SpringArmComponent
@@ -65,7 +64,6 @@ void APlayerCharacter::BeginPlay()
 	CharacterLocation = GetActorLocation();
 
 	Super::BeginPlay();
-
 	/** DEBUG DELETE LATER **/
 }
 
@@ -420,6 +418,7 @@ void APlayerCharacter::ChangePossession(ABaseCharacter* newCharacter)
 	//Cleanup this pawn
 	this->CharacterSpringArm->SetWorldLocation(this->GetActorLocation());
 	this->DefaultController = nullptr;
+
 }
 
 bool APlayerCharacter::IsCursorOnValidMovementTile(int32 x, int32 y)

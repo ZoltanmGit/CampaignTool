@@ -382,10 +382,15 @@ bool UCharacterInventoryComponent::UnequipItemFromSlot(UBaseEquippableItem* item
 			case EEquipmentSlot::EquipmentSlot_Offhand:
 				bHasOffhand = false;
 				bHasShieldEquipped = false;
+				UpdateOffhandAttackBonus();
+				UpdateOffhandDamageBonus();
+			case EEquipmentSlot::EquipmentSlot_Armor:
+				UpdateArmorClass();
+				break;
 			default:
 				break;
 			}
-
+			Owner->OnStatChange();
 			/** Log **/
 			UE_LOG(LogTemp, Warning, TEXT("CharacterInventory - UnequipItemFromSlot: %s was successfully unequipped."), *itemToUnequip->ItemName);
 			return true;

@@ -16,6 +16,7 @@ ACampaignToolGameModeBase::ACampaignToolGameModeBase()
 	TestFighter.bIsPlayerCharacter = true;
 	TestFighter.ArmorClass = 10;
 	TestFighter.Dexterity = 8;
+	TestFighter.Strength = 15;
 	TestFighter.CharacterName = "BlackBetty";
 	TestFighter.Class = EClass::Fighter;
 	TestFighter.Speed = 30.0f;
@@ -23,6 +24,8 @@ ACampaignToolGameModeBase::ACampaignToolGameModeBase()
 	TestFighter.SpellBook.Add("curewounds", true);
 	TestFighter.Inventory.Add("a_plate",1);
 	TestFighter.Inventory.Add("w_longsword",1);
+	TestFighter.Inventory.Add("a_leather", 1);
+	TestFighter.Inventory.Add("w_dagger", 1);
 
 	TestRogue.bIsPlayerCharacter = true;
 	TestRogue.ArmorClass = 10;
@@ -36,6 +39,8 @@ ACampaignToolGameModeBase::ACampaignToolGameModeBase()
 	TestRogue.SpellBook.Add("firebreath", true);
 	TestRogue.Inventory.Add("a_leather", 1);
 	TestRogue.Inventory.Add("w_dagger", 1);
+	TestRogue.Inventory.Add("w_longsword", 1);
+	TestRogue.Inventory.Add("a_plate", 1);
 }
 
 void ACampaignToolGameModeBase::BeginPlay()
