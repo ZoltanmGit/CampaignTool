@@ -226,6 +226,22 @@ void ABaseCharacter::InitializeCharacter(FCharacterStruct Character, AGrid* ArgG
 			UE_LOG(LogTemp, Warning, TEXT("AbilityMapValue false"));
 		}
 	}
+
+	/** AcquiredAbility Initialization **/
+	for (auto It = CharacterAttributes->Stats.AcquiredSpells.CreateConstIterator(); It; ++It)
+	{
+		UBaseAbility* NewAbilityInstance = ArgAbilityStorage->GetAbilityPtr(It.Key());
+		if (NewAbilityInstance != nullptr)
+		{
+			NewAbilityInstance->OwnerCharacter = this;
+			AcquiredAbilityArray.Add(NewAbilityInstance);
+			UE_LOG(LogTemp, Warning, TEXT("Spell Added to AcquiredAbilities"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Spell not added because nullptr"));
+		}
+}
 	/** Inventory Initialization **/
 	if (CharacterInventory != nullptr)
 	{

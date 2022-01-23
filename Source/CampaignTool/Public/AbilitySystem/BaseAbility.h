@@ -109,6 +109,8 @@ public:
 		TArray<TEnumAsByte<ERequirementType>> AbilityRequirements;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = AbilityDetails)
 		TEnumAsByte<EAffectedTargetType> AfffectedTargetType;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = AbilityDetails)
+		TEnumAsByte<EAbilityType> SpellCastingAbility;
 
 	//Misc
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Particle)

@@ -62,6 +62,8 @@ public:
 		class AIndicatorActor* Indicator;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Abilities)
 		TArray<class UBaseAbility*> AbilityArray;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Abilities)
+		TArray<class UBaseAbility*> AcquiredAbilityArray;
 
 	//Properties not exposed to the editor
 	bool bCanMove;
