@@ -15,6 +15,7 @@ ANewCharacterGameMode::ANewCharacterGameMode()
 	NewCharacter.Alignment = EAlignment::N;
 	AbilityBonusArray.Init(0, 6);
 }
+
 void ANewCharacterGameMode::OnElfChoice()
 {
 	//General
@@ -46,6 +47,7 @@ void ANewCharacterGameMode::OnElfChoice()
 	NewCharacter.LanguageArray.Add(ELanguage::Common);
 	NewCharacter.LanguageArray.Add(ELanguage::Elvish);
 }
+
 void ANewCharacterGameMode::OnDragonbornChoice()
 {
 	//General
@@ -57,6 +59,7 @@ void ANewCharacterGameMode::OnDragonbornChoice()
 	NewCharacter.LanguageArray.Add(ELanguage::Common);
 	//ADD BREATH WEAPON
 }
+
 void ANewCharacterGameMode::OnDwarfChoice()
 {
 	NewCharacter.Race = ERace::Dwarf;
@@ -80,6 +83,7 @@ void ANewCharacterGameMode::OnDwarfChoice()
 	NewCharacter.LanguageArray.Add(ELanguage::Common);
 	NewCharacter.LanguageArray.Add(ELanguage::Dwarvish);
 }
+
 void ANewCharacterGameMode::OnTieflingChoice()
 {
 	NewCharacter.Race = ERace::Tiefling;
@@ -138,6 +142,26 @@ void ANewCharacterGameMode::OnFighterChoice()
 	//Add Second Wind to spells
 }
 
+void ANewCharacterGameMode::RevertFighterChoice()
+{
+	// They get overriden anyway
+	NewCharacter.HitDie = 0; 
+	NewCharacter.PerLevelHitDie = 0;
+
+	// Saving Throws:
+	RemoveAbilitySavingThrowProficiency(EAbilityType::Strength);
+	RemoveAbilitySavingThrowProficiency(EAbilityType::Constitution);
+
+	// No Race gives Simple/Martial or Shield bonuses so these can be safely removed
+	RemoveWeaponProficiency(EWeapon::MartialWeapons);
+	RemoveWeaponProficiency(EWeapon::SimpleWeapons);
+	RemoveWeaponProficiency(EWeapon::Shield);
+
+	// Remove Second Wind spell
+	// NewCharacter.SpellBook
+
+}
+
 void ANewCharacterGameMode::OnRogueChoice()
 {
 	NewCharacter.HitDie = 8;
@@ -158,12 +182,20 @@ void ANewCharacterGameMode::OnRogueChoice()
 	// Skills: Choose 4 from Acrobatics, Athletics, Deception, Insight, Intimidation, Investigation, Perception, Performance, Persuasion, Sleight of Hand, and Stealth
 }
 
+void ANewCharacterGameMode::RevertRogueChoice()
+{
+}
+
 void ANewCharacterGameMode::OnWizardChoice()
 {
 	NewCharacter.SpellcastingAbility = EAbilityType::Intelligence;
 	NewCharacter.SpellSaveDC = 8;
 	//Choose 3 Cantrips
 	//Choose 6 spells
+}
+
+void ANewCharacterGameMode::RevertWizardChoice()
+{
 }
 
 void ANewCharacterGameMode::AddLanguage(const TEnumAsByte<ELanguage> LanguageToAdd)
@@ -199,4 +231,19 @@ void ANewCharacterGameMode::AddResistanceProficiency(const TEnumAsByte<EDamageTy
 void ANewCharacterGameMode::AddAbilitySavingThrowProficiency(const TEnumAsByte<EAbilityType> AbilityTypeToAdd)
 {
 	NewCharacter.SavingThrowProficiencyArray.AddUnique(AbilityTypeToAdd);
+}
+
+void ANewCharacterGameMode::RemoveAbilitySavingThrowProficiency(TEnumAsByte<EAbilityType> ProficiencyToRemvoce)
+{
+	NewCharacter.SavingThrowProficiencyArray.RemoveSingle(ProficiencyToRemvoce);
+}
+
+void ANewCharacterGameMode::RemoveWeaponProficiency(TEnumAsByte<EWeapon> WeaponProficiencyToRemove)
+{
+	NewCharacter.ProficiencyWeaponArray.RemoveSingle(WeaponProficiencyToRemove);
+}
+
+void ANewCharacterGameMode::RemoveArmorProficiency(TEnumAsByte<EArmor> ArmorProficiencyToRemove)
+{
+	NewCharacter.ProficiencyArmorArray.RemoveSingle(ArmorProficiencyToRemove);
 }

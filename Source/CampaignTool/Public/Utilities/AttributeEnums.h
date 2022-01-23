@@ -150,9 +150,10 @@ enum EFeat
 	ElfWeaponTraining UMETA(DisplayName = "ElfWeaponTraning"),
 	SneakAttack UMETA(DisplayName = "SneakAttack"),
 	TheivesCant UMETA(DisplayName = "Thieves' cant"),
-	Expertise UMETA(DisplayName = "Expertise")
-
-
+	Expertise UMETA(DisplayName = "Expertise"),
+	FightingStyle_Archery UMETA(DisplayName = "Archery Fighting Style"),
+	FightingStyle_Defense UMETA(DisplayName = "Defense Fighting Style"),
+	FightingStyle_Dueling UMETA(DisplayName = "Dueling Fighting Style")
 };
 
 UENUM(BlueprintType)

@@ -138,6 +138,8 @@ public:
 	// Abilities
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = SpellCasting)
 		TMap<FString, bool> SpellBook;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = SpellCasting)
+		TMap<FString, TEnumAsByte<EAbilityType>> InateSpells;
 	// Inventory
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Inventory)
 		TMap<FString, int32> Inventory;

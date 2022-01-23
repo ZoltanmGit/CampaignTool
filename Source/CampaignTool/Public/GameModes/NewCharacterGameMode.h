@@ -39,9 +39,15 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void OnFighterChoice();
 	UFUNCTION(BlueprintCallable)
+		void RevertFighterChoice();
+	UFUNCTION(BlueprintCallable)
 		void OnRogueChoice();
 	UFUNCTION(BlueprintCallable)
+		void RevertRogueChoice();
+	UFUNCTION(BlueprintCallable)
 		void OnWizardChoice();
+	UFUNCTION(BlueprintCallable)
+		void RevertWizardChoice();
 
 	UFUNCTION(BlueprintCallable)
 		void AddLanguage(const TEnumAsByte<ELanguage> LanguageToAdd);
@@ -57,6 +63,11 @@ public:
 		void AddResistanceProficiency(const TEnumAsByte<EDamageType> ProficiencyToAdd);
 	UFUNCTION(BlueprintCallable)
 		void AddAbilitySavingThrowProficiency(const TEnumAsByte<EAbilityType> ProficiencyToAdd);
+
+	void RemoveAbilitySavingThrowProficiency(TEnumAsByte<EAbilityType> ProficiencyToRemvoce);
+	void RemoveWeaponProficiency(TEnumAsByte<EWeapon> WeaponProficiencyToRemove);
+	void RemoveArmorProficiency(TEnumAsByte<EArmor>ArmorProficiencyToRemove);
+
 	/*UFUNCTION(BlueprintCallabe)
 		void AddSpellId();*/ // TODO
 };
