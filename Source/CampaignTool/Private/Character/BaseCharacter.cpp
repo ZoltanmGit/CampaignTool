@@ -200,7 +200,7 @@ void ABaseCharacter::InitializeCharacter(FCharacterStruct Character, AGrid* ArgG
 		OnStatChange();
 	}
 	
-	/** Ability Initialization **/
+	/** SpellBook Initialization **/
 	if (CharacterAbilityComponent != nullptr)
 	{
 		CharacterAbilityComponent->Owner = this;
@@ -227,13 +227,14 @@ void ABaseCharacter::InitializeCharacter(FCharacterStruct Character, AGrid* ArgG
 		}
 	}
 
-	/** AcquiredAbility Initialization **/
+	/** AcquiredSpells Initialization **/
 	for (auto It = CharacterAttributes->Stats.AcquiredSpells.CreateConstIterator(); It; ++It)
 	{
 		UBaseAbility* NewAbilityInstance = ArgAbilityStorage->GetAbilityPtr(It.Key());
 		if (NewAbilityInstance != nullptr)
 		{
 			NewAbilityInstance->OwnerCharacter = this;
+			NewAbilityInstance->SpellCastingAbility = It.Value();
 			AcquiredAbilityArray.Add(NewAbilityInstance);
 			UE_LOG(LogTemp, Warning, TEXT("Spell Added to AcquiredAbilities"));
 		}

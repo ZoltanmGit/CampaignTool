@@ -37,9 +37,9 @@ public:
 		void ResetRaceChoice();
 	//Class choice
 	UFUNCTION(BlueprintCallable)
-		void OnFighterChoice();
+		void OnFighterChoice(const FString Skill01, const FString Skill02, const FString FightingStyle);
 	UFUNCTION(BlueprintCallable)
-		void RevertFighterChoice();
+		void RevertFighterChoice(const FString Skill01, const FString Skill02, const FString FightingStyle);
 	UFUNCTION(BlueprintCallable)
 		void OnRogueChoice();
 	UFUNCTION(BlueprintCallable)
@@ -63,11 +63,12 @@ public:
 		void AddResistanceProficiency(const TEnumAsByte<EDamageType> ProficiencyToAdd);
 	UFUNCTION(BlueprintCallable)
 		void AddAbilitySavingThrowProficiency(const TEnumAsByte<EAbilityType> ProficiencyToAdd);
-
+private:
 	void RemoveAbilitySavingThrowProficiency(TEnumAsByte<EAbilityType> ProficiencyToRemvoce);
 	void RemoveWeaponProficiency(TEnumAsByte<EWeapon> WeaponProficiencyToRemove);
-	void RemoveArmorProficiency(TEnumAsByte<EArmor>ArmorProficiencyToRemove);
-
-	/*UFUNCTION(BlueprintCallabe)
-		void AddSpellId();*/ // TODO
+	void RemoveArmorProficiency(TEnumAsByte<EArmor> ArmorProficiencyToRemove);
+	void RemoveSkillProficiency(const TEnumAsByte<ESkill> SkillToRemove);
+	TEnumAsByte<ESkill> GetSkillFromString(const FString skillAsString);
+	TEnumAsByte<EFeat> GetFightingStyleFromString(const FString fightingStyleAsString);
+	void RevertSkillMap();
 };

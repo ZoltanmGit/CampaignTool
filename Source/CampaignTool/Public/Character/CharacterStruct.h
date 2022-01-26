@@ -18,8 +18,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = General)
 		TEnumAsByte<ECreatureType> CreatureType;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = General)
-		int32 Level;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = General)
 		int32 ArmorClass;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = General)
 		int32 ProficiencyBonus;
@@ -50,7 +48,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Background)
 		TEnumAsByte<ERace> Race;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Background)
-		TEnumAsByte<EClass> Class;
+		TMap<TEnumAsByte<EClass> ,int32> ClassLevelMap;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Background)
 		TEnumAsByte<EAlignment> Alignment;
 	
@@ -62,6 +60,7 @@ public:
 		TArray<TEnumAsByte<EWeapon>> ProficiencyWeaponArray;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
 		TArray<TEnumAsByte<ETool>> ProficiencyToolArray;
+
 	//Combat related
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
 		TArray<TEnumAsByte<EDamageType>> DamageImmunities; //Damage types to which this character is immune to
@@ -83,16 +82,14 @@ public:
 	//Damage Resistance
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
 		TArray<TEnumAsByte<EDamageType>> DamageResistanceArray;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
-		TArray<TEnumAsByte<ESkill>> SkillProficiencyArray;
 	//Feats
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
 		TArray<TEnumAsByte<EFeat>> FeatArray;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Proficiencies)
 		TArray<TEnumAsByte<ELanguage>> LanguageArray;
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Skills)
+		TMap<TEnumAsByte<ESkill>, bool> SkillMap;
 	//Skills
 	//Skills - Strength
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Skills)

@@ -123,7 +123,15 @@ void UAbilityComponent::HandleTileChange()
 			UBaseSingleTargetAbility* AbilityAsSingle = Cast<UBaseSingleTargetAbility>(SelectedAbility);
 			if (AbilityAsSingle != nullptr && AbilityAsSingle->SingleTargetType == ESingleTargetType::NonAttack)
 			{
-				ResolveNonAttack(x_curs, y_curs);
+				if (SelectedAbility->AfffectedTargetType == EAffectedTargetType::Self)
+				{
+					// If it's targeting self then only the casting character is affected
+					ResolveNonAttack(x_char, y_char);
+				}
+				else
+				{
+					ResolveNonAttack(x_curs, y_curs);
+				}
 			}
 			else if (AbilityAsSingle != nullptr && AbilityAsSingle->SingleTargetType == ESingleTargetType::MeleeAttack)
 			{

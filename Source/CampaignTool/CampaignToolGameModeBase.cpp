@@ -13,7 +13,7 @@
 
 ACampaignToolGameModeBase::ACampaignToolGameModeBase()
 {
-	TestFighter.bIsPlayerCharacter = true;
+	/*TestFighter.bIsPlayerCharacter = true;
 	TestFighter.ArmorClass = 10;
 	TestFighter.Dexterity = 8;
 	TestFighter.Strength = 16;
@@ -40,7 +40,7 @@ ACampaignToolGameModeBase::ACampaignToolGameModeBase()
 	TestRogue.Inventory.Add("a_leather", 1);
 	TestRogue.Inventory.Add("w_dagger", 1);
 	TestRogue.Inventory.Add("w_longsword", 1);
-	TestRogue.Inventory.Add("a_plate", 1);
+	TestRogue.Inventory.Add("a_plate", 1);*/
 }
 
 void ACampaignToolGameModeBase::BeginPlay()
@@ -122,6 +122,7 @@ void ACampaignToolGameModeBase::InitializeAbilityStorage()
 	TransformParams.SetLocation(FVector(0.0f, 0.0f, 0.0f));
 	AbilityStorageptr = GetWorld()->SpawnActor<AAbilityStorage>(AbilityStorage, TransformParams, SpawnParams);
 }
+
 void ACampaignToolGameModeBase::InitializeItemStorage()
 {
 	FActorSpawnParameters SpawnParams;
@@ -130,6 +131,7 @@ void ACampaignToolGameModeBase::InitializeItemStorage()
 	TransformParams.SetLocation(FVector(0.0f, 0.0f, 0.0f));
 	ItemStorageptr = GetWorld()->SpawnActor<AItemStorage>(ItemStorage, TransformParams, SpawnParams);
 }
+
 void ACampaignToolGameModeBase::InitializeCharacters()
 {
 	SpawnCharacter(TestFighter, 0, 0);
@@ -151,18 +153,21 @@ void ACampaignToolGameModeBase::SpawnCharacter(FCharacterStruct character, int32
 	TransformParams.SetLocation(FVector((x*Gridptr->fieldSize)+(Gridptr->fieldSize/2), (y* Gridptr->fieldSize) + (Gridptr->fieldSize / 2), 50.0f));
 	Gridptr->GridDataArray[(x * Gridptr->Columns) + y].bIsOccupied = true;
 	ABaseCharacter* newCharacter = nullptr;
+	
+	
 	// Spawn Character from template
-	switch (character.Class)
+	// There is no way for a character to gain levels in multiple classes. Therefore this solution is adequate.
+	if (character.ClassLevelMap.Find(EClass::Fighter) > 0)
 	{
-	case EClass::Fighter:
 		newCharacter = GetWorld()->SpawnActor<APlayerCharacter>(FighterClass, TransformParams, SpawnParams);
-		break;
-	case EClass::Rogue:
+	}
+	else if(character.ClassLevelMap.Find(EClass::Rogue) > 0)
+	{
 		newCharacter = GetWorld()->SpawnActor<APlayerCharacter>(RogueClass, TransformParams, SpawnParams);
-		break;
-	default:
+	}
+	else if(character.ClassLevelMap.Find(EClass::Wizard) > 0)
+	{
 		newCharacter = GetWorld()->SpawnActor<APlayerCharacter>(RogueClass, TransformParams, SpawnParams);
-		break;
 	}
 	// Initialize Character
 	if (newCharacter != nullptr && Gridptr != nullptr && Indicatorptr != nullptr && AbilityStorageptr != nullptr && ItemStorageptr != nullptr)

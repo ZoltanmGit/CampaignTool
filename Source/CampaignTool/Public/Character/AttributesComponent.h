@@ -36,11 +36,13 @@ public:
 		
 public:
 	UFUNCTION(BlueprintCallable)
-		int32 GetModifier(TEnumAsByte<EAbilityType> Ability);
+		int32 GetModifier(const TEnumAsByte<EAbilityType> Ability);
 	UFUNCTION(BlueprintCallable)
-		int32 GetSavingThrowModifier(TEnumAsByte<EAbilityType> Ability);
+		int32 GetSavingThrowModifier(const TEnumAsByte<EAbilityType> Ability);
 	UFUNCTION(BlueprintCallable)
 		int32 GetProficiencyBonus();
+	UFUNCTION(BlueprintCallable)
+		int32 GetClassLevel(const TEnumAsByte<EClass> classToFind);
 
 	bool IsProficientWith(TEnumAsByte<EWeapon> weapon);
 	bool IsProficientWith(TEnumAsByte<EArmor> armor);

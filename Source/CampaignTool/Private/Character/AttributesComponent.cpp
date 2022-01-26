@@ -20,7 +20,7 @@ void UAttributesComponent::InitComponent(FCharacterStruct charstruct)
 	Stats = charstruct;
 }
 
-int32 UAttributesComponent::GetModifier(TEnumAsByte<EAbilityType> Ability)
+int32 UAttributesComponent::GetModifier(const TEnumAsByte<EAbilityType> Ability)
 {
 	switch (Ability)
 	{
@@ -48,7 +48,7 @@ int32 UAttributesComponent::GetModifier(TEnumAsByte<EAbilityType> Ability)
 	}
 	return 0;
 }
-int32 UAttributesComponent::GetSavingThrowModifier(TEnumAsByte<EAbilityType> Ability)
+int32 UAttributesComponent::GetSavingThrowModifier(const TEnumAsByte<EAbilityType> Ability)
 {
 	int32 result = 0;
 	result += GetModifier(Ability);
@@ -64,6 +64,15 @@ int32 UAttributesComponent::GetSavingThrowModifier(TEnumAsByte<EAbilityType> Abi
 int32 UAttributesComponent::GetProficiencyBonus()
 {
 	return FMath::Clamp(Stats.ProficiencyBonus, 0, 6); // I think technically the minimum is +2 but it needs some digging
+}
+
+int32 UAttributesComponent::GetClassLevel(const TEnumAsByte<EClass> classToFind)
+{
+	if (Stats.ClassLevelMap.Contains(classToFind))
+	{
+		return *Stats.ClassLevelMap.Find(classToFind);
+	}
+	return 0;
 }
 
 bool UAttributesComponent::IsProficientWith(TEnumAsByte<EWeapon> weapon)

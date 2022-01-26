@@ -1,15 +1,38 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "GameModes/NewCharacterGameMode.h"
 
 ANewCharacterGameMode::ANewCharacterGameMode()
 {
-	NewCharacter.Level = 1;
+	NewCharacter.ClassLevelMap.Add(EClass::Fighter, 0);
+	NewCharacter.ClassLevelMap.Add(EClass::Rogue, 0);
+	NewCharacter.ClassLevelMap.Add(EClass::Wizard, 0);
+	NewCharacter.ClassLevelMap.Add(EClass::UndefinedClass, 0);
 	NewCharacter.ArmorClass = 10;
 
+	{
+		// Painful init
+		NewCharacter.SkillMap.Add(ESkill::Acrobatics, false);
+		NewCharacter.SkillMap.Add(ESkill::Athletics, false);
+		NewCharacter.SkillMap.Add(ESkill::AnimalHandling, false);
+		NewCharacter.SkillMap.Add(ESkill::Arcana, false);
+		NewCharacter.SkillMap.Add(ESkill::Deception, false);
+		NewCharacter.SkillMap.Add(ESkill::History, false);
+		NewCharacter.SkillMap.Add(ESkill::Insight, false);
+		NewCharacter.SkillMap.Add(ESkill::Intimidation, false);
+		NewCharacter.SkillMap.Add(ESkill::Investigation, false);
+		NewCharacter.SkillMap.Add(ESkill::Medicine, false);
+		NewCharacter.SkillMap.Add(ESkill::Nature, false);
+		NewCharacter.SkillMap.Add(ESkill::Perception, false);
+		NewCharacter.SkillMap.Add(ESkill::Performance, false);
+		NewCharacter.SkillMap.Add(ESkill::Persuasion, false);
+		NewCharacter.SkillMap.Add(ESkill::Religion, false);
+		NewCharacter.SkillMap.Add(ESkill::SleightOfHand, false);
+		NewCharacter.SkillMap.Add(ESkill::Stealth, false);
+		NewCharacter.SkillMap.Add(ESkill::Survival, false);
+	}
+
 	NewCharacter.Race = ERace::UndefinedRace;
-	NewCharacter.Class = EClass::UndefinedClass;
 	NewCharacter.CreatureType = ECreatureType::THumanoid;
 	NewCharacter.bIsPlayerCharacter = true;
 	NewCharacter.Alignment = EAlignment::N;
@@ -32,7 +55,7 @@ void ANewCharacterGameMode::OnElfChoice()
 	NewCharacter.ProficiencyWeaponArray.Add(EWeapon::Shortbows); //Because of "Elf Weapon Training"
 	NewCharacter.ProficiencyWeaponArray.Add(EWeapon::Longbows); //Because of "Elf Weapon Training"
 	//Proficiency-Skills
-	NewCharacter.SkillProficiencyArray.Add(ESkill::Perception); //Because of "Keen Senses" feat
+	AddSkillProficiency(ESkill::Perception); //Because of "Keen Senses" feat
 	//Proficiency-Saving Throws
 	NewCharacter.ConditionSavingThrowArray.Add(ECondition::Charmed); //Because of "Fey Ancestry"
 	NewCharacter.ConditionImmunities.Add(ECondition::Sleeping);   //Because of "Fey Ancestry"
@@ -112,7 +135,6 @@ void ANewCharacterGameMode::ResetRaceChoice()
 	// We empty the arrays
 	NewCharacter.FeatArray.Empty();
 	NewCharacter.LanguageArray.Empty();
-	NewCharacter.SkillProficiencyArray.Empty();
 	NewCharacter.ConditionImmunities.Empty();
 	NewCharacter.AbilitySavingThrowArray.Empty();
 	NewCharacter.ConditionSavingThrowArray.Empty();
@@ -121,10 +143,11 @@ void ANewCharacterGameMode::ResetRaceChoice()
 	NewCharacter.ProficiencyToolArray.Empty();
 }
 
-void ANewCharacterGameMode::OnFighterChoice()
+void ANewCharacterGameMode::OnFighterChoice(const FString Skill01, const FString Skill02, const FString FightingStyle)
 {
 	NewCharacter.HitDie = 10;
 	NewCharacter.PerLevelHitDie = 6;
+	NewCharacter.ClassLevelMap.Emplace(EClass::Fighter, 1);
 	//Armor: All armor, shields
 	AddArmorProficiency(EArmor::LightArmor);
 	AddArmorProficiency(EArmor::MediumArmor);
@@ -138,16 +161,25 @@ void ANewCharacterGameMode::OnFighterChoice()
 	AddAbilitySavingThrowProficiency(EAbilityType::Strength);
 	AddAbilitySavingThrowProficiency(EAbilityType::Constitution);
 	//Skills: Choose 2 from Acrobatics, Animal Handling, Athletics, History, Insight, Intimidation, Perception, and Survival
-	//Choose fighting style: Archery, Defense, Dueling, Great Weapon Fighting, Protection, Two Weapon Fighting 
+	AddSkillProficiency(GetSkillFromString(Skill01));
+	AddSkillProficiency(GetSkillFromString(Skill02));
+	
+	// Choose fighting style: Archery, Defense, Dueling
+	if (GetFightingStyleFromString(FightingStyle) != EFeat::UndefinedFeat)
+	{
+		NewCharacter.FeatArray.Add(GetFightingStyleFromString(FightingStyle));
+	}
+
 	//Add Second Wind to spells
+	NewCharacter.AcquiredSpells.Add("g_secondwind", EAbilityType::Constitution);
 }
 
-void ANewCharacterGameMode::RevertFighterChoice()
+void ANewCharacterGameMode::RevertFighterChoice(const FString Skill01, const FString Skill02, const FString FightingStyle)
 {
 	// They get overriden anyway
 	NewCharacter.HitDie = 0; 
 	NewCharacter.PerLevelHitDie = 0;
-
+	NewCharacter.ClassLevelMap.Emplace(EClass::Fighter, 0);
 	// Saving Throws:
 	RemoveAbilitySavingThrowProficiency(EAbilityType::Strength);
 	RemoveAbilitySavingThrowProficiency(EAbilityType::Constitution);
@@ -157,9 +189,25 @@ void ANewCharacterGameMode::RevertFighterChoice()
 	RemoveWeaponProficiency(EWeapon::SimpleWeapons);
 	RemoveWeaponProficiency(EWeapon::Shield);
 
-	// Remove Second Wind spell
-	// NewCharacter.SpellBook
+	// Remove Armors these can also be safely removed
+	RemoveArmorProficiency(EArmor::HeavyArmor);
+	RemoveArmorProficiency(EArmor::MediumArmor);
+	RemoveArmorProficiency(EArmor::LightArmor);
 
+
+	// Reset skills, if elf add perception because of "Keen Senses"
+	RevertSkillMap();
+	if (NewCharacter.Race == ERace::Elf)
+	{
+		AddSkillProficiency(ESkill::Perception);
+	}
+
+	// Remove Fighting Style
+	NewCharacter.FeatArray.RemoveSingle(EFeat::FightingStyle_Archery);
+	NewCharacter.FeatArray.RemoveSingle(EFeat::FightingStyle_Defense);
+	NewCharacter.FeatArray.RemoveSingle(EFeat::FightingStyle_Dueling);
+	// Remove Second Wind spell
+	NewCharacter.AcquiredSpells.Remove("g_secondwind");
 }
 
 void ANewCharacterGameMode::OnRogueChoice()
@@ -220,7 +268,10 @@ void ANewCharacterGameMode::AddArmorProficiency(const TEnumAsByte<EArmor> ArmorP
 
 void ANewCharacterGameMode::AddSkillProficiency(const TEnumAsByte<ESkill> SkillProficiencyToAdd)
 {
-	NewCharacter.SkillProficiencyArray.AddUnique(SkillProficiencyToAdd);
+	if (SkillProficiencyToAdd != ESkill::UndefinedSkill)
+	{
+		NewCharacter.SkillMap.Emplace(SkillProficiencyToAdd, true);
+	}
 }
 
 void ANewCharacterGameMode::AddResistanceProficiency(const TEnumAsByte<EDamageType> ResistanceProficiencyToAdd)
@@ -246,4 +297,128 @@ void ANewCharacterGameMode::RemoveWeaponProficiency(TEnumAsByte<EWeapon> WeaponP
 void ANewCharacterGameMode::RemoveArmorProficiency(TEnumAsByte<EArmor> ArmorProficiencyToRemove)
 {
 	NewCharacter.ProficiencyArmorArray.RemoveSingle(ArmorProficiencyToRemove);
+}
+
+void ANewCharacterGameMode::RemoveSkillProficiency(const TEnumAsByte<ESkill> SkillToRemove)
+{
+	if (SkillToRemove != ESkill::UndefinedSkill)
+	{
+		NewCharacter.SkillMap.Emplace(SkillToRemove, false);
+	}
+}
+
+TEnumAsByte<ESkill> ANewCharacterGameMode::GetSkillFromString(const FString skillAsString)
+{
+	if (skillAsString == "Athletics")
+	{
+		ESkill::Acrobatics;
+	}
+	else if (skillAsString == "Acrobatics")
+	{
+		ESkill::Acrobatics;
+	}
+	else if (skillAsString == "Animal Handling")
+	{
+		ESkill::AnimalHandling;
+	}
+	else if (skillAsString == "Arcana")
+	{
+		ESkill::Arcana;
+	}
+	else if (skillAsString == "Deception")
+	{
+		ESkill::Deception;
+	}
+	else if (skillAsString == "History")
+	{
+		ESkill::History;
+	}
+	else if (skillAsString == "Insight")
+	{
+		ESkill::Insight;
+	}
+	else if (skillAsString == "Intimidation")
+	{
+		ESkill::Intimidation;
+	}
+	else if (skillAsString == "Investigation")
+	{
+		ESkill::Investigation;
+	}
+	else if (skillAsString == "Medicine")
+	{
+		ESkill::Medicine;
+	}
+	else if (skillAsString == "Nature")
+	{
+		ESkill::Nature;
+	}
+	else if (skillAsString == "Perception")
+	{
+		ESkill::Perception;
+	}
+	else if (skillAsString == "Performance")
+	{
+		ESkill::Performance;
+	}
+	else if (skillAsString == "Persuasion")
+	{
+		ESkill::Persuasion;
+	}
+	else if (skillAsString == "Religion")
+	{
+		ESkill::Religion;
+	}
+	else if (skillAsString == "Sleight Of Hand")
+	{
+		ESkill::SleightOfHand;
+	}
+	else if (skillAsString == "Stealth")
+	{
+		ESkill::Stealth;
+	}
+	else if (skillAsString == "Survival")
+	{
+		ESkill::Survival;
+	}
+	return ESkill::UndefinedSkill;
+}
+
+TEnumAsByte<EFeat> ANewCharacterGameMode::GetFightingStyleFromString(const FString fightingStyleAsString)
+{
+	if (fightingStyleAsString=="Archery")
+	{
+		return EFeat::FightingStyle_Archery;
+	}
+	else if (fightingStyleAsString == "Defense")
+	{
+		return EFeat::FightingStyle_Defense;
+	}
+	else if (fightingStyleAsString == "Dueling")
+	{
+		return EFeat::FightingStyle_Dueling;
+	}
+	return EFeat::UndefinedFeat;
+}
+
+void ANewCharacterGameMode::RevertSkillMap()
+{
+	NewCharacter.SkillMap.Emplace(ESkill::Acrobatics, false);
+	NewCharacter.SkillMap.Emplace(ESkill::Athletics, false);
+	NewCharacter.SkillMap.Emplace(ESkill::AnimalHandling, false);
+	NewCharacter.SkillMap.Emplace(ESkill::Arcana, false);
+	NewCharacter.SkillMap.Emplace(ESkill::Deception, false);
+	NewCharacter.SkillMap.Emplace(ESkill::History, false);
+	NewCharacter.SkillMap.Emplace(ESkill::Insight, false);
+	NewCharacter.SkillMap.Emplace(ESkill::Intimidation, false);
+	NewCharacter.SkillMap.Emplace(ESkill::Investigation, false);
+	NewCharacter.SkillMap.Emplace(ESkill::Medicine, false);
+	NewCharacter.SkillMap.Emplace(ESkill::Nature, false);
+	NewCharacter.SkillMap.Emplace(ESkill::Perception, false);
+	NewCharacter.SkillMap.Emplace(ESkill::Performance, false);
+	NewCharacter.SkillMap.Emplace(ESkill::Persuasion, false);
+	NewCharacter.SkillMap.Emplace(ESkill::Religion, false);
+	NewCharacter.SkillMap.Emplace(ESkill::SleightOfHand, false);
+	NewCharacter.SkillMap.Emplace(ESkill::Stealth, false);
+	NewCharacter.SkillMap.Emplace(ESkill::Survival, false);
 }

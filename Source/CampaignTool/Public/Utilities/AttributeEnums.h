@@ -71,6 +71,7 @@ enum EWeapon
 UENUM(BlueprintType)
 enum ESkill
 {
+	UndefinedSkill UMETA(DisplayName = "UndefinedSkill"),
 	Athletics UMETA(DisplayName = "Athletics"),
 	Acrobatics UMETA(DisplayName = "Acrobatics"),
 	SleightOfHand UMETA(DisplayName = "Sleight Of Hand"),
@@ -159,7 +160,6 @@ enum EFeat
 UENUM(BlueprintType)
 enum ELanguage
 {
-	
 	Common UMETA(DisplayName = "Common"),
 	Dwarvish UMETA(DisplayName = "Dwarvish"),
 	Elvish UMETA(DisplayName = "Elvish"),
