@@ -6,7 +6,7 @@
 #include "UObject/NoExportTypes.h"
 #include "DiceRoller.generated.h"
 
-UCLASS()
+UCLASS(Blueprintable)
 class CAMPAIGNTOOL_API UDiceRoller : public UObject
 {
 	GENERATED_BODY()
