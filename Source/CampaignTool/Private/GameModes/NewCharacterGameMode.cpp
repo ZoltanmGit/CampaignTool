@@ -284,6 +284,18 @@ void ANewCharacterGameMode::AddAbilitySavingThrowProficiency(const TEnumAsByte<E
 	NewCharacter.SavingThrowProficiencyArray.AddUnique(AbilityTypeToAdd);
 }
 
+bool ANewCharacterGameMode::IsProficientWith(const TEnumAsByte<ESkill> skill)
+{
+	if (NewCharacter.SkillMap.Contains(skill))
+	{
+		if (*NewCharacter.SkillMap.Find(skill) == true)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 void ANewCharacterGameMode::RemoveAbilitySavingThrowProficiency(TEnumAsByte<EAbilityType> ProficiencyToRemvoce)
 {
 	NewCharacter.SavingThrowProficiencyArray.RemoveSingle(ProficiencyToRemvoce);

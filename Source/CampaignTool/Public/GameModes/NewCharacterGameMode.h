@@ -63,6 +63,8 @@ public:
 		void AddResistanceProficiency(const TEnumAsByte<EDamageType> ProficiencyToAdd);
 	UFUNCTION(BlueprintCallable)
 		void AddAbilitySavingThrowProficiency(const TEnumAsByte<EAbilityType> ProficiencyToAdd);
+	UFUNCTION(BlueprintCallable)
+		bool IsProficientWith(const TEnumAsByte<ESkill> skill);
 private:
 	void RemoveAbilitySavingThrowProficiency(TEnumAsByte<EAbilityType> ProficiencyToRemvoce);
 	void RemoveWeaponProficiency(TEnumAsByte<EWeapon> WeaponProficiencyToRemove);
