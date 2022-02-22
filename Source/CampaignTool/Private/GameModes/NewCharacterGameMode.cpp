@@ -1,6 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "GameModes/NewCharacterGameMode.h"
+#include "Kismet/GameplayStatics.h"
+#include "Persistence/PersistenceSaveObject.h"
+#include "Character/CharacterSaveObject.h"
 
 ANewCharacterGameMode::ANewCharacterGameMode()
 {
@@ -37,6 +40,11 @@ ANewCharacterGameMode::ANewCharacterGameMode()
 	NewCharacter.bIsPlayerCharacter = true;
 	NewCharacter.Alignment = EAlignment::N;
 	AbilityBonusArray.Init(0, 6);
+}
+
+void ANewCharacterGameMode::BeginPlay()
+{
+	SaveObject = Cast<UCharacterSaveObject>(UGameplayStatics::CreateSaveGameObject(UCharacterSaveObject::StaticClass()));
 }
 
 void ANewCharacterGameMode::OnElfChoice()
@@ -170,8 +178,12 @@ void ANewCharacterGameMode::OnFighterChoice(const FString Skill01, const FString
 		NewCharacter.FeatArray.Add(GetFightingStyleFromString(FightingStyle));
 	}
 
-	//Add Second Wind to spells
+	// Add Second Wind to spells
 	NewCharacter.AcquiredSpells.Add("g_secondwind", EAbilityType::Constitution);
+
+	// Add some equipment
+	NewCharacter.Inventory.Add("w_longsword", 1);
+	NewCharacter.Inventory.Add("a_plate", 1);
 }
 
 void ANewCharacterGameMode::RevertFighterChoice(const FString Skill01, const FString Skill02, const FString FightingStyle)
@@ -214,6 +226,7 @@ void ANewCharacterGameMode::OnRogueChoice()
 {
 	NewCharacter.HitDie = 8;
 	NewCharacter.PerLevelHitDie = 5;
+	NewCharacter.ClassLevelMap.Emplace(EClass::Fighter, 1);
 	//Armor: Light Armor
 	AddArmorProficiency(EArmor::LightArmor);
 	//Weapons: Simple weapons, hand crossbows, longswords, rapiers, shortswords
@@ -296,6 +309,46 @@ bool ANewCharacterGameMode::IsProficientWith(const TEnumAsByte<ESkill> skill)
 	return false;
 }
 
+void ANewCharacterGameMode::FinalizeAbilities(const int32 Str, const int32 Dex, const int32 Con, const int32 Int, const int32 Wis, const int32 Cha)
+{
+	NewCharacter.Strength = Str;
+	NewCharacter.Dexterity = Dex;
+	NewCharacter.Constitution = Con;
+	NewCharacter.Intelligence = Int;
+	NewCharacter.Wisdom = Wis;
+	NewCharacter.Charisma = Cha;
+}
+
+void ANewCharacterGameMode::SaveCharacter()
+{
+	NewCharacter.CharacterName = CharacterName;
+	if (SaveObject != nullptr)
+	{
+		UPersistenceSaveObject* Persist = Cast<UPersistenceSaveObject>(UGameplayStatics::LoadGameFromSlot(TEXT("PersistentDataSlot"), 0));
+		if (!Persist)
+		{
+			Persist = Cast<UPersistenceSaveObject>(UGameplayStatics::CreateSaveGameObject(UPersistenceSaveObject::StaticClass())); // If there is no Persistence yet then we create one
+			UE_LOG(LogTemp, Warning, TEXT("Created new persistence"));
+		}
+
+		//Save the persistent values of a map
+		SaveObject->SavedCharacterStruct = NewCharacter;
+
+		FString SlotName = "CharacterSave" + FString::FromInt(Persist->CharacterNextIndex + 1);
+
+		if (UGameplayStatics::SaveGameToSlot(SaveObject, SlotName, 0))
+		{
+			Persist->CharacterSlotNames.Add(SlotName);
+			UE_LOG(LogTemp, Warning, TEXT("Saved %s to %s"), *CharacterName, *SlotName);
+		}
+		Persist->CharacterNextIndex++;
+		if (UGameplayStatics::SaveGameToSlot(Persist, TEXT("PersistentDataSlot"), 0))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Saved Persistence"));
+		}
+	}
+}
+
 void ANewCharacterGameMode::RemoveAbilitySavingThrowProficiency(TEnumAsByte<EAbilityType> ProficiencyToRemvoce)
 {
 	NewCharacter.SavingThrowProficiencyArray.RemoveSingle(ProficiencyToRemvoce);
@@ -323,75 +376,75 @@ TEnumAsByte<ESkill> ANewCharacterGameMode::GetSkillFromString(const FString skil
 {
 	if (skillAsString == "Athletics")
 	{
-		ESkill::Acrobatics;
+		return ESkill::Athletics;
 	}
 	else if (skillAsString == "Acrobatics")
 	{
-		ESkill::Acrobatics;
+		return ESkill::Acrobatics;
 	}
 	else if (skillAsString == "Animal Handling")
 	{
-		ESkill::AnimalHandling;
+		return ESkill::AnimalHandling;
 	}
 	else if (skillAsString == "Arcana")
 	{
-		ESkill::Arcana;
+		return ESkill::Arcana;
 	}
 	else if (skillAsString == "Deception")
 	{
-		ESkill::Deception;
+		return ESkill::Deception;
 	}
 	else if (skillAsString == "History")
 	{
-		ESkill::History;
+		return ESkill::History;
 	}
 	else if (skillAsString == "Insight")
 	{
-		ESkill::Insight;
+		return ESkill::Insight;
 	}
 	else if (skillAsString == "Intimidation")
 	{
-		ESkill::Intimidation;
+		return ESkill::Intimidation;
 	}
 	else if (skillAsString == "Investigation")
 	{
-		ESkill::Investigation;
+		return ESkill::Investigation;
 	}
 	else if (skillAsString == "Medicine")
 	{
-		ESkill::Medicine;
+		return ESkill::Medicine;
 	}
 	else if (skillAsString == "Nature")
 	{
-		ESkill::Nature;
+		return ESkill::Nature;
 	}
 	else if (skillAsString == "Perception")
 	{
-		ESkill::Perception;
+		return ESkill::Perception;
 	}
 	else if (skillAsString == "Performance")
 	{
-		ESkill::Performance;
+		return ESkill::Performance;
 	}
 	else if (skillAsString == "Persuasion")
 	{
-		ESkill::Persuasion;
+		return ESkill::Persuasion;
 	}
 	else if (skillAsString == "Religion")
 	{
-		ESkill::Religion;
+		return ESkill::Religion;
 	}
 	else if (skillAsString == "Sleight Of Hand")
 	{
-		ESkill::SleightOfHand;
+		return ESkill::SleightOfHand;
 	}
 	else if (skillAsString == "Stealth")
 	{
-		ESkill::Stealth;
+		return ESkill::Stealth;
 	}
 	else if (skillAsString == "Survival")
 	{
-		ESkill::Survival;
+		return ESkill::Survival;
 	}
 	return ESkill::UndefinedSkill;
 }

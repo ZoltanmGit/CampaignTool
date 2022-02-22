@@ -90,48 +90,6 @@ public:
 		TArray<TEnumAsByte<ELanguage>> LanguageArray;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Skills)
 		TMap<TEnumAsByte<ESkill>, bool> SkillMap;
-	//Skills
-	//Skills - Strength
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Skills)
-		int32 Athletics;
-	//Skills - Dexterity
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Skills)
-		int32 Acrobatics;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Skills)
-		int32 SleightOfHand;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Skills)
-		int32 Stealth;
-	//Skills - Intelligence
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Skills)
-		int32 Arcana;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Skills)
-		int32 History;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Skills)
-		int32 Investigation;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Skills)
-		int32 Nature;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Skills)
-		int32 Religion;
-	//Skills - Wisdom
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Skills)
-		int32 AnimalHandling;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Skills)
-		int32 Insight;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Skills)
-		int32 Medicine;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Skills)
-		int32 Perception;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Skills)
-		int32 Survival;
-	//Skills - Charisma
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Skills)
-		int32 Deception;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Skills)
-		int32 Intimidation;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Skills)
-		int32 Performance;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Skills)
-		int32 Persuasion;
 	// Abilities
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = SpellCasting)
 		TMap<FString, bool> SpellBook;

@@ -17,12 +17,16 @@ class CAMPAIGNTOOL_API ANewCharacterGameMode : public AGameModeBase
 
 		ANewCharacterGameMode();
 public:
-
+	virtual void BeginPlay() override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Character)
 		TArray<int32> AbilityBonusArray; // 0-STR || 1-DEX || 2-CON || 3-INT || 4-WIS || 5-CHA
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Character)
 		FCharacterStruct NewCharacter;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Map)
+		FString CharacterName;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Persistence)
+		class UCharacterSaveObject* SaveObject;
 
 	//Race Choice
 	UFUNCTION(BlueprintCallable)
@@ -65,6 +69,10 @@ public:
 		void AddAbilitySavingThrowProficiency(const TEnumAsByte<EAbilityType> ProficiencyToAdd);
 	UFUNCTION(BlueprintCallable)
 		bool IsProficientWith(const TEnumAsByte<ESkill> skill);
+	UFUNCTION(BlueprintCallable)
+		void FinalizeAbilities(const int32 Str, const int32 Dex, const int32 Con, const int32 Int, const int32 Wis, const int32 Cha);
+	UFUNCTION(BlueprintCallable)
+		void SaveCharacter();
 private:
 	void RemoveAbilitySavingThrowProficiency(TEnumAsByte<EAbilityType> ProficiencyToRemvoce);
 	void RemoveWeaponProficiency(TEnumAsByte<EWeapon> WeaponProficiencyToRemove);

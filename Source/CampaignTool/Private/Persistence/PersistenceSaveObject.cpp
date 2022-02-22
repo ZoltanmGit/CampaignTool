@@ -4,6 +4,6 @@
 #include "Persistence/PersistenceSaveObject.h"
 UPersistenceSaveObject::UPersistenceSaveObject()
 {
-	SavedMapNum = 0;
-	SavedCharacterNum = 0;
+	MapNextIndex = 0;
+	CharacterNextIndex = 0;
 }

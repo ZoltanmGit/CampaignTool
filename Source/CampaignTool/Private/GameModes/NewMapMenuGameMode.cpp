@@ -107,19 +107,14 @@ void ANewMapMenuGameMode::SaveMap()
 		SaveObject->MapName = MapName;
 		SaveObject->Rows = Rows;
 		SaveObject->Columns = Columns;
-
-		for (int32 i = 0; i < (Rows*Columns)/2; i++)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("%i -> %i"), i,(Rows*Columns) - (Columns-i%Columns) - ((i/Columns)*Columns )       );
-		}
 		
-		FString SlotName = "MapSave"+FString::FromInt(Persist->SavedMapNum+1);
+		FString SlotName = "MapSave"+FString::FromInt(Persist->MapNextIndex+1);
 
 		if (UGameplayStatics::SaveGameToSlot(SaveObject, SlotName, 0))
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Saved the map to %s"), *SlotName);
 		}
-		Persist->SavedMapNum++;
+		Persist->MapNextIndex++;
 		if (UGameplayStatics::SaveGameToSlot(Persist, TEXT("PersistentDataSlot"), 0))
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Saved Persistence"));

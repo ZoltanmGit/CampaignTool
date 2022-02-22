@@ -16,4 +16,6 @@ class CAMPAIGNTOOL_API UCampaignToolGameInstance : public UGameInstance
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = MetaData)
 		FString SelectedMapSlotName;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = MetaData)
+		FString SelectedCharacterSlotName;
 };

@@ -17,7 +17,11 @@ public:
 	UPersistenceSaveObject();
 public:
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category = SaveData)
-		int32 SavedMapNum;
+		int32 MapNextIndex;
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category = SaveData)
-		int32 SavedCharacterNum;
+		int32 CharacterNextIndex;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = CharacterSaveData)
+		TArray<FString> CharacterSlotNames;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = CharacterSaveData)
+		TArray<FString> MapSlotNames;
 };
