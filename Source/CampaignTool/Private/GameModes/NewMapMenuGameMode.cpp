@@ -91,6 +91,7 @@ void ANewMapMenuGameMode::ResizeColumn(int32 NewColumn)
 		OnGridChange();
 	}
 }
+
 void ANewMapMenuGameMode::SaveMap()
 {
 	if (SaveObject != nullptr)
@@ -112,6 +113,7 @@ void ANewMapMenuGameMode::SaveMap()
 
 		if (UGameplayStatics::SaveGameToSlot(SaveObject, SlotName, 0))
 		{
+			Persist->MapSlotNames.Add(SlotName);
 			UE_LOG(LogTemp, Warning, TEXT("Saved the map to %s"), *SlotName);
 		}
 		Persist->MapNextIndex++;
@@ -121,6 +123,7 @@ void ANewMapMenuGameMode::SaveMap()
 		}
 	}
 }
+
 void ANewMapMenuGameMode::OnGridChange_Implementation()
 {
 	UE_LOG(LogTemp, Warning, TEXT("OnGridChange()"));

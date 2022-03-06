@@ -46,6 +46,4 @@ public:
 		void SaveMap();
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 		void OnGridChange();
-
-
 };

@@ -18,9 +18,4 @@ class CAMPAIGNTOOL_API UCharacterSaveObject : public USaveGame
 public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Persistence)
 		FCharacterStruct SavedCharacterStruct;
-
-	//TODO
-
-	/*UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Persistence) 
-		TArra<BaseInventoryItem> SavedInventory;*/
 };
