@@ -31,7 +31,7 @@ protected:
 	virtual void BeginPlay() override;
 	
 public:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Attributes)
 		FCharacterStruct Stats;
 		
 public:

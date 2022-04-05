@@ -5,42 +5,19 @@
 #include "GridSystem/Grid.h"
 #include "Utilities/IndicatorActor.h"
 #include "AbilitySystem/AbilityStorage.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "InventorySystem/ItemStorage.h"
 #include "Character/PlayerCharacter.h"
+#include "Character/CharacterSaveObject.h"
+#include "Character/EnemyController.h"
+#include "Character/AiCharacter.h"
 #include "Persistence/MapSaveObject.h"
 #include "Public/CampaignToolGameInstance.h"
 #include <Runtime/Engine/Classes/Kismet/GameplayStatics.h>
 
 ACampaignToolGameModeBase::ACampaignToolGameModeBase()
 {
-	/*TestFighter.bIsPlayerCharacter = true;
-	TestFighter.ArmorClass = 10;
-	TestFighter.Dexterity = 8;
-	TestFighter.Strength = 16;
-	TestFighter.CharacterName = "BlackBetty";
-	TestFighter.Class = EClass::Fighter;
-	TestFighter.Speed = 30.0f;
-	TestFighter.SpellBook.Add("lightningstrike",true);
-	TestFighter.SpellBook.Add("curewounds", true);
-	TestFighter.Inventory.Add("a_plate",1);
-	TestFighter.Inventory.Add("w_longsword",1);
-	TestFighter.Inventory.Add("a_leather", 1);
-	TestFighter.Inventory.Add("w_dagger", 1);
-
-	TestRogue.bIsPlayerCharacter = true;
-	TestRogue.ArmorClass = 10;
-	TestRogue.Dexterity = 20;
-	TestRogue.Strength = 8;
-	TestRogue.CharacterName = "Bames Jond";
-	TestRogue.Class = EClass::Rogue;
-	TestRogue.Speed = 25.0f;
-	TestRogue.DamageResistanceArray.Add(EDamageType::Fire);
-	TestRogue.SpellBook.Add("g_mainattack", true);
-	TestRogue.SpellBook.Add("firebreath", true);
-	TestRogue.Inventory.Add("a_leather", 1);
-	TestRogue.Inventory.Add("w_dagger", 1);
-	TestRogue.Inventory.Add("w_longsword", 1);
-	TestRogue.Inventory.Add("a_plate", 1);*/
+	EnemyController = CreateDefaultSubobject<AEnemyController>(TEXT("Enemy Controller"));
 }
 
 void ACampaignToolGameModeBase::BeginPlay()
@@ -134,8 +111,23 @@ void ACampaignToolGameModeBase::InitializeItemStorage()
 
 void ACampaignToolGameModeBase::InitializeCharacters()
 {
-	SpawnCharacter(TestFighter, 0, 0);
-	SpawnCharacter(TestRogue, 1, 0);
+	UCampaignToolGameInstance* GameInstance = Cast<UCampaignToolGameInstance>(GetGameInstance());
+	
+	if (GameInstance != nullptr)
+	{
+		for (auto& Element : GameInstance->IndexForCharacter)
+		{
+			UCharacterSaveObject* CharacterToLoad = Cast<UCharacterSaveObject>(UGameplayStatics::LoadGameFromSlot(Element.Value, 0));
+			if (CharacterToLoad != nullptr)
+			{
+				int32 row = Element.Key / Gridptr->Columns;
+				int32 column = Element.Key % Gridptr->Columns;
+				// row needs to be mirrored
+				row = (Gridptr->Rows - 1) - row;
+				SpawnCharacter(CharacterToLoad->SavedCharacterStruct,row,column);
+			}
+		}
+	}
 
 	if (Characters[0] != nullptr)
 	{
@@ -143,6 +135,32 @@ void ACampaignToolGameModeBase::InitializeCharacters()
 		character->DefaultController = UserController; 
 		UserController->Possess(Characters[0]);
 		character->BeginTurn();
+	}
+}
+
+void ACampaignToolGameModeBase::InitializeEnemies()
+{
+	UCampaignToolGameInstance* GameInstance = Cast<UCampaignToolGameInstance>(GetGameInstance());
+	
+	for (auto& Element : GameInstance->EnemySpawnMap)
+	{
+		int32 row = Element.Key / Gridptr->Columns;
+		int32 column = Element.Key % Gridptr->Columns;
+		// row needs to be mirrored
+		row = (Gridptr->Rows - 1) - row;
+		
+		FActorSpawnParameters SpawnParams;
+		FTransform TransformParams;
+		TransformParams.SetLocation(FVector((row * Gridptr->fieldSize) + (Gridptr->fieldSize / 2), (column * Gridptr->fieldSize) + (Gridptr->fieldSize / 2), 50.0f));
+		Gridptr->GridDataArray[(row * Gridptr->Columns) + column].bIsOccupied = true;
+		
+		ABaseCharacter* newCharacter = GetWorld()->SpawnActor<AAiCharacter>(Element.Value->StaticClass(), TransformParams, SpawnParams);
+		if (newCharacter != nullptr && Gridptr != nullptr && Indicatorptr != nullptr && AbilityStorageptr != nullptr && ItemStorageptr != nullptr)
+		{
+			Gridptr->GridDataArray[(row * Gridptr->Columns) + column].ActorOnTile = newCharacter;
+			//newCharacter->InitializeCharacter(character, Gridptr, Indicatorptr, AbilityStorageptr, ItemStorageptr);
+		}
+		Characters.Add(newCharacter);
 	}
 }
 
@@ -161,11 +179,11 @@ void ACampaignToolGameModeBase::SpawnCharacter(FCharacterStruct character, int32
 	{
 		newCharacter = GetWorld()->SpawnActor<APlayerCharacter>(FighterClass, TransformParams, SpawnParams);
 	}
-	else if(character.ClassLevelMap.Find(EClass::Rogue) > 0)
+	else if (character.ClassLevelMap.Find(EClass::Rogue) > 0)
 	{
 		newCharacter = GetWorld()->SpawnActor<APlayerCharacter>(RogueClass, TransformParams, SpawnParams);
 	}
-	else if(character.ClassLevelMap.Find(EClass::Wizard) > 0)
+	else if (character.ClassLevelMap.Find(EClass::Wizard) > 0)
 	{
 		newCharacter = GetWorld()->SpawnActor<APlayerCharacter>(RogueClass, TransformParams, SpawnParams);
 	}
@@ -173,7 +191,11 @@ void ACampaignToolGameModeBase::SpawnCharacter(FCharacterStruct character, int32
 	if (newCharacter != nullptr && Gridptr != nullptr && Indicatorptr != nullptr && AbilityStorageptr != nullptr && ItemStorageptr != nullptr)
 	{
 		Gridptr->GridDataArray[(x * Gridptr->Columns) + y].ActorOnTile = newCharacter;
-		newCharacter->InitializeCharacter(character,Gridptr,Indicatorptr, AbilityStorageptr, ItemStorageptr);
+		newCharacter->InitializeCharacter(character, Gridptr, Indicatorptr, AbilityStorageptr, ItemStorageptr);
 	}
+	APlayerCharacter* newPlayerCharacter = Cast<APlayerCharacter>(newCharacter);
+	newPlayerCharacter->CharacterSpringArm->SetWorldLocation(TransformParams.GetLocation());
+	
+
 	Characters.Add(newCharacter);
 }

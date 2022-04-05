@@ -60,6 +60,10 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Controller)
 		class APlayerController* UserController;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Enemy)
+		class AEnemyController* EnemyController;
+
 	
 	
 
@@ -72,6 +76,8 @@ protected:
 	void InitializeAbilityStorage();
 	void InitializeItemStorage();
 	void InitializeCharacters();
+	void InitializeEnemies();
+
 	void SpawnCharacter(FCharacterStruct character, int32 x, int32 y);
 protected:
 	FCharacterStruct TestFighter; // Redundant after character creation is implemented

@@ -26,6 +26,8 @@ public:
 		int32 Rows;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Map)
 		int32 Columns;
+	// Indecies are keys with saveslot strings being values because 
+	// A character can only occupy one index
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Characters)
-		TMap<FString, int32> CharacterToIndex;
+		TMap<int32, FString> CharacterToIndex; 
 };

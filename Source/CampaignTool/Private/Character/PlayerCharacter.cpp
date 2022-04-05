@@ -221,7 +221,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 void APlayerCharacter::HandleTestAction()
 {
-	if (CurrentSpeed >= 1 && bCanMove && !bIsAimingMovement)
+	if (CurrentSpeed >= 1 && !bIsAimingMovement)
 	{
 		if (bIsAimingAbility)
 		{
@@ -242,10 +242,12 @@ void APlayerCharacter::HandleTestAction()
 			Pathfinder->GetRouteFromIndexes(tileProp.Row, tileProp.Column);
 			Mover->RefreshSpline();
 		}
+		bCanMove = true;
 	}
 	else if (bIsAimingMovement)
 	{
 		bIsAimingMovement = false;
+		bCanMove = false;
 		CleanupPathfinding();
 		Mover->CleanupSplineMesh();
 	}

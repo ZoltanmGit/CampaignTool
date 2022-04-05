@@ -156,6 +156,7 @@ void ANewCharacterGameMode::OnFighterChoice(const FString Skill01, const FString
 	NewCharacter.HitDie = 10;
 	NewCharacter.PerLevelHitDie = 6;
 	NewCharacter.ClassLevelMap.Emplace(EClass::Fighter, 1);
+	NewCharacter.Class = EClass::Fighter;
 	//Armor: All armor, shields
 	AddArmorProficiency(EArmor::LightArmor);
 	AddArmorProficiency(EArmor::MediumArmor);
@@ -192,6 +193,7 @@ void ANewCharacterGameMode::RevertFighterChoice(const FString Skill01, const FSt
 	NewCharacter.HitDie = 0; 
 	NewCharacter.PerLevelHitDie = 0;
 	NewCharacter.ClassLevelMap.Emplace(EClass::Fighter, 0);
+	NewCharacter.Class = EClass::UndefinedClass;
 	// Saving Throws:
 	RemoveAbilitySavingThrowProficiency(EAbilityType::Strength);
 	RemoveAbilitySavingThrowProficiency(EAbilityType::Constitution);
@@ -226,7 +228,8 @@ void ANewCharacterGameMode::OnRogueChoice()
 {
 	NewCharacter.HitDie = 8;
 	NewCharacter.PerLevelHitDie = 5;
-	NewCharacter.ClassLevelMap.Emplace(EClass::Fighter, 1);
+	NewCharacter.ClassLevelMap.Emplace(EClass::Rogue, 1);
+	NewCharacter.Class = EClass::Rogue;
 	//Armor: Light Armor
 	AddArmorProficiency(EArmor::LightArmor);
 	//Weapons: Simple weapons, hand crossbows, longswords, rapiers, shortswords

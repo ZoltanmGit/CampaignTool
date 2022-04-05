@@ -71,7 +71,7 @@ public:
 	bool bIsActive;
 	bool bIsAimingAbility;
 	UFUNCTION()
-		void BeginTurn();
+		virtual void BeginTurn();
 	UFUNCTION(BlueprintCallable)
 		virtual void EndTurn();
 	UFUNCTION()
