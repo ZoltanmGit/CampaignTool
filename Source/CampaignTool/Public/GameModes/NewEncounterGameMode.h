@@ -30,4 +30,10 @@ public:
 	// A character can only occupy one index
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Characters)
 		TMap<int32, FString> CharacterToIndex; 
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Characters)
+		TMap<int32, TSubclassOf<class AAiCharacter>> EnemySpawnMap;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MetaData)
+		TArray<TSubclassOf<class AAiCharacter>> Enemies;
 };

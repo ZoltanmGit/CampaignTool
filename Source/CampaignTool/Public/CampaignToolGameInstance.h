@@ -24,6 +24,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = MetaData)
 		TMap<int32, FString> IndexForCharacter;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = MetaData)
-		TMap<int32, class AAiCharacter*> EnemySpawnMap;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MetaData)
+		TMap<int32, TSubclassOf<class AAiCharacter>> EnemySpawnMap;
 };

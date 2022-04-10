@@ -18,4 +18,7 @@ public:
 
 		virtual void BeginTurn() override;
 		virtual void EndTurn() override;
+
+		UPROPERTY(EditDefaultsOnly, BluePrintReadOnly, Category = General)
+			FString EnemyName;
 };

@@ -193,6 +193,7 @@ void ABaseCharacter::InitializeCharacter(FCharacterStruct Character, AGrid* ArgG
 			OnHealthChange();
 		}
 	}
+	
 	if (CharacterInventory != nullptr)
 	{
 		CharacterInventory->Owner = this;
@@ -205,6 +206,7 @@ void ABaseCharacter::InitializeCharacter(FCharacterStruct Character, AGrid* ArgG
 	{
 		CharacterAbilityComponent->Owner = this;
 	}
+	
 	for (auto It = CharacterAttributes->Stats.SpellBook.CreateConstIterator(); It; ++It)
 	{
 		if (It.Value() == true)
@@ -243,6 +245,104 @@ void ABaseCharacter::InitializeCharacter(FCharacterStruct Character, AGrid* ArgG
 			UE_LOG(LogTemp, Warning, TEXT("Spell not added because nullptr"));
 		}
 }
+	/** Inventory Initialization **/
+	if (CharacterInventory != nullptr)
+	{
+		CharacterInventory->Owner = this;
+		for (auto It = CharacterAttributes->Stats.Inventory.CreateConstIterator(); It; ++It)
+		{
+			UBaseItem* NewItemInstance = ArgItemStorage->GetItemPtr(It.Key());
+			if (NewItemInstance != nullptr)
+			{
+				CharacterInventory->AddItemToInventory(NewItemInstance);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("BaseCharacter - InitializeCharacter(): Item query from storage returned nullptr."));
+			}
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("BaseCharacter - InitializeCharacter(): Character inventory is not initialized."));
+	}
+}
+
+void ABaseCharacter::InitializeEnemyCharacter(AGrid* ArgGrid, AIndicatorActor* ArgIndicator, AAbilityStorage* ArgAbilityStorage, AItemStorage* ArgItemStorage)
+{
+	/** Initializing utility actors **/
+	Grid = ArgGrid;
+	Indicator = ArgIndicator;
+
+	/** Passing Grid information to pathfinder **/
+	Pathfinder->Rows = Grid->Rows;
+	Pathfinder->Columns = Grid->Columns;
+
+	/** Initializing Health and Attributes **/
+	if (CharacterAttributes != nullptr && CharacterHealth != nullptr)
+	{
+		CharacterHealth->Owner = this;
+		
+		if (CharacterHealth)
+		{
+			CharacterHealth->SetFullHealth(120);
+			CharacterHealth->SetCurrentHealth(120);
+			OnHealthChange();
+		}
+	}
+
+	if (CharacterInventory != nullptr)
+	{
+		CharacterInventory->Owner = this;
+		CharacterInventory->UpdateArmorClass();
+		OnStatChange();
+	}
+
+	/** SpellBook Initialization **/
+	if (CharacterAbilityComponent != nullptr)
+	{
+		CharacterAbilityComponent->Owner = this;
+	}
+
+	for (auto It = CharacterAttributes->Stats.SpellBook.CreateConstIterator(); It; ++It)
+	{
+		if (It.Value() == true)
+		{
+			UBaseAbility* NewAbilityInstance = ArgAbilityStorage->GetAbilityPtr(It.Key());
+			if (NewAbilityInstance != nullptr)
+			{
+				NewAbilityInstance->OwnerCharacter = this;
+				AbilityArray.Add(NewAbilityInstance);
+				UE_LOG(LogTemp, Warning, TEXT("Spell Added to Abilities"));
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Spell not added because nullptr"));
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("AbilityMapValue false"));
+		}
+	}
+
+	/** AcquiredSpells Initialization **/
+	for (auto It = CharacterAttributes->Stats.AcquiredSpells.CreateConstIterator(); It; ++It)
+	{
+		UBaseAbility* NewAbilityInstance = ArgAbilityStorage->GetAbilityPtr(It.Key());
+		if (NewAbilityInstance != nullptr)
+		{
+			NewAbilityInstance->OwnerCharacter = this;
+			NewAbilityInstance->SpellCastingAbility = It.Value();
+			AcquiredAbilityArray.Add(NewAbilityInstance);
+			UE_LOG(LogTemp, Warning, TEXT("Spell Added to AcquiredAbilities"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Spell not added because nullptr"));
+		}
+	}
+	
 	/** Inventory Initialization **/
 	if (CharacterInventory != nullptr)
 	{
@@ -306,5 +406,11 @@ void ABaseCharacter::OnAbilityAim_Implementation(const FTransform transform)
 {
 }
 void ABaseCharacter::CleanupAbilityIndicators_Implementation()
+{
+}
+void ABaseCharacter::OnAttackEnemy_Implementation(const ABaseCharacter* attackedCharacter) 
+{
+}
+void ABaseCharacter::OnBeingAttacked_Implementation(const ABaseCharacter* attackingCharacter)
 {
 }

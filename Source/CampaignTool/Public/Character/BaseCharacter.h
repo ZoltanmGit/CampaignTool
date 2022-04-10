@@ -32,7 +32,7 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Health)
 		class UHealthComponent* CharacterHealth; //Component that manages the health of the character
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Attributes)
 		class UAttributesComponent* CharacterAttributes;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Attributes)
 		class UAbilityComponent* CharacterAbilityComponent;
@@ -80,6 +80,8 @@ public:
 		void RefreshPathfinding();
 	UFUNCTION()
 		void InitializeCharacter(FCharacterStruct Character, class AGrid* ArgGrid, class AIndicatorActor* ArgIndicator, class AAbilityStorage* ArgAbilityStorage, class AItemStorage* ArgItemStorage);
+	UFUNCTION()
+		void InitializeEnemyCharacter(class AGrid* ArgGrid, class AIndicatorActor* ArgIndicator, class AAbilityStorage* ArgAbilityStorage, class AItemStorage* ArgItemStorage);
 public:
 
 	//Getters
@@ -102,4 +104,9 @@ public:
 		void OnAbilityAim(const FTransform transform);
 	UFUNCTION(BlueprintNativeEvent)
 		void CleanupAbilityIndicators();
+	UFUNCTION(BlueprintNativeEvent)
+		void OnAttackEnemy(const ABaseCharacter* attackedCharacter);
+	UFUNCTION(BlueprintNativeEvent)
+		void OnBeingAttacked(const ABaseCharacter* attackingCharacter);
+
 };

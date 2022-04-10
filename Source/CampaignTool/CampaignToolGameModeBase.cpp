@@ -41,6 +41,9 @@ void ACampaignToolGameModeBase::BeginPlay()
 
 		/** Character Init **/
 		InitializeCharacters(); //requires grid and indicator to be initialized beforehand
+
+		/** Enemy Init **/
+		InitializeEnemies();
 	}
 	else
 	{
@@ -154,7 +157,7 @@ void ACampaignToolGameModeBase::InitializeEnemies()
 		TransformParams.SetLocation(FVector((row * Gridptr->fieldSize) + (Gridptr->fieldSize / 2), (column * Gridptr->fieldSize) + (Gridptr->fieldSize / 2), 50.0f));
 		Gridptr->GridDataArray[(row * Gridptr->Columns) + column].bIsOccupied = true;
 		
-		ABaseCharacter* newCharacter = GetWorld()->SpawnActor<AAiCharacter>(Element.Value->StaticClass(), TransformParams, SpawnParams);
+		ABaseCharacter* newCharacter = GetWorld()->SpawnActor<AAiCharacter>(Element.Value, TransformParams, SpawnParams);
 		if (newCharacter != nullptr && Gridptr != nullptr && Indicatorptr != nullptr && AbilityStorageptr != nullptr && ItemStorageptr != nullptr)
 		{
 			Gridptr->GridDataArray[(row * Gridptr->Columns) + column].ActorOnTile = newCharacter;

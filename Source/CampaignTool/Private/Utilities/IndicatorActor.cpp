@@ -33,7 +33,6 @@ AIndicatorActor::AIndicatorActor()
 	AbilityIndicatorHISMC->SetMobility(EComponentMobility::Static);
 	AbilityIndicatorHISMC->bCastContactShadow = false;
 	AbilityIndicatorHISMC->CastShadow = false;
-	
 }
 
 // Called when the game starts or when spawned

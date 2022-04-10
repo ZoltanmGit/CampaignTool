@@ -6,7 +6,6 @@
 
 ANewEncounterGameMode::ANewEncounterGameMode()
 {
-
 }
 
 void ANewEncounterGameMode::BeginPlay()
