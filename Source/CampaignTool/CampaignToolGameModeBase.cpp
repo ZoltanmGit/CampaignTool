@@ -18,6 +18,8 @@
 ACampaignToolGameModeBase::ACampaignToolGameModeBase()
 {
 	EnemyController = CreateDefaultSubobject<AEnemyController>(TEXT("Enemy Controller"));
+
+	turnIndex = -1;
 }
 
 void ACampaignToolGameModeBase::BeginPlay()
@@ -44,11 +46,44 @@ void ACampaignToolGameModeBase::BeginPlay()
 
 		/** Enemy Init **/
 		InitializeEnemies();
+
+		/** Start the first Turn **/
+		NextTurn();
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("PlayerController not found!"));
+		UE_LOG(LogTemp, Warning, TEXT(""));
 	}
+}
+
+void ACampaignToolGameModeBase::NextTurn()
+{
+	if (turnIndex == Characters.Num() - 1)
+	{
+		turnIndex = 0;
+	}
+	else
+	{
+		turnIndex++;
+	}
+	
+	if (Characters[turnIndex]->bIsPlayerCharacter)
+	{
+		UserController->UnPossess();
+		APlayerCharacter* character = Cast<APlayerCharacter>(Characters[turnIndex]);
+
+		if (previousCharacter != nullptr)
+		{
+			/** Set the Rotation of the new possessed pawn to the previous one's **/
+			character->CharacterSpringArm->SetWorldRotation(previousCharacter->CharacterSpringArm->GetComponentRotation());
+			previousCharacter->CharacterSpringArm->SetWorldLocation(previousCharacter->GetActorLocation());
+		}
+
+		character->DefaultController = UserController;
+		UserController->Possess(Characters[turnIndex]);
+		previousCharacter = Cast<APlayerCharacter>(Characters[turnIndex]);
+	}
+	Characters[turnIndex]->BeginTurn();
 }
 
 void ACampaignToolGameModeBase::InitializeGrid()
@@ -132,13 +167,13 @@ void ACampaignToolGameModeBase::InitializeCharacters()
 		}
 	}
 
-	if (Characters[0] != nullptr)
+	/*if (Characters[0] != nullptr)
 	{
 		APlayerCharacter* character = Cast<APlayerCharacter>(Characters[0]);
 		character->DefaultController = UserController; 
 		UserController->Possess(Characters[0]);
 		character->BeginTurn();
-	}
+	}*/
 }
 
 void ACampaignToolGameModeBase::InitializeEnemies()
@@ -161,9 +196,12 @@ void ACampaignToolGameModeBase::InitializeEnemies()
 		if (newCharacter != nullptr && Gridptr != nullptr && Indicatorptr != nullptr && AbilityStorageptr != nullptr && ItemStorageptr != nullptr)
 		{
 			Gridptr->GridDataArray[(row * Gridptr->Columns) + column].ActorOnTile = newCharacter;
-			//newCharacter->InitializeCharacter(character, Gridptr, Indicatorptr, AbilityStorageptr, ItemStorageptr);
+			newCharacter->InitializeEnemyCharacter(Gridptr, Indicatorptr, AbilityStorageptr, ItemStorageptr);
+			newCharacter->bIsPlayerCharacter = false;
 		}
+		
 		Characters.Add(newCharacter);
+		EnemyCharacters.Add(newCharacter);
 	}
 }
 
@@ -195,10 +233,13 @@ void ACampaignToolGameModeBase::SpawnCharacter(FCharacterStruct character, int32
 	{
 		Gridptr->GridDataArray[(x * Gridptr->Columns) + y].ActorOnTile = newCharacter;
 		newCharacter->InitializeCharacter(character, Gridptr, Indicatorptr, AbilityStorageptr, ItemStorageptr);
+		newCharacter->bIsPlayerCharacter = true;
 	}
+	
 	APlayerCharacter* newPlayerCharacter = Cast<APlayerCharacter>(newCharacter);
 	newPlayerCharacter->CharacterSpringArm->SetWorldLocation(TransformParams.GetLocation());
 	
 
 	Characters.Add(newCharacter);
+	PlayerCharacters.Add(newCharacter);
 }

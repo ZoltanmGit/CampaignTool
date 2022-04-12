@@ -15,6 +15,7 @@
 #include "Utilities/IndicatorActor.h"
 #include "Utilities/DiceRoller.h"
 #include "Kismet/GameplayStatics.h"
+#include "../../CampaignToolGameModeBase.h"
 
 // Sets default values
 ABaseCharacter::ABaseCharacter()
@@ -96,6 +97,9 @@ void ABaseCharacter::EndTurn()
 	bIsActive = false;
 	CleanupPathfinding();
 	UE_LOG(LogTemp, Warning, TEXT("Turn Ended"));
+
+	ACampaignToolGameModeBase* GameMode = Cast<ACampaignToolGameModeBase>(GetWorld()->GetAuthGameMode());
+	GameMode->NextTurn();
 }
 
 void ABaseCharacter::ChangeLocation(FVector newLocation)
@@ -112,7 +116,6 @@ void ABaseCharacter::ChangeLocation(FVector newLocation)
 		{
 			float minusSpeed = *Pathfinder->ValidIndexMap.Find(index);
 			CurrentSpeed = CurrentSpeed - minusSpeed;
-			//UE_LOG(LogTemp, Warning, TEXT("Speed is %f"), CurrentSpeed);
 
 			int32 CurrentIndex;
 			FTileProperties CurrentTileData = Grid->GetTilePropertiesFromTransform(this->GetActorTransform(), CurrentIndex);
@@ -124,7 +127,7 @@ void ABaseCharacter::ChangeLocation(FVector newLocation)
 			Grid->GridDataArray[NewTileIndex].bIsOccupied = true;
 			Grid->GridDataArray[NewTileIndex].ActorOnTile = this;
 			
-			//UE_LOG(LogTemp, Warning, TEXT("Speed: %f"),(1/minusSpeed)*4);
+			
 			Mover->Timeline->SetPlayRate((1/minusSpeed)*4);
 			Mover->MoveCharacter(newLocation);
 			CharacterLocation = newLocation;
@@ -153,8 +156,7 @@ void ABaseCharacter::RefreshPathfinding()
 		Pathfinder->GetValidMovementIndexes(tile.Row, tile.Column, CurrentSpeed);
 
 
-		//PLACEHOLDER
-		for (TPair<int32, float>& Kvp : Pathfinder->ValidIndexMap) //Source: https://docs.unrealengine.com/4.27/en-US/ProductionPipelines/DevelopmentSetup/CodingStandard/#range-basedfor
+		for (TPair<int32, float>& Kvp : Pathfinder->ValidIndexMap) //Source on iteration: https://docs.unrealengine.com/4.27/en-US/ProductionPipelines/DevelopmentSetup/CodingStandard/#range-basedfor
 		{
 			float i;
 			float j;
@@ -364,6 +366,20 @@ void ABaseCharacter::InitializeEnemyCharacter(AGrid* ArgGrid, AIndicatorActor* A
 	{
 		UE_LOG(LogTemp, Warning, TEXT("BaseCharacter - InitializeCharacter(): Character inventory is not initialized."));
 	}
+}
+
+int32 ABaseCharacter::GetRow() const
+{
+	int32 Index = (((GetActorLocation().X - 50) / Grid->fieldSize) * Grid->Columns) + ((GetActorLocation().Y - 50) / Grid->fieldSize);
+	int32 row = Index / Grid->Columns;
+	return row;
+}
+
+int32 ABaseCharacter::GetColumn() const
+{
+	int32 Index = (((GetActorLocation().X - 50) / Grid->fieldSize) * Grid->Columns) + ((GetActorLocation().Y - 50) / Grid->fieldSize);
+	int32 column = Index % Grid->Columns;
+	return column;
 }
 
 UHealthComponent* ABaseCharacter::GetCharacterHealth() const

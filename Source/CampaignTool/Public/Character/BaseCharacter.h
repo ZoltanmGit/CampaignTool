@@ -70,7 +70,8 @@ public:
 	bool bCanAct;
 	bool bIsActive;
 	bool bIsAimingAbility;
-	UFUNCTION()
+	bool bIsPlayerCharacter;
+	UFUNCTION(BlueprintCallable)
 		virtual void BeginTurn();
 	UFUNCTION(BlueprintCallable)
 		virtual void EndTurn();
@@ -82,6 +83,12 @@ public:
 		void InitializeCharacter(FCharacterStruct Character, class AGrid* ArgGrid, class AIndicatorActor* ArgIndicator, class AAbilityStorage* ArgAbilityStorage, class AItemStorage* ArgItemStorage);
 	UFUNCTION()
 		void InitializeEnemyCharacter(class AGrid* ArgGrid, class AIndicatorActor* ArgIndicator, class AAbilityStorage* ArgAbilityStorage, class AItemStorage* ArgItemStorage);
+	
+	/** Utility Functions **/
+	UFUNCTION(BlueprintCallable)
+		int32 GetRow() const;
+	UFUNCTION(BlueprintCallable)
+		int32 GetColumn() const;
 public:
 
 	//Getters
@@ -108,5 +115,4 @@ public:
 		void OnAttackEnemy(const ABaseCharacter* attackedCharacter);
 	UFUNCTION(BlueprintNativeEvent)
 		void OnBeingAttacked(const ABaseCharacter* attackingCharacter);
-
 };

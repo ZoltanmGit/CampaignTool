@@ -3,6 +3,7 @@
 
 #include "MovementSystem/MoverComponent.h"
 #include "Character/BaseCharacter.h"
+#include "Character/AiCharacter.h"
 #include "MovementSystem/PathfinderComponent.h"
 #include "GridSystem/Grid.h"
 #include "Components/SplineComponent.h"
@@ -58,7 +59,18 @@ void UMoverComponent::MoveCharacter(FVector newLocation)
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Mover: Cannot move character"));
+		if (!Timeline)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Mover::MoveCharacter() - Timeline is nullptr"));
+		}
+		if (!MovementSpline)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Mover::MoveCharacter() - MovementSpline is nullptr"));
+		}
+		if (!TimelineCurve)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Mover::MoveCharacter() - TimelineCurve is nullptr"));
+		}
 	}
 }
 
@@ -72,7 +84,7 @@ void UMoverComponent::TimelineFloatReturn(float value)
 		NewLocation.Z = FMath::Clamp(NewLocation.Z, 0.0f, 200.0f);
 
 		OwnerCharacter->SetActorLocation(NewLocation);
-		UE_LOG(LogTemp, Warning, TEXT("NewLocation: %s"), *NewLocation.ToString());
+		//UE_LOG(LogTemp, Warning, TEXT("NewLocation: %s"), *NewLocation.ToString());
 	}
 }
 
@@ -86,6 +98,13 @@ void UMoverComponent::OnTimelineFinished()
 		OwnerCharacter->RefreshPathfinding();
 	}
 	MovementSpline->ClearSplinePoints();
+
+	if (!OwnerCharacter->bIsPlayerCharacter)
+	{
+		AAiCharacter* OwnerAsAiCharacter = Cast<AAiCharacter>(OwnerCharacter);
+		OwnerAsAiCharacter->ResolveAction();
+
+	}
 	UE_LOG(LogTemp, Warning, TEXT("Movement is finished."));
 }
 
@@ -97,7 +116,6 @@ void UMoverComponent::RefreshSpline()
 		{
 			MovementSpline->ClearSplinePoints();
 		}
-
 		for (int32 i = OwnerCharacter->Pathfinder->Route.Num()-1; i >= 0; i--)
 		{
 			FVector splinePointLocation;
@@ -106,11 +124,21 @@ void UMoverComponent::RefreshSpline()
 
 			splinePointLocation = FVector((Row * OwnerCharacter->Grid->fieldSize) + (OwnerCharacter->Grid->fieldSize / 2), (Column * OwnerCharacter->Grid->fieldSize) + (OwnerCharacter->Grid->fieldSize / 2), 50.0f);
 			MovementSpline->AddSplinePoint(splinePointLocation, ESplineCoordinateSpace::World, true);
+			UE_LOG(LogTemp, Warning, TEXT("Mover - RefreshSpline(): Adding SplinePoint to: %s"), *splinePointLocation.ToString());
+			
 			MovementSpline->SetSplinePointType(i, ESplinePointType::Linear); //Make tangents 0,0,0 vectors TODO
 			MovementSpline->SetTangentsAtSplinePoint(i, FVector(0, 0, 0), FVector(0, 0, 0), ESplineCoordinateSpace::Local);
 		}
-		RefreshSplineMesh();
+		if (OwnerCharacter->bIsPlayerCharacter)
+		{
+			RefreshSplineMesh();
+		}
 		//UE_LOG(LogTemp, Warning, TEXT("SplineMeshes: %i"),MovementSplineMeshArray.Num());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Mover - RefreshSpline(): nullptr received"));
+
 	}
 }
 

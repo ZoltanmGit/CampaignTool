@@ -37,6 +37,7 @@ APlayerCharacter::APlayerCharacter()
 
 	CharacterCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("CharacterCamera"));
 	CharacterCamera->SetupAttachment(CharacterSpringArm, USpringArmComponent::SocketName); //Attach the camera to the SpringArmComponent
+	CharacterCamera->SetFieldOfView(70.0f);
 
 	//Initialize values
 	TargetedCharacter = nullptr;
@@ -81,6 +82,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction("RMBAction", IE_Released, this, &APlayerCharacter::HandleRMBRelease);
 	PlayerInputComponent->BindAction("LMBAction", IE_Pressed, this, &APlayerCharacter::HandleLMBPress);
 	PlayerInputComponent->BindAction("ToogleInventory", IE_Pressed, this, &APlayerCharacter::HandleInventoryToogle);
+	PlayerInputComponent->BindAction("EndTurn", IE_Pressed, this, &APlayerCharacter::EndTurn);
 	PlayerInputComponent->BindAction<FCustomInputDelegate>("Hotkey01", IE_Pressed, this, &APlayerCharacter::HandleHotkey, 0);
 	PlayerInputComponent->BindAction<FCustomInputDelegate>("Hotkey02", IE_Pressed, this, &APlayerCharacter::HandleHotkey, 1);
 	PlayerInputComponent->BindAction<FCustomInputDelegate>("Hotkey03", IE_Pressed, this, &APlayerCharacter::HandleHotkey, 2);
@@ -251,20 +253,6 @@ void APlayerCharacter::HandleTestAction()
 		CleanupPathfinding();
 		Mover->CleanupSplineMesh();
 	}
-	UE_LOG(LogTemp, Warning, TEXT("________"));
-	int32 testValue = DiceRoller->Roll(4);
-	UE_LOG(LogTemp, Warning, TEXT("d4: %i"), testValue);
-	testValue = DiceRoller->Roll(6);
-	UE_LOG(LogTemp, Warning, TEXT("d6: %i"), testValue);
-	testValue = DiceRoller->Roll(8);
-	UE_LOG(LogTemp, Warning, TEXT("d8: %i"), testValue);
-	testValue = DiceRoller->Roll(10);
-	UE_LOG(LogTemp, Warning, TEXT("d10: %i"), testValue);
-	testValue = DiceRoller->Roll(12);
-	UE_LOG(LogTemp, Warning, TEXT("d12: %i"), testValue);
-	testValue = DiceRoller->Roll(20);
-	UE_LOG(LogTemp, Warning, TEXT("d20: %i"), testValue);
-	UE_LOG(LogTemp, Warning, TEXT("________"));
 }
 
 void APlayerCharacter::HandleHotkey(int index)
@@ -379,14 +367,14 @@ void APlayerCharacter::HandleLMBPress()
 	{
 		this->ChangeLocation(FVector(CursorLocation.X, CursorLocation.Y, 50.0f));
 	}
-	// Temporary, 
-	else if (TargetedCharacter != nullptr && !bIsAimingAbility)
+	// Temporary 
+	/*else if (TargetedCharacter != nullptr && !bIsAimingAbility)
 	{
 		if (TargetedCharacter != this)
 		{
 			ChangePossession(TargetedCharacter);
 		}
-	}
+	}*/
 	else if (bIsAimingAbility && CharacterAbilityComponent != nullptr)
 	{
 		if (CharacterAbilityComponent->AffectedTiles.Num() > 0)
@@ -440,9 +428,28 @@ void APlayerCharacter::HandleInventoryToogle()
 
 void APlayerCharacter::EndTurn()
 {
-	Super::EndTurn();
 	bIsAimingAbility = false;
 	bIsAimingMovement = false;
+	
+	Super::EndTurn();
+}
+
+void APlayerCharacter::BeginTurn()
+{
+	if (Grid && CharacterHealth && CharacterAttributes && Pathfinder && Mover && !bCanAct && !bCanMove && !bIsActive && Indicator && DefaultController)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Components are valid at BeginTurn"));
+		bCanAct = true;
+		bCanMove = true;
+		bIsActive = true;
+		CurrentSpeed = CharacterAttributes->Stats.Speed / 5.0f;
+
+		OnStatChange();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Components are valid at BeginTurn"));
+	}
 }
 
 void APlayerCharacter::OnInventoryChange_Implementation(){}

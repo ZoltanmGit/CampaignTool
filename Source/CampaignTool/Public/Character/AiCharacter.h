@@ -9,6 +9,13 @@
 /**
  * 
  */
+UENUM(BlueprintType)
+enum EEnemyBehaviour
+{
+	EUndefinedBehaviour UMETA(DisplayName = "Undefined Behaviour"),
+	EMelee UMETA(DisplayName = "EMelee")
+};
+
 UCLASS()
 class CAMPAIGNTOOL_API AAiCharacter : public ABaseCharacter
 {
@@ -16,9 +23,26 @@ class CAMPAIGNTOOL_API AAiCharacter : public ABaseCharacter
 	
 public:
 
-		virtual void BeginTurn() override;
-		virtual void EndTurn() override;
+	virtual void BeginTurn() override;
+	virtual void EndTurn() override;
 
-		UPROPERTY(EditDefaultsOnly, BluePrintReadOnly, Category = General)
-			FString EnemyName;
+	void ResolveMovement();
+
+	void ResolveAction();
+
+	UFUNCTION(BlueprintNativeEvent)
+		void OnMove();
+
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = General)
+		FString EnemyName;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Combat)
+		ABaseCharacter* EnemyFocus;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Combat)
+		TEnumAsByte<EEnemyBehaviour> Behaviour;
+
+private:
+	
+	FVector GetLocationFromIndex(int32 index);
+	int32 GetFurthestOnRouteIndex();
 };

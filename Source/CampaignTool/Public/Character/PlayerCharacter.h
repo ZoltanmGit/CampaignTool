@@ -30,6 +30,10 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	virtual void Tick(float DeltaTime) override;
+	
+	virtual void EndTurn() override;
+
+	virtual void BeginTurn() override;
 public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
@@ -79,8 +83,6 @@ protected:
 
 	/** Functions **/
 	void HandleInventoryToogle();
-	//UFUNCTION(BlueprintCallable)
-		virtual void EndTurn() override;
 
 	/** For parametered bindaction use **/
 	DECLARE_DELEGATE_OneParam(FCustomInputDelegate, const int); /** Used for hotkey input bindings **/

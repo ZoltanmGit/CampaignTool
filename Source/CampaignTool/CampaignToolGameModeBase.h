@@ -45,18 +45,25 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = ItemStorage)
 		class AItemStorage* ItemStorageptr;
 
-	/** Characters **/
+	/** TemplateClasses **/
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Characters)
 		TSubclassOf<class APlayerCharacter> FighterClass;
-	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Characters)
 		TSubclassOf<class APlayerCharacter> RogueClass;
-	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Characters)
 		TSubclassOf<class APlayerCharacter> WizardClass;
 	
+	/** Character Arrays **/
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Characters)
 		TArray<class ABaseCharacter*> Characters;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Characters)
+		TArray<class ABaseCharacter*> PlayerCharacters;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Characters)
+		TArray<class ABaseCharacter*> EnemyCharacters;
+	
+	APlayerCharacter* previousCharacter; //The purpose of this pointer is only tied to cameras being rotated when changing posession for a more seamless transition
+
+
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Controller)
 		class APlayerController* UserController;
@@ -64,12 +71,14 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Enemy)
 		class AEnemyController* EnemyController;
 
-	
-	
-
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Init)
 		int32 MapChoice;
+
+	/** Gameplay Controllers **/
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Gameplay)
+		int32 turnIndex;
+	
+	void NextTurn();
 protected:
 	void InitializeGrid();
 	void InitializeIndicator();
@@ -77,9 +86,7 @@ protected:
 	void InitializeItemStorage();
 	void InitializeCharacters();
 	void InitializeEnemies();
+	
 
 	void SpawnCharacter(FCharacterStruct character, int32 x, int32 y);
-protected:
-	FCharacterStruct TestFighter; // Redundant after character creation is implemented
-	FCharacterStruct TestRogue;   // Redundant after character creation is implemented
 };
