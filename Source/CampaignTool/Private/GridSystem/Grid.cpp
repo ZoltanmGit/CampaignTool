@@ -121,7 +121,7 @@ TerrainType AGrid::GetTerrainTypeFromInt(int value)
 		return TerrainType::Rock;
 		break;
 	case 6 :
-		return TerrainType::Grass;
+		return TerrainType::Water;
 		break;
 	default:
 		return TerrainType::Void;

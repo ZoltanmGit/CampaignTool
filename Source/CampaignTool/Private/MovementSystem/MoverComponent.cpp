@@ -97,15 +97,14 @@ void UMoverComponent::OnTimelineFinished()
 		OwnerCharacter->bCanAct = true;
 		OwnerCharacter->RefreshPathfinding();
 	}
+	
 	MovementSpline->ClearSplinePoints();
 
 	if (!OwnerCharacter->bIsPlayerCharacter)
 	{
 		AAiCharacter* OwnerAsAiCharacter = Cast<AAiCharacter>(OwnerCharacter);
 		OwnerAsAiCharacter->ResolveAction();
-
 	}
-	UE_LOG(LogTemp, Warning, TEXT("Movement is finished."));
 }
 
 void UMoverComponent::RefreshSpline()

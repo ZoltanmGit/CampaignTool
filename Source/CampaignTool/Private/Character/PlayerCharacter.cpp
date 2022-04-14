@@ -151,7 +151,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 						}
 					}
 					//DEBUG
-					/*if (GEngine)
+					if (GEngine)
 					{
 
 						GEngine->AddOnScreenDebugMessage(-1, 0.0, FColor::Emerald, FString::Printf(TEXT("Tile Index: %i"), tileIndex));
@@ -160,7 +160,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 						GEngine->AddOnScreenDebugMessage(-4, 0.0, FColor::Emerald, FString::Printf(TEXT("Tile LightType: %i"), hitTileProperties.LightType));
 						GEngine->AddOnScreenDebugMessage(-5, 0.0, FColor::Emerald, FString::Printf(TEXT("Tile Row: %i"), hitTileProperties.Row));
 						GEngine->AddOnScreenDebugMessage(-6, 0.0, FColor::Emerald, FString::Printf(TEXT("Tile Column: %i"), hitTileProperties.Column));
-					}*/
+					}
 				}
 				else //If the grid isn't targeted then we check for characters
 				{

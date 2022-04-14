@@ -30,41 +30,46 @@ void AAiCharacter::ResolveMovement()
 	int32 index;//Unused
 	FTileProperties tile = Grid->GetTilePropertiesFromTransform(this->GetActorTransform(), index);
 	Pathfinder->GetValidMovementIndexes(tile.Row, tile.Column, 100);
+
 	ACampaignToolGameModeBase* GameMode = Cast<ACampaignToolGameModeBase>(GetWorld()->GetAuthGameMode());
 
-	int32 distanceToFocusedCharacter = -1;
+	
 
 	/** Determinte Focus based on who's closest **/
+
 	int32 playerIndex;
 	FTileProperties playerTile = Grid->GetTilePropertiesFromTransform(GameMode->PlayerCharacters[0]->GetActorTransform(), playerIndex);
-	if (Pathfinder->ValidIndexMap.Contains(playerIndex+1) || Pathfinder->ValidIndexMap.Contains(playerIndex-1) || Pathfinder->ValidIndexMap.Contains(playerIndex+Grid->Columns) || Pathfinder->ValidIndexMap.Contains(playerIndex-Grid->Columns) || Pathfinder->ValidIndexMap.Contains(playerIndex + Grid->Columns+1) || Pathfinder->ValidIndexMap.Contains(playerIndex + Grid->Columns - 1) || Pathfinder->ValidIndexMap.Contains(playerIndex - Grid->Columns + 1) || Pathfinder->ValidIndexMap.Contains(playerIndex - Grid->Columns - 1))
+	
+	
+	Pathfinder->GetRouteFromIndexes(GameMode->PlayerCharacters[0]->GetRow(), GameMode->PlayerCharacters[0]->GetColumn());
+	int32 distanceToFocusedCharacter = Pathfinder->Route.Num();
+	
+	if (Pathfinder->Route.Num() > 2 && Pathfinder->Route.Num()!=0)
 	{
-		Pathfinder->GetRouteFromIndexes(GameMode->PlayerCharacters[0]->GetRow(), GameMode->PlayerCharacters[0]->GetColumn());
-		if (Pathfinder->Route.Num() > 2)
-		{
-			EnemyFocus = GameMode->PlayerCharacters[0];
-			distanceToFocusedCharacter = Pathfinder->Route.Num() - 1;
-		}
+		EnemyFocus = GameMode->PlayerCharacters[0];
+		distanceToFocusedCharacter = Pathfinder->Route.Num();
 	}
 
 	for (int32 i = 1; i < GameMode->PlayerCharacters.Num(); i++)
 	{
 		playerIndex;
 		playerTile = Grid->GetTilePropertiesFromTransform(GameMode->PlayerCharacters[i]->GetActorTransform(), playerIndex);
-		if (Pathfinder->ValidIndexMap.Contains(playerIndex + 1) || Pathfinder->ValidIndexMap.Contains(playerIndex - 1) || Pathfinder->ValidIndexMap.Contains(playerIndex + Grid->Columns) || Pathfinder->ValidIndexMap.Contains(playerIndex - Grid->Columns) || Pathfinder->ValidIndexMap.Contains(playerIndex + Grid->Columns + 1) || Pathfinder->ValidIndexMap.Contains(playerIndex + Grid->Columns - 1) || Pathfinder->ValidIndexMap.Contains(playerIndex - Grid->Columns + 1) || Pathfinder->ValidIndexMap.Contains(playerIndex - Grid->Columns - 1))
-		{
-			Pathfinder->GetRouteFromIndexes(GameMode->PlayerCharacters[i]->GetRow(), GameMode->PlayerCharacters[i]->GetColumn());
+		//if (Pathfinder->Route.Num() < 1) CHECK IF HAS NEIGHBOUR
+		//{
+		Pathfinder->GetRouteFromIndexes(GameMode->PlayerCharacters[i]->GetRow(), GameMode->PlayerCharacters[i]->GetColumn());
 
-			if (Pathfinder->Route.Num() - 1 < distanceToFocusedCharacter && Pathfinder->Route.Num() > 2)
-			{
-				EnemyFocus = GameMode->PlayerCharacters[i];
-				distanceToFocusedCharacter = Pathfinder->Route.Num() - 1;
-			}
+		if (Pathfinder->Route.Num() < distanceToFocusedCharacter && Pathfinder->Route.Num() > 2 && Pathfinder->Route.Num() != 0)
+		{
+			EnemyFocus = GameMode->PlayerCharacters[i];
+			distanceToFocusedCharacter = Pathfinder->Route.Num();
 		}
+		//}
 	}
 
-	if (EnemyFocus != nullptr)
+
+	if (EnemyFocus != nullptr && distanceToFocusedCharacter != -1)
 	{
+		Pathfinder->GetRouteFromIndexes(EnemyFocus->GetRow(), EnemyFocus->GetColumn());
 		UE_LOG(LogTemp, Warning, TEXT("'%s' is moving towards '%s' - Route length: %i"), *EnemyName, *EnemyFocus->CharacterAttributes->Stats.CharacterName, Pathfinder->Route.Num());
 		ChangeLocation(GetLocationFromIndex(GetFurthestOnRouteIndex()));
 	}
@@ -73,9 +78,6 @@ void AAiCharacter::ResolveMovement()
 		UE_LOG(LogTemp, Warning, TEXT("'%s' is not moving."), *EnemyName);
 		ResolveAction();
 	}
-	
-	
-	//OnMove();
 }
 
 void AAiCharacter::ResolveAction()
@@ -100,10 +102,12 @@ int32 AAiCharacter::GetFurthestOnRouteIndex()
 	bool bContinueLoop = true;
 	do
 	{
-		if (speed >= *Pathfinder->ValidIndexMap.Find(Pathfinder->Route[i]))
+		if (Pathfinder->ValidIndexMap.Contains(Pathfinder->Route[i]))
 		{
-			furthestIndex = Pathfinder->Route[i];
-			
+			if (speed >= *Pathfinder->ValidIndexMap.Find(Pathfinder->Route[i]))
+			{
+				furthestIndex = Pathfinder->Route[i];
+			}
 		}
 		else
 		{

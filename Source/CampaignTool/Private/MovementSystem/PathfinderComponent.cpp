@@ -148,6 +148,7 @@ void UPathfinderComponent::ProcessNodeForRoute(int32 x, int32 y)
 	TPair<int32, int32> Coord = TPair<int32, int32>();
 	Coord.Key = x;
 	Coord.Value = y;
+
 	//Left
 	if (y - 1 >= 0)
 	{
@@ -225,10 +226,14 @@ void UPathfinderComponent::ProcessNodeForRoute(int32 x, int32 y)
 			Coord.Value = y + 1;
 		}
 	}
-	Route.Add(CoordToIndex(Coord.Key, Coord.Value));
-	if (DijkstraGrid[CoordToIndex(Coord.Key, Coord.Value)].NodeValue != 0.0f)
+	
+	if (Coord.Key != x || Coord.Value != y)
 	{
-		ProcessNodeForRoute(Coord.Key, Coord.Value);
+		Route.Add(CoordToIndex(Coord.Key, Coord.Value));
+		if (DijkstraGrid[CoordToIndex(Coord.Key, Coord.Value)].NodeValue != 0.0f)
+		{
+			ProcessNodeForRoute(Coord.Key, Coord.Value);
+		}
 	}
 }
 
