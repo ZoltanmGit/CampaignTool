@@ -123,7 +123,7 @@ void UMoverComponent::RefreshSpline()
 
 			splinePointLocation = FVector((Row * OwnerCharacter->Grid->fieldSize) + (OwnerCharacter->Grid->fieldSize / 2), (Column * OwnerCharacter->Grid->fieldSize) + (OwnerCharacter->Grid->fieldSize / 2), 50.0f);
 			MovementSpline->AddSplinePoint(splinePointLocation, ESplineCoordinateSpace::World, true);
-			UE_LOG(LogTemp, Warning, TEXT("Mover - RefreshSpline(): Adding SplinePoint to: %s"), *splinePointLocation.ToString());
+			//UE_LOG(LogTemp, Warning, TEXT("Mover - RefreshSpline(): Adding SplinePoint to: %s"), *splinePointLocation.ToString());
 			
 			MovementSpline->SetSplinePointType(i, ESplinePointType::Linear); //Make tangents 0,0,0 vectors TODO
 			MovementSpline->SetTangentsAtSplinePoint(i, FVector(0, 0, 0), FVector(0, 0, 0), ESplineCoordinateSpace::Local);
@@ -136,7 +136,7 @@ void UMoverComponent::RefreshSpline()
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Mover - RefreshSpline(): nullptr received"));
+		//UE_LOG(LogTemp, Warning, TEXT("Mover - RefreshSpline(): nullptr received"));
 
 	}
 }

@@ -223,35 +223,38 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 void APlayerCharacter::HandleTestAction()
 {
-	if (CurrentSpeed >= 1 && !bIsAimingMovement)
+	if (bCanAct)
 	{
-		if (bIsAimingAbility)
+		if (CurrentSpeed >= 1 && !bIsAimingMovement)
 		{
-			bIsAimingAbility = false;
-			CharacterAbilityComponent->CancelAbility();
-		}
-		bIsAimingMovement = true;
-		RefreshPathfinding();
+			if (bIsAimingAbility)
+			{
+				bIsAimingAbility = false;
+				CharacterAbilityComponent->CancelAbility();
+			}
+			bIsAimingMovement = true;
+			RefreshPathfinding();
 
-		
-		FTransform transform;
-		transform.SetLocation(CursorLocation);
-		int32 DummyIndex;
-		FTileProperties tileProp = Grid->GetTilePropertiesFromTransform(transform,DummyIndex);
-		if (IsCursorOnValidMovementTile(tileProp.Row, tileProp.Column))
-		{
-			//UE_LOG(LogTemp, Warning, TEXT("New CursorLocation is Valid Movement"));
-			Pathfinder->GetRouteFromIndexes(tileProp.Row, tileProp.Column);
-			Mover->RefreshSpline();
+
+			FTransform transform;
+			transform.SetLocation(CursorLocation);
+			int32 DummyIndex;
+			FTileProperties tileProp = Grid->GetTilePropertiesFromTransform(transform, DummyIndex);
+			if (IsCursorOnValidMovementTile(tileProp.Row, tileProp.Column))
+			{
+				//UE_LOG(LogTemp, Warning, TEXT("New CursorLocation is Valid Movement"));
+				Pathfinder->GetRouteFromIndexes(tileProp.Row, tileProp.Column);
+				Mover->RefreshSpline();
+			}
+			bCanMove = true;
 		}
-		bCanMove = true;
-	}
-	else if (bIsAimingMovement)
-	{
-		bIsAimingMovement = false;
-		bCanMove = false;
-		CleanupPathfinding();
-		Mover->CleanupSplineMesh();
+		else if (bIsAimingMovement)
+		{
+			bIsAimingMovement = false;
+			bCanMove = false;
+			CleanupPathfinding();
+			Mover->CleanupSplineMesh();
+		}
 	}
 }
 

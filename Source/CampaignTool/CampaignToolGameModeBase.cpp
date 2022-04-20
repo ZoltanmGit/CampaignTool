@@ -4,6 +4,7 @@
 #include "CampaignToolGameModeBase.h"
 #include "GridSystem/Grid.h"
 #include "Utilities/IndicatorActor.h"
+#include "Utilities/DiceRoller.h"
 #include "AbilitySystem/AbilityStorage.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "InventorySystem/ItemStorage.h"
@@ -11,6 +12,7 @@
 #include "Character/CharacterSaveObject.h"
 #include "Character/EnemyController.h"
 #include "Character/AiCharacter.h"
+#include "Character/AttributesComponent.h"
 #include "Persistence/MapSaveObject.h"
 #include "Public/CampaignToolGameInstance.h"
 #include <Runtime/Engine/Classes/Kismet/GameplayStatics.h>
@@ -42,13 +44,19 @@ void ACampaignToolGameModeBase::BeginPlay()
 		InitializeItemStorage();
 
 		/** Character Init **/
-		InitializeCharacters(); //requires grid and indicator to be initialized beforehand
+		InitializeCharacters(); 
 
 		/** Enemy Init **/
 		InitializeEnemies();
 
+		/** Sort the Characters based on initiative **/
+		SortInitiative();
+
 		/** Start the first Turn **/
-		NextTurn();
+		//NextTurn();
+
+		Super::BeginPlay();
+
 	}
 	else
 	{
@@ -72,6 +80,7 @@ void ACampaignToolGameModeBase::NextTurn()
 		UserController->UnPossess();
 		APlayerCharacter* character = Cast<APlayerCharacter>(Characters[turnIndex]);
 
+		/** If the previous character was a player character **/
 		if (previousCharacter != nullptr)
 		{
 			/** Set the Rotation of the new possessed pawn to the previous one's **/
@@ -83,6 +92,7 @@ void ACampaignToolGameModeBase::NextTurn()
 		UserController->Possess(Characters[turnIndex]);
 		previousCharacter = Cast<APlayerCharacter>(Characters[turnIndex]);
 	}
+	
 	Characters[turnIndex]->BeginTurn();
 }
 
@@ -166,14 +176,7 @@ void ACampaignToolGameModeBase::InitializeCharacters()
 			}
 		}
 	}
-
-	/*if (Characters[0] != nullptr)
-	{
-		APlayerCharacter* character = Cast<APlayerCharacter>(Characters[0]);
-		character->DefaultController = UserController; 
-		UserController->Possess(Characters[0]);
-		character->BeginTurn();
-	}*/
+	UserController->Possess(PlayerCharacters[0]);
 }
 
 void ACampaignToolGameModeBase::InitializeEnemies()
@@ -198,10 +201,32 @@ void ACampaignToolGameModeBase::InitializeEnemies()
 			Gridptr->GridDataArray[(row * Gridptr->Columns) + column].ActorOnTile = newCharacter;
 			newCharacter->InitializeEnemyCharacter(Gridptr, Indicatorptr, AbilityStorageptr, ItemStorageptr);
 			newCharacter->bIsPlayerCharacter = false;
+			newCharacter->Initiative = newCharacter->DiceRoller->Roll(20) + newCharacter->CharacterAttributes->GetModifier(EAbilityType::Dexterity);
 		}
 		
 		Characters.Add(newCharacter);
 		EnemyCharacters.Add(newCharacter);
+	}
+}
+
+void ACampaignToolGameModeBase::SortInitiative()
+{
+	for (int32 i = 0; i < Characters.Num() - 1; i++)
+	{
+		for (int32 j = 0; j < Characters.Num() - 1 - i; j++)
+		{
+			if (Characters[j]->Initiative < Characters[j + 1]->Initiative)
+			{
+				ABaseCharacter* bucketCharacter = Characters[j];
+				Characters[j] = Characters[j + 1];
+				Characters[j + 1] = bucketCharacter;
+			}
+		}
+	}
+
+	for (int32 i = 0; i < Characters.Num(); i++)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("%s Initiative: %i"),*Characters[i]->CharacterAttributes->Stats.CharacterName, Characters[i]->Initiative);
 	}
 }
 
@@ -234,6 +259,7 @@ void ACampaignToolGameModeBase::SpawnCharacter(FCharacterStruct character, int32
 		Gridptr->GridDataArray[(x * Gridptr->Columns) + y].ActorOnTile = newCharacter;
 		newCharacter->InitializeCharacter(character, Gridptr, Indicatorptr, AbilityStorageptr, ItemStorageptr);
 		newCharacter->bIsPlayerCharacter = true;
+		newCharacter->Initiative = newCharacter->DiceRoller->Roll(20) + newCharacter->CharacterAttributes->GetModifier(EAbilityType::Dexterity);
 	}
 	
 	APlayerCharacter* newPlayerCharacter = Cast<APlayerCharacter>(newCharacter);

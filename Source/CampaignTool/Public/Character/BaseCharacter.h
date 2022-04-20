@@ -64,7 +64,8 @@ public:
 		TArray<class UBaseAbility*> AbilityArray;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Abilities)
 		TArray<class UBaseAbility*> AcquiredAbilityArray;
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Combat)
+		int32 Initiative;
 	//Properties not exposed to the editor
 	bool bCanMove;
 	bool bCanAct;

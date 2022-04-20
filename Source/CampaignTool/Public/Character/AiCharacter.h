@@ -42,7 +42,7 @@ public:
 		TEnumAsByte<EEnemyBehaviour> Behaviour;
 
 private:
-	
+	ABaseCharacter* GetNeighbor();
 	FVector GetLocationFromIndex(int32 index);
 	int32 GetFurthestOnRouteIndex();
 };

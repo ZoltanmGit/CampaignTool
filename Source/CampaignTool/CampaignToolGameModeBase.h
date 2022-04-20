@@ -77,15 +77,23 @@ public:
 	/** Gameplay Controllers **/
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Gameplay)
 		int32 turnIndex;
-	
-	void NextTurn();
+	UFUNCTION(BlueprintCallable)
+		void NextTurn();
 protected:
+		UFUNCTION(BlueprintCallable)
 	void InitializeGrid();
+		UFUNCTION(BlueprintCallable)
 	void InitializeIndicator();
+		UFUNCTION(BlueprintCallable)
 	void InitializeAbilityStorage();
+		UFUNCTION(BlueprintCallable)
 	void InitializeItemStorage();
+		UFUNCTION(BlueprintCallable)
 	void InitializeCharacters();
+		UFUNCTION(BlueprintCallable)
 	void InitializeEnemies();
+		UFUNCTION(BlueprintCallable)
+	void SortInitiative();
 	
 
 	void SpawnCharacter(FCharacterStruct character, int32 x, int32 y);

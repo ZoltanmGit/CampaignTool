@@ -43,6 +43,8 @@ ABaseCharacter::ABaseCharacter()
 	DiceRoller = CreateDefaultSubobject<UDiceRoller>(TEXT("DiceRoller"));
 	CharacterAbilityComponent = CreateDefaultSubobject<UAbilityComponent>(TEXT("AbilityComponent"));
 	Grid = nullptr; // TODO: Check if redundant
+
+	Initiative = 0;
 }
 
 // Called when the game starts or when spawned
@@ -406,6 +408,7 @@ UAttributesComponent* ABaseCharacter::GetCharacterAttributes() const
 	}
 }
 
+/** Implementations are necessary for **/
 void ABaseCharacter::OnHealthChange_Implementation()
 {
 }
