@@ -44,7 +44,7 @@ APlayerCharacter::APlayerCharacter()
 	TargetedTile = nullptr;
 	bIsRightMouseDown = false;
 	bCastMouseLineTrace = true;
-	bIsInventoryCollapsed = false;
+	bIsInventoryCollapsed = true;
 	PlayerCursorState = CursorState::OverGameWorld;
 	CharacterType = ECharacterType::C_Ally;
 
@@ -495,13 +495,13 @@ void APlayerCharacter::BeginPreparationTurn()
 	if (Grid && CharacterHealth && CharacterAttributes && Pathfinder && Mover && !bCanAct && !bCanMove && !bIsActive && Indicator && DefaultController)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Components are valid at BeginTurn"));
-		bCanAct = true;
-		bCanMove = true;
+		bCanAct = false;
+		bCanMove = false;
 		bIsActive = true;
-		bAction = true;
-		bMovementAction = true;
-		bBonusAction = true;
-		CurrentSpeed = CharacterAttributes->Stats.Speed / 5.0f;
+		bAction = false;
+		bMovementAction = false;
+		bBonusAction = false;
+		CurrentSpeed = 0;
 
 		OnStatChange();
 	}

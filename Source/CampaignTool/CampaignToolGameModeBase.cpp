@@ -288,10 +288,12 @@ void ACampaignToolGameModeBase::SpawnCharacter(FCharacterStruct character, int32
 		newCharacter->InitializeCharacter(character, Gridptr, Indicatorptr, AbilityStorageptr, ItemStorageptr);
 		newCharacter->bIsPlayerCharacter = true;
 		newCharacter->Initiative = newCharacter->DiceRoller->Roll(20) + newCharacter->CharacterAttributes->GetModifier(EAbilityType::Dexterity);
+		
 	}
 	
 	APlayerCharacter* newPlayerCharacter = Cast<APlayerCharacter>(newCharacter);
 	newPlayerCharacter->CharacterSpringArm->SetWorldLocation(TransformParams.GetLocation());
+	newPlayerCharacter->OnInventoryChange();
 	
 
 	Characters.Add(newCharacter);
