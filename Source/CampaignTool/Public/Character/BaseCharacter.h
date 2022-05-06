@@ -64,8 +64,20 @@ public:
 		TArray<class UBaseAbility*> AbilityArray;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Abilities)
 		TArray<class UBaseAbility*> AcquiredAbilityArray;
+	
+	// Action Economy
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Combat)
 		int32 Initiative;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		int32 SpellSlotNum;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		bool bAction;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		bool bMovementAction;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		bool bBonusAction;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		bool bFreeAction;
 	//Properties not exposed to the editor
 	bool bCanMove;
 	bool bCanAct;
@@ -112,6 +124,8 @@ public:
 		void OnAbilityAim(const FTransform transform);
 	UFUNCTION(BlueprintNativeEvent)
 		void CleanupAbilityIndicators();
+	UFUNCTION(BlueprintNativeEvent)
+		void OnConstructSpellBook();
 	UFUNCTION(BlueprintNativeEvent)
 		void OnAttackEnemy(const ABaseCharacter* attackedCharacter);
 	UFUNCTION(BlueprintNativeEvent)

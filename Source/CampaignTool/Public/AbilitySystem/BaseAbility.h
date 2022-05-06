@@ -65,7 +65,7 @@ enum EOriginType
 	Cursor UMETA(DisplayName = "Cursor")
 };
 
-UCLASS()
+UCLASS(Blueprintable)
 class CAMPAIGNTOOL_API UBaseAbility : public UObject
 {
 	GENERATED_BODY()
@@ -96,6 +96,8 @@ public:
 		bool bHasValue;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = AbilityDetails, meta=(EditCondition="bHasValue"))
 		float AbilityValue;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = AbilityDetails)
+		int32 Cost;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = AbilityDetails)
 		class ABaseCharacter* OwnerCharacter; // This character is only used to access the caster's Roller class in Blueprints
 

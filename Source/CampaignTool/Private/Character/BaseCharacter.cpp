@@ -54,6 +54,7 @@ void ABaseCharacter::BeginPlay()
 	
 	if (CharacterHealth != nullptr)
 	{
+		CharacterHealth->SetFullHealth(CharacterAttributes->Stats.HitDie);
 		CharacterHealth->SetCurrentHealth(CharacterHealth->GetFullHealth());
 		OnHealthChange();
 	}
@@ -192,8 +193,8 @@ void ABaseCharacter::InitializeCharacter(FCharacterStruct Character, AGrid* ArgG
 		CharacterAttributes->InitComponent(Character);
 		if (CharacterHealth)
 		{
-			CharacterHealth->SetFullHealth(120);
-			CharacterHealth->SetCurrentHealth(120);
+			CharacterHealth->SetFullHealth(CharacterAttributes->Stats.HitDie);
+			CharacterHealth->SetCurrentHealth(CharacterAttributes->Stats.HitDie);
 			OnHealthChange();
 		}
 	}
@@ -270,6 +271,7 @@ void ABaseCharacter::InitializeCharacter(FCharacterStruct Character, AGrid* ArgG
 	{
 		UE_LOG(LogTemp, Warning, TEXT("BaseCharacter - InitializeCharacter(): Character inventory is not initialized."));
 	}
+	OnConstructSpellBook();
 }
 
 void ABaseCharacter::InitializeEnemyCharacter(AGrid* ArgGrid, AIndicatorActor* ArgIndicator, AAbilityStorage* ArgAbilityStorage, AItemStorage* ArgItemStorage)
@@ -433,3 +435,4 @@ void ABaseCharacter::OnAttackEnemy_Implementation(const ABaseCharacter* attacked
 void ABaseCharacter::OnBeingAttacked_Implementation(const ABaseCharacter* attackingCharacter)
 {
 }
+void ABaseCharacter::OnConstructSpellBook_Implementation() {}

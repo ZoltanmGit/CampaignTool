@@ -181,6 +181,7 @@ void ANewCharacterGameMode::OnFighterChoice(const FString Skill01, const FString
 
 	// Add Second Wind to spells
 	NewCharacter.AcquiredSpells.Add("g_secondwind", EAbilityType::Constitution);
+	NewCharacter.AcquiredSpells.Add("g_mainattack", EAbilityType::UndefiniedAbility);
 
 	// Add some equipment
 	NewCharacter.Inventory.Add("w_longsword", 1);
@@ -222,6 +223,7 @@ void ANewCharacterGameMode::RevertFighterChoice(const FString Skill01, const FSt
 	NewCharacter.FeatArray.RemoveSingle(EFeat::FightingStyle_Dueling);
 	// Remove Second Wind spell
 	NewCharacter.AcquiredSpells.Remove("g_secondwind");
+	NewCharacter.AcquiredSpells.Remove("g_mainattack");
 }
 
 void ANewCharacterGameMode::OnRogueChoice()
@@ -244,10 +246,12 @@ void ANewCharacterGameMode::OnRogueChoice()
 	AddAbilitySavingThrowProficiency(EAbilityType::Dexterity);
 	AddAbilitySavingThrowProficiency(EAbilityType::Intelligence);
 	// Skills: Choose 4 from Acrobatics, Athletics, Deception, Insight, Intimidation, Investigation, Perception, Performance, Persuasion, Sleight of Hand, and Stealth
+	NewCharacter.AcquiredSpells.Add("g_mainattack", EAbilityType::UndefiniedAbility);
 }
 
 void ANewCharacterGameMode::RevertRogueChoice()
 {
+
 }
 
 void ANewCharacterGameMode::OnWizardChoice()
@@ -256,6 +260,7 @@ void ANewCharacterGameMode::OnWizardChoice()
 	NewCharacter.SpellSaveDC = 8;
 	//Choose 3 Cantrips
 	//Choose 6 spells
+	NewCharacter.AcquiredSpells.Add("g_mainattack", EAbilityType::UndefiniedAbility);
 }
 
 void ANewCharacterGameMode::RevertWizardChoice()

@@ -170,15 +170,33 @@ void UAbilityComponent::ExecuteAbility()
 				SingleTargetAbility->OnExecute();
 			}
 		}
+		if (SelectedAbility->CastTime == ECastTime::Action && Owner->bAction)
+		{
+			Owner->bAction = false;
+		}
+		else if (SelectedAbility->CastTime == ECastTime::BonusAction && Owner->bBonusAction)
+		{
+			Owner->bBonusAction = false;
+		}
+		Owner->SpellSlotNum = Owner->SpellSlotNum - SelectedAbility->Cost;
 		CancelAbility();
 		Owner->bIsAimingAbility = false;
-
 	}
 }
 
 void UAbilityComponent::SelectAbility(UBaseAbility* AbilityToSelect)
 {
-	SelectedAbility = AbilityToSelect;
+	if (AbilityToSelect->Cost <= Owner->SpellSlotNum)
+	{
+		if (AbilityToSelect->CastTime == ECastTime::Action && Owner->bAction)
+		{
+			SelectedAbility = AbilityToSelect;
+		}
+		else if (AbilityToSelect->CastTime == ECastTime::BonusAction && Owner->bBonusAction)
+		{
+			SelectedAbility = AbilityToSelect;
+		}
+	}
 }
 
 void UAbilityComponent::ResolveSphere(int32 x, int32 y)
@@ -356,13 +374,27 @@ void UAbilityComponent::ResolveRanged(int32 x, int32 y)
 
 void UAbilityComponent::ResolveNonAttack(int32 x, int32 y)
 {
-	if (GetRangeValue(x, y) > 0 && GetRangeValue(x, y) <= SelectedAbility->Range)
+	if (SelectedAbility->AfffectedTargetType == EAffectedTargetType::Self)
 	{
-		AffectedTiles.Add(Owner->Grid->CoordToIndex(x, y));
+		if (GetRangeValue(x, y) >= 0 && GetRangeValue(x, y) <= SelectedAbility->Range)
+		{
+			AffectedTiles.Add(Owner->Grid->CoordToIndex(x, y));
 
-		FTransform transform;
-		transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
-		Owner->OnAbilityAim(transform);
+			FTransform transform;
+			transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
+			Owner->OnAbilityAim(transform);
+		}
+	}
+	else
+	{
+		if (GetRangeValue(x, y) > 0 && GetRangeValue(x, y) <= SelectedAbility->Range)
+		{
+			AffectedTiles.Add(Owner->Grid->CoordToIndex(x, y));
+
+			FTransform transform;
+			transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
+			Owner->OnAbilityAim(transform);
+		}
 	}
 }
 

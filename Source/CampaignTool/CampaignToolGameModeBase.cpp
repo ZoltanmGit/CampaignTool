@@ -22,6 +22,7 @@ ACampaignToolGameModeBase::ACampaignToolGameModeBase()
 	EnemyController = CreateDefaultSubobject<AEnemyController>(TEXT("Enemy Controller"));
 
 	turnIndex = -1;
+	preparationTurnIndex = -1;
 }
 
 void ACampaignToolGameModeBase::BeginPlay()
@@ -53,47 +54,74 @@ void ACampaignToolGameModeBase::BeginPlay()
 		SortInitiative();
 
 		/** Start the first Turn **/
-		//NextTurn();
+		NextTurn();
 
 		Super::BeginPlay();
 
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT(""));
+		UE_LOG(LogTemp, Warning, TEXT("GameMode - BeginPlay(): UserController is nullptr"));
 	}
 }
 
 void ACampaignToolGameModeBase::NextTurn()
 {
-	if (turnIndex == Characters.Num() - 1)
+	if (preparationTurnIndex < PlayerCharacters.Num() - 1)
 	{
-		turnIndex = 0;
+		preparationTurnIndex++;
+
+		if (PlayerCharacters[preparationTurnIndex]->bIsPlayerCharacter)
+		{
+			UserController->UnPossess();
+			APlayerCharacter* character = Cast<APlayerCharacter>(PlayerCharacters[preparationTurnIndex]);
+
+			/** If the previous character was a player character **/
+			if (previousCharacter != nullptr)
+			{
+				/** Set the Rotation of the new possessed pawn to the previous one's **/
+				character->CharacterSpringArm->SetWorldRotation(previousCharacter->CharacterSpringArm->GetComponentRotation());
+				previousCharacter->CharacterSpringArm->SetWorldLocation(previousCharacter->GetActorLocation());
+			}
+
+			character->DefaultController = UserController;
+			UserController->Possess(PlayerCharacters[preparationTurnIndex]);
+			previousCharacter = Cast<APlayerCharacter>(PlayerCharacters[preparationTurnIndex]);
+		}
+
+		Cast<APlayerCharacter>(PlayerCharacters[preparationTurnIndex])->BeginPreparationTurn();
 	}
 	else
 	{
-		turnIndex++;
-	}
-	
-	if (Characters[turnIndex]->bIsPlayerCharacter)
-	{
-		UserController->UnPossess();
-		APlayerCharacter* character = Cast<APlayerCharacter>(Characters[turnIndex]);
-
-		/** If the previous character was a player character **/
-		if (previousCharacter != nullptr)
+		if (turnIndex == Characters.Num() - 1)
 		{
-			/** Set the Rotation of the new possessed pawn to the previous one's **/
-			character->CharacterSpringArm->SetWorldRotation(previousCharacter->CharacterSpringArm->GetComponentRotation());
-			previousCharacter->CharacterSpringArm->SetWorldLocation(previousCharacter->GetActorLocation());
+			turnIndex = 0;
+		}
+		else
+		{
+			turnIndex++;
 		}
 
-		character->DefaultController = UserController;
-		UserController->Possess(Characters[turnIndex]);
-		previousCharacter = Cast<APlayerCharacter>(Characters[turnIndex]);
+		if (Characters[turnIndex]->bIsPlayerCharacter)
+		{
+			UserController->UnPossess();
+			APlayerCharacter* character = Cast<APlayerCharacter>(Characters[turnIndex]);
+
+			/** If the previous character was a player character **/
+			if (previousCharacter != nullptr)
+			{
+				/** Set the Rotation of the new possessed pawn to the previous one's **/
+				character->CharacterSpringArm->SetWorldRotation(previousCharacter->CharacterSpringArm->GetComponentRotation());
+				previousCharacter->CharacterSpringArm->SetWorldLocation(previousCharacter->GetActorLocation());
+			}
+
+			character->DefaultController = UserController;
+			UserController->Possess(Characters[turnIndex]);
+			previousCharacter = Cast<APlayerCharacter>(Characters[turnIndex]);
+		}
+
+		Characters[turnIndex]->BeginTurn();
 	}
-	
-	Characters[turnIndex]->BeginTurn();
 }
 
 void ACampaignToolGameModeBase::InitializeGrid()

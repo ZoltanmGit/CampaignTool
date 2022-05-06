@@ -77,6 +77,8 @@ public:
 	/** Gameplay Controllers **/
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Gameplay)
 		int32 turnIndex;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Gameplay)
+		int32 preparationTurnIndex;
 	UFUNCTION(BlueprintCallable)
 		void NextTurn();
 protected:

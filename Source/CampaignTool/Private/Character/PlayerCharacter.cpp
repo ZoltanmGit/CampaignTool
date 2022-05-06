@@ -65,7 +65,6 @@ void APlayerCharacter::BeginPlay()
 	CharacterLocation = GetActorLocation();
 
 	Super::BeginPlay();
-	/** DEBUG DELETE LATER **/
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -221,7 +220,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 	}
 }
 
-void APlayerCharacter::HandleTestAction()
+void APlayerCharacter::ToogleMovement()
 {
 	if (bCanAct)
 	{
@@ -258,6 +257,11 @@ void APlayerCharacter::HandleTestAction()
 	}
 }
 
+void APlayerCharacter::HandleTestAction()
+{
+	
+}
+
 void APlayerCharacter::HandleHotkey(int index)
 {
 	if (AbilityArray.IsValidIndex(index))
@@ -286,6 +290,34 @@ void APlayerCharacter::HandleHotkey(int index)
 			CharacterAbilityComponent->SelectAbility(AbilityArray[index]);
 			CharacterAbilityComponent->HandleTileChange();
 		}
+	}
+}
+
+void APlayerCharacter::SelectAbility(UBaseAbility* abilityToSelect)
+{
+	if (bIsAimingMovement)
+	{
+		bIsAimingMovement = false;
+		CleanupPathfinding();
+		Mover->CleanupSplineMesh();
+	}
+	// If we're already aiming the same spell then the aim is canceled
+	if (bIsAimingAbility && CharacterAbilityComponent->SelectedAbility == abilityToSelect)
+	{
+		CharacterAbilityComponent->CancelAbility();
+		bIsAimingAbility = false;
+	}
+	else if (bIsAimingAbility && CharacterAbilityComponent->SelectedAbility != abilityToSelect)
+	{
+		CharacterAbilityComponent->CancelAbility();
+		CharacterAbilityComponent->SelectAbility(abilityToSelect);
+		CharacterAbilityComponent->HandleTileChange();
+	}
+	else if (!bIsAimingAbility)
+	{
+		bIsAimingAbility = true;
+		CharacterAbilityComponent->SelectAbility(abilityToSelect);
+		CharacterAbilityComponent->HandleTileChange();
 	}
 }
 
@@ -445,13 +477,33 @@ void APlayerCharacter::BeginTurn()
 		bCanAct = true;
 		bCanMove = true;
 		bIsActive = true;
+		bAction = true;
+		bMovementAction = true;
+		bBonusAction = true;
 		CurrentSpeed = CharacterAttributes->Stats.Speed / 5.0f;
 
 		OnStatChange();
 	}
 	else
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Components are invalid at BeginTurn"));
+	}
+}
+
+void APlayerCharacter::BeginPreparationTurn()
+{
+	if (Grid && CharacterHealth && CharacterAttributes && Pathfinder && Mover && !bCanAct && !bCanMove && !bIsActive && Indicator && DefaultController)
+	{
 		UE_LOG(LogTemp, Warning, TEXT("Components are valid at BeginTurn"));
+		bCanAct = true;
+		bCanMove = true;
+		bIsActive = true;
+		bAction = true;
+		bMovementAction = true;
+		bBonusAction = true;
+		CurrentSpeed = CharacterAttributes->Stats.Speed / 5.0f;
+
+		OnStatChange();
 	}
 }
 

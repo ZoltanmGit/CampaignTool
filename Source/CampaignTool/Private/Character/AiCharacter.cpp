@@ -11,7 +11,9 @@
 void AAiCharacter::BeginTurn()
 {
 	EnemyFocus = nullptr;
-
+	bAction = true;
+	bMovementAction = true;
+	bBonusAction = true;
 	ResolveMovement();
 }
 
@@ -88,13 +90,15 @@ void AAiCharacter::ResolveMovement()
 				}
 			}
 		}
-
-
 		if (EnemyFocus != nullptr && currentDistanceToFocusedCharacter != -1)
 		{
 			Pathfinder->GetRouteFromIndexes(EnemyFocus->GetRow(), EnemyFocus->GetColumn());
 			UE_LOG(LogTemp, Warning, TEXT("'%s' is moving towards '%s' - Route length: %f"), *EnemyName, *EnemyFocus->CharacterAttributes->Stats.CharacterName, currentDistanceToFocusedCharacter);
 			ChangeLocation(GetLocationFromIndex(GetFurthestOnRouteIndex()));
+		}
+		else
+		{
+			EndTurn();
 		}
 	}
 	else

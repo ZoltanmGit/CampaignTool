@@ -34,6 +34,8 @@ public:
 	virtual void EndTurn() override;
 
 	virtual void BeginTurn() override;
+
+	void BeginPreparationTurn();
 public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
@@ -49,25 +51,32 @@ public:
 		TEnumAsByte<CursorState> PlayerCursorState;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	bool bIsInventoryCollapsed;
+		bool bIsInventoryCollapsed;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		class ABaseCharacter* TargetedCharacter;
-protected:
-	//values
 
+	UFUNCTION(BlueprintCallable)
+		void ToogleMovement();
+
+protected:
 	FVector2D savedMousePosition; // We save the mouse location and reset it when turning
 	bool bIsRightMouseDown;
 	bool bCastMouseLineTrace;
-	bool bIsAimingMovement;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		bool bIsAimingMovement;
 
 	FHitResult UnderCursorHitResult;
+	
 	UPROPERTY()
 		class UHierarchicalInstancedStaticMeshComponent* TargetedTile;
 
 	//Test method
 	void HandleTestAction();
 	void HandleHotkey(int index);
+	UFUNCTION(BlueprintCallable)
+		void SelectAbility(class UBaseAbility* abilityToSelect);
 
 	//CameraMovement
 	void CameraForward(float value);
