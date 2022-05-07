@@ -95,7 +95,7 @@ public:
 		TMap<TEnumAsByte<ESkill>, bool> SkillMap;
 	// Abilities
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SpellCasting)
-		TMap<FString, bool> SpellBook;
+		TMap<FString, TEnumAsByte<EAbilityType>> SpellBook;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SpellCasting)
 		TMap<FString, TEnumAsByte<EAbilityType>> AcquiredSpells;
 	// Inventory

@@ -104,7 +104,7 @@ void ACampaignToolGameModeBase::NextTurn()
 
 		if (Characters[turnIndex]->bIsPlayerCharacter)
 		{
-			UserController->UnPossess();
+			//UserController->UnPossess();
 			APlayerCharacter* character = Cast<APlayerCharacter>(Characters[turnIndex]);
 
 			/** If the previous character was a player character **/
@@ -114,10 +114,13 @@ void ACampaignToolGameModeBase::NextTurn()
 				character->CharacterSpringArm->SetWorldRotation(previousCharacter->CharacterSpringArm->GetComponentRotation());
 				previousCharacter->CharacterSpringArm->SetWorldLocation(previousCharacter->GetActorLocation());
 			}
-
-			character->DefaultController = UserController;
-			UserController->Possess(Characters[turnIndex]);
-			previousCharacter = Cast<APlayerCharacter>(Characters[turnIndex]);
+			if (previousCharacter != character)
+			{
+				UserController->UnPossess();
+				character->DefaultController = UserController;
+				UserController->Possess(Characters[turnIndex]);
+				previousCharacter = Cast<APlayerCharacter>(Characters[turnIndex]);
+			}
 		}
 
 		Characters[turnIndex]->BeginTurn();
@@ -269,17 +272,17 @@ void ACampaignToolGameModeBase::SpawnCharacter(FCharacterStruct character, int32
 	
 	// Spawn Character from template
 	// There is no way for a character to gain levels in multiple classes. Therefore this solution is adequate.
-	if (character.ClassLevelMap.Find(EClass::Fighter) > 0)
+	if (character.Class == EClass::Fighter)
 	{
 		newCharacter = GetWorld()->SpawnActor<APlayerCharacter>(FighterClass, TransformParams, SpawnParams);
 	}
-	else if (character.ClassLevelMap.Find(EClass::Rogue) > 0)
+	else if (character.Class == EClass::Rogue)
 	{
 		newCharacter = GetWorld()->SpawnActor<APlayerCharacter>(RogueClass, TransformParams, SpawnParams);
 	}
-	else if (character.ClassLevelMap.Find(EClass::Wizard) > 0)
+	else if (character.Class == EClass::Wizard)
 	{
-		newCharacter = GetWorld()->SpawnActor<APlayerCharacter>(RogueClass, TransformParams, SpawnParams);
+		newCharacter = GetWorld()->SpawnActor<APlayerCharacter>(WizardClass, TransformParams, SpawnParams);
 	}
 	// Initialize Character
 	if (newCharacter != nullptr && Gridptr != nullptr && Indicatorptr != nullptr && AbilityStorageptr != nullptr && ItemStorageptr != nullptr)

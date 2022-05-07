@@ -154,7 +154,7 @@ void ANewCharacterGameMode::ResetRaceChoice()
 void ANewCharacterGameMode::OnFighterChoice(const FString Skill01, const FString Skill02, const FString FightingStyle)
 {
 	NewCharacter.HitDie = 10;
-	NewCharacter.PerLevelHitDie = 6;
+	NewCharacter.PerLevelHitDie = 10;
 	NewCharacter.ClassLevelMap.Emplace(EClass::Fighter, 1);
 	NewCharacter.Class = EClass::Fighter;
 	//Armor: All armor, shields
@@ -224,9 +224,12 @@ void ANewCharacterGameMode::RevertFighterChoice(const FString Skill01, const FSt
 	// Remove Second Wind spell
 	NewCharacter.AcquiredSpells.Remove("g_secondwind");
 	NewCharacter.AcquiredSpells.Remove("g_mainattack");
+	// Remove Items
+	NewCharacter.Inventory.Remove("w_longsword");
+	NewCharacter.Inventory.Remove("a_plate");
 }
 
-void ANewCharacterGameMode::OnRogueChoice()
+void ANewCharacterGameMode::OnRogueChoice(const FString Skill01, const FString Skill02)
 {
 	NewCharacter.HitDie = 8;
 	NewCharacter.PerLevelHitDie = 5;
@@ -254,13 +257,36 @@ void ANewCharacterGameMode::RevertRogueChoice()
 
 }
 
-void ANewCharacterGameMode::OnWizardChoice()
+void ANewCharacterGameMode::OnWizardChoice(const FString Skill01, const FString Skill02)
 {
+	NewCharacter.HitDie = 6;
+	NewCharacter.PerLevelHitDie = 6;
+	NewCharacter.ClassLevelMap.Emplace(EClass::Wizard, 1);
+	NewCharacter.Class = EClass::Wizard;
 	NewCharacter.SpellcastingAbility = EAbilityType::Intelligence;
-	NewCharacter.SpellSaveDC = 8;
-	//Choose 3 Cantrips
-	//Choose 6 spells
+	//Armor: None
+	
+	//Weapons: Daggers, Darts, Quarterstaffs, Light Crossbow
+	AddWeaponProficiency(EWeapon::Daggers);
+	AddWeaponProficiency(EWeapon::Darts);
+	AddWeaponProficiency(EWeapon::Quarterstaffs);
+	AddWeaponProficiency(EWeapon::LightCrossbows);
+	//Tools: None
+	//Saving Throws: Strength, Constitution
+	AddAbilitySavingThrowProficiency(EAbilityType::Wisdom);
+	AddAbilitySavingThrowProficiency(EAbilityType::Intelligence);
+	
+	//Skills: Choose 2
+	AddSkillProficiency(GetSkillFromString(Skill01));
+	AddSkillProficiency(GetSkillFromString(Skill02));
+
+	// Add some spells
+	NewCharacter.SpellBook.Add("fireball", EAbilityType::Intelligence);
+	NewCharacter.SpellBook.Add("lightningstrike", EAbilityType::Intelligence);
+	NewCharacter.SpellBook.Add("firebreath", EAbilityType::Intelligence);
+	NewCharacter.SpellBook.Add("curewounds", EAbilityType::Intelligence);
 	NewCharacter.AcquiredSpells.Add("g_mainattack", EAbilityType::UndefiniedAbility);
+	// Add some equipment
 }
 
 void ANewCharacterGameMode::RevertWizardChoice()

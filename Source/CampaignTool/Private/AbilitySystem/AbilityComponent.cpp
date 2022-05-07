@@ -168,6 +168,11 @@ void UAbilityComponent::ExecuteAbility()
 				SingleTargetAbility->TargetCharacter = AffectedCharacters[0];
 				SingleTargetAbility->Execute();
 				SingleTargetAbility->OnExecute();
+				UE_LOG(LogTemp, Warning, TEXT("Executed Ability"));
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Did not execute Ability"));
 			}
 		}
 		if (SelectedAbility->CastTime == ECastTime::Action && Owner->bAction)
@@ -383,6 +388,17 @@ void UAbilityComponent::ResolveNonAttack(int32 x, int32 y)
 			FTransform transform;
 			transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
 			Owner->OnAbilityAim(transform);
+
+			/** Add Characters **/
+			FTileProperties AffectedTile = Owner->Grid->GetTilePropertiesFromCoord(x, y);
+			if (AffectedTile.ActorOnTile != nullptr)
+			{
+				ABaseCharacter* CharacterToAdd = Cast<ABaseCharacter>(AffectedTile.ActorOnTile);
+				if (CharacterToAdd != nullptr)
+				{
+					AffectedCharacters.Add(CharacterToAdd);
+				}
+			}
 		}
 	}
 	else
@@ -394,6 +410,17 @@ void UAbilityComponent::ResolveNonAttack(int32 x, int32 y)
 			FTransform transform;
 			transform.SetLocation(FVector((x * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), (y * Owner->Grid->fieldSize) + (Owner->Grid->fieldSize / 2), 0.1f));
 			Owner->OnAbilityAim(transform);
+
+			/** Add Characters **/
+			FTileProperties AffectedTile = Owner->Grid->GetTilePropertiesFromCoord(x, y);
+			if (AffectedTile.ActorOnTile != nullptr)
+			{
+				ABaseCharacter* CharacterToAdd = Cast<ABaseCharacter>(AffectedTile.ActorOnTile);
+				if (CharacterToAdd != nullptr)
+				{
+					AffectedCharacters.Add(CharacterToAdd);
+				}
+			}
 		}
 	}
 }

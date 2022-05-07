@@ -214,23 +214,16 @@ void ABaseCharacter::InitializeCharacter(FCharacterStruct Character, AGrid* ArgG
 	
 	for (auto It = CharacterAttributes->Stats.SpellBook.CreateConstIterator(); It; ++It)
 	{
-		if (It.Value() == true)
+		UBaseAbility* NewAbilityInstance = ArgAbilityStorage->GetAbilityPtr(It.Key());
+		if (NewAbilityInstance != nullptr)
 		{
-			UBaseAbility* NewAbilityInstance = ArgAbilityStorage->GetAbilityPtr(It.Key());
-			if (NewAbilityInstance != nullptr)
-			{
-				NewAbilityInstance->OwnerCharacter = this;
-				AbilityArray.Add(NewAbilityInstance);
-				UE_LOG(LogTemp, Warning, TEXT("Spell Added to Abilities"));
-			}
-			else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Spell not added because nullptr"));
-			}
+			NewAbilityInstance->OwnerCharacter = this;
+			AbilityArray.Add(NewAbilityInstance);
+			UE_LOG(LogTemp, Warning, TEXT("Spell Added to Abilities"));
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("AbilityMapValue false"));
+			UE_LOG(LogTemp, Warning, TEXT("Spell not added because nullptr"));
 		}
 	}
 
@@ -312,23 +305,16 @@ void ABaseCharacter::InitializeEnemyCharacter(AGrid* ArgGrid, AIndicatorActor* A
 
 	for (auto It = CharacterAttributes->Stats.SpellBook.CreateConstIterator(); It; ++It)
 	{
-		if (It.Value() == true)
+		UBaseAbility* NewAbilityInstance = ArgAbilityStorage->GetAbilityPtr(It.Key());
+		if (NewAbilityInstance != nullptr)
 		{
-			UBaseAbility* NewAbilityInstance = ArgAbilityStorage->GetAbilityPtr(It.Key());
-			if (NewAbilityInstance != nullptr)
-			{
-				NewAbilityInstance->OwnerCharacter = this;
-				AbilityArray.Add(NewAbilityInstance);
-				UE_LOG(LogTemp, Warning, TEXT("Spell Added to Abilities"));
-			}
-			else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Spell not added because nullptr"));
-			}
+			NewAbilityInstance->OwnerCharacter = this;
+			AbilityArray.Add(NewAbilityInstance);
+			UE_LOG(LogTemp, Warning, TEXT("Spell Added to Abilities"));
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("AbilityMapValue false"));
+			UE_LOG(LogTemp, Warning, TEXT("Spell not added because nullptr"));
 		}
 	}
 

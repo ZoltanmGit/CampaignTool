@@ -45,11 +45,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void RevertFighterChoice(const FString Skill01, const FString Skill02, const FString FightingStyle);
 	UFUNCTION(BlueprintCallable)
-		void OnRogueChoice();
+		void OnRogueChoice(const FString Skill01, const FString Skill02);
 	UFUNCTION(BlueprintCallable)
 		void RevertRogueChoice();
 	UFUNCTION(BlueprintCallable)
-		void OnWizardChoice();
+		void OnWizardChoice(const FString Skill01, const FString Skill02);
 	UFUNCTION(BlueprintCallable)
 		void RevertWizardChoice();
 
