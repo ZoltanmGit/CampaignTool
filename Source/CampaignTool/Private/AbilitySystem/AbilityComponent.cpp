@@ -186,6 +186,7 @@ void UAbilityComponent::ExecuteAbility()
 		Owner->SpellSlotNum = Owner->SpellSlotNum - SelectedAbility->Cost;
 		CancelAbility();
 		Owner->bIsAimingAbility = false;
+		Owner->OnStatChange();
 	}
 }
 

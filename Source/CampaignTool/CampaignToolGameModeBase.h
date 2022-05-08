@@ -62,6 +62,7 @@ public:
 		TArray<class ABaseCharacter*> EnemyCharacters;
 	
 	APlayerCharacter* previousCharacter; //The purpose of this pointer is only tied to cameras being rotated when changing posession for a more seamless transition
+	bool bIsGameOver;
 
 
 
@@ -81,6 +82,9 @@ public:
 		int32 preparationTurnIndex;
 	UFUNCTION(BlueprintCallable)
 		void NextTurn();
+
+	void HandleCharacterDeath(class ABaseCharacter* characterThatDied);
+	void HandleEnemyDeath(class ABaseCharacter* enemyThatDied);
 protected:
 		UFUNCTION(BlueprintCallable)
 	void InitializeGrid();
@@ -96,7 +100,8 @@ protected:
 	void InitializeEnemies();
 		UFUNCTION(BlueprintCallable)
 	void SortInitiative();
-	
 
 	void SpawnCharacter(FCharacterStruct character, int32 x, int32 y);
+	bool AnyEnemyAlive();
+	bool CharacterAlive();
 };

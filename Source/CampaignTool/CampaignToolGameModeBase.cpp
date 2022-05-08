@@ -23,6 +23,7 @@ ACampaignToolGameModeBase::ACampaignToolGameModeBase()
 
 	turnIndex = -1;
 	preparationTurnIndex = -1;
+	bIsGameOver = false;
 }
 
 void ACampaignToolGameModeBase::BeginPlay()
@@ -67,63 +68,114 @@ void ACampaignToolGameModeBase::BeginPlay()
 
 void ACampaignToolGameModeBase::NextTurn()
 {
-	if (preparationTurnIndex < PlayerCharacters.Num() - 1)
+	if (!bIsGameOver)
 	{
-		preparationTurnIndex++;
-
-		if (PlayerCharacters[preparationTurnIndex]->bIsPlayerCharacter)
+		if (preparationTurnIndex < PlayerCharacters.Num() - 1)
 		{
-			UserController->UnPossess();
-			APlayerCharacter* character = Cast<APlayerCharacter>(PlayerCharacters[preparationTurnIndex]);
+			preparationTurnIndex++;
 
-			/** If the previous character was a player character **/
-			if (previousCharacter != nullptr)
+			if (PlayerCharacters[preparationTurnIndex]->bIsPlayerCharacter)
 			{
-				/** Set the Rotation of the new possessed pawn to the previous one's **/
-				character->CharacterSpringArm->SetWorldRotation(previousCharacter->CharacterSpringArm->GetComponentRotation());
-				previousCharacter->CharacterSpringArm->SetWorldLocation(previousCharacter->GetActorLocation());
+				UserController->UnPossess();
+				APlayerCharacter* character = Cast<APlayerCharacter>(PlayerCharacters[preparationTurnIndex]);
+
+				/** If the previous character was a player character **/
+				if (previousCharacter != nullptr)
+				{
+					/** Set the Rotation of the new possessed pawn to the previous one's **/
+					character->CharacterSpringArm->SetWorldRotation(previousCharacter->CharacterSpringArm->GetComponentRotation());
+					previousCharacter->CharacterSpringArm->SetWorldLocation(previousCharacter->GetActorLocation());
+				}
+
+				character->DefaultController = UserController;
+				UserController->Possess(PlayerCharacters[preparationTurnIndex]);
+				previousCharacter = Cast<APlayerCharacter>(PlayerCharacters[preparationTurnIndex]);
 			}
 
-			character->DefaultController = UserController;
-			UserController->Possess(PlayerCharacters[preparationTurnIndex]);
-			previousCharacter = Cast<APlayerCharacter>(PlayerCharacters[preparationTurnIndex]);
-		}
-
-		Cast<APlayerCharacter>(PlayerCharacters[preparationTurnIndex])->BeginPreparationTurn();
-	}
-	else
-	{
-		if (turnIndex == Characters.Num() - 1)
-		{
-			turnIndex = 0;
+			Cast<APlayerCharacter>(PlayerCharacters[preparationTurnIndex])->BeginPreparationTurn();
 		}
 		else
 		{
-			turnIndex++;
-		}
-
-		if (Characters[turnIndex]->bIsPlayerCharacter)
-		{
-			//UserController->UnPossess();
-			APlayerCharacter* character = Cast<APlayerCharacter>(Characters[turnIndex]);
-
-			/** If the previous character was a player character **/
-			if (previousCharacter != nullptr)
+			if (turnIndex == Characters.Num() - 1)
 			{
-				/** Set the Rotation of the new possessed pawn to the previous one's **/
-				character->CharacterSpringArm->SetWorldRotation(previousCharacter->CharacterSpringArm->GetComponentRotation());
-				previousCharacter->CharacterSpringArm->SetWorldLocation(previousCharacter->GetActorLocation());
+				turnIndex = 0;
 			}
-			if (previousCharacter != character)
+			else
 			{
-				UserController->UnPossess();
-				character->DefaultController = UserController;
-				UserController->Possess(Characters[turnIndex]);
-				previousCharacter = Cast<APlayerCharacter>(Characters[turnIndex]);
+				turnIndex++;
+			}
+
+			if (Characters[turnIndex]->bIsAlive)
+			{
+				if (Characters[turnIndex]->bIsPlayerCharacter)
+				{
+					//UserController->UnPossess();
+					APlayerCharacter* character = Cast<APlayerCharacter>(Characters[turnIndex]);
+
+					/** If the previous character was a player character **/
+					if (previousCharacter != nullptr)
+					{
+						/** Set the Rotation of the new possessed pawn to the previous one's **/
+						character->CharacterSpringArm->SetWorldRotation(previousCharacter->CharacterSpringArm->GetComponentRotation());
+						previousCharacter->CharacterSpringArm->SetWorldLocation(previousCharacter->GetActorLocation());
+					}
+					if (previousCharacter != character)
+					{
+						UserController->UnPossess();
+						character->DefaultController = UserController;
+						UserController->Possess(Characters[turnIndex]);
+						previousCharacter = Cast<APlayerCharacter>(Characters[turnIndex]);
+					}
+				}
+				Characters[turnIndex]->BeginTurn();
+			}
+			else
+			{
+				NextTurn();
 			}
 		}
+	}
+}
 
-		Characters[turnIndex]->BeginTurn();
+void ACampaignToolGameModeBase::HandleCharacterDeath(ABaseCharacter* characterThatDied)
+{
+	UE_LOG(LogTemp, Warning, TEXT("GameMode - HandleEnemyDeathCalled()"));
+
+	int32 Index;
+	FTileProperties tile = Gridptr->GetTilePropertiesFromTransform(characterThatDied->GetActorTransform(), Index);
+	Gridptr->GridDataArray[Index].bIsOccupied = false;
+	Gridptr->GridDataArray[Index].ActorOnTile = nullptr;
+	characterThatDied->SetActorHiddenInGame(true);
+
+	if (!CharacterAlive())
+	{
+		APlayerCharacter* character = Cast<APlayerCharacter>(PlayerCharacters[0]);
+		UserController->UnPossess();
+		character->DefaultController = UserController;
+		UserController->Possess(character);
+
+		character->OnDefeat();
+	}
+}
+
+void ACampaignToolGameModeBase::HandleEnemyDeath(ABaseCharacter* enemyThatDied)
+{
+	UE_LOG(LogTemp, Warning, TEXT("GameMode - HandleEnemyDeathCalled()"));
+	
+	int32 Index;
+	FTileProperties tile = Gridptr->GetTilePropertiesFromTransform(enemyThatDied->GetActorTransform(), Index);
+	Gridptr->GridDataArray[Index].bIsOccupied = false;
+	Gridptr->GridDataArray[Index].ActorOnTile = nullptr;
+	enemyThatDied->SetActorHiddenInGame(true);
+	
+	if (!AnyEnemyAlive())
+	{
+		APlayerCharacter* character = Cast<APlayerCharacter>(PlayerCharacters[0]);
+		UserController->UnPossess();
+		character->DefaultController = UserController;
+		UserController->Possess(character);
+		
+		character->OnVictory();
 	}
 }
 
@@ -230,8 +282,8 @@ void ACampaignToolGameModeBase::InitializeEnemies()
 		if (newCharacter != nullptr && Gridptr != nullptr && Indicatorptr != nullptr && AbilityStorageptr != nullptr && ItemStorageptr != nullptr)
 		{
 			Gridptr->GridDataArray[(row * Gridptr->Columns) + column].ActorOnTile = newCharacter;
-			newCharacter->InitializeEnemyCharacter(Gridptr, Indicatorptr, AbilityStorageptr, ItemStorageptr);
 			newCharacter->bIsPlayerCharacter = false;
+			newCharacter->InitializeEnemyCharacter(Gridptr, Indicatorptr, AbilityStorageptr, ItemStorageptr);
 			newCharacter->Initiative = newCharacter->DiceRoller->Roll(20) + newCharacter->CharacterAttributes->GetModifier(EAbilityType::Dexterity);
 		}
 		
@@ -288,8 +340,8 @@ void ACampaignToolGameModeBase::SpawnCharacter(FCharacterStruct character, int32
 	if (newCharacter != nullptr && Gridptr != nullptr && Indicatorptr != nullptr && AbilityStorageptr != nullptr && ItemStorageptr != nullptr)
 	{
 		Gridptr->GridDataArray[(x * Gridptr->Columns) + y].ActorOnTile = newCharacter;
-		newCharacter->InitializeCharacter(character, Gridptr, Indicatorptr, AbilityStorageptr, ItemStorageptr);
 		newCharacter->bIsPlayerCharacter = true;
+		newCharacter->InitializeCharacter(character, Gridptr, Indicatorptr, AbilityStorageptr, ItemStorageptr);
 		newCharacter->Initiative = newCharacter->DiceRoller->Roll(20) + newCharacter->CharacterAttributes->GetModifier(EAbilityType::Dexterity);
 		
 	}
@@ -301,4 +353,31 @@ void ACampaignToolGameModeBase::SpawnCharacter(FCharacterStruct character, int32
 
 	Characters.Add(newCharacter);
 	PlayerCharacters.Add(newCharacter);
+}
+
+bool ACampaignToolGameModeBase::AnyEnemyAlive()
+{
+	for (int32 i = 0; i < EnemyCharacters.Num(); i++)
+	{
+		if (EnemyCharacters[i]->bIsAlive == true)
+		{
+			
+			return true;
+		}
+	}
+	bIsGameOver = true;
+	return false;
+}
+
+bool ACampaignToolGameModeBase::CharacterAlive()
+{
+	for (int32 i = 0; i < PlayerCharacters.Num(); i++)
+	{
+		if (PlayerCharacters[i]->bIsAlive)
+		{
+			return true;
+		}
+	}
+	bIsGameOver = true;
+	return false;
 }

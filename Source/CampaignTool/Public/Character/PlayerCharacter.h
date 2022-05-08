@@ -87,6 +87,9 @@ protected:
 	void HandleRMBRelease();
 
 	void HandleLMBPress();
+	void HandleEscape();
+	
+
 	void ChangePossession(class ABaseCharacter* newCharacter);
 	bool IsCursorOnValidMovementTile(int32 x, int32 y);
 
@@ -94,32 +97,21 @@ protected:
 	void HandleInventoryToogle();
 
 	/** For parametered bindaction use **/
-	DECLARE_DELEGATE_OneParam(FCustomInputDelegate, const int); /** Used for hotkey input bindings **/
-
-	/**REDUNDANT FOR DEBUG PURPOSES**/
-	//Area of Effect
-	UPROPERTY(VisibleAnywhere)
-		class UBaseAoeTargetAbility* TestAbility01;
-	UPROPERTY(VisibleAnywhere)
-		class UBaseAoeTargetAbility* TestAbility02;
-	UPROPERTY(VisibleAnywhere)
-		class UBaseAoeTargetAbility* TestAbility03;
-	//Single Target
-	UPROPERTY(VisibleAnywhere)
-		class UBaseSingleTargetAbility* TestAbility04;
-	UPROPERTY(VisibleAnywhere)
-		class UBaseSingleTargetAbility* TestAbility05;
-	UPROPERTY(VisibleAnywhere)
-		class UBaseSingleTargetAbility* TestAbility06;
-	
+	DECLARE_DELEGATE_OneParam(FCustomInputDelegate, const int); /** Used for hotkey input bindings (not used in final release) **/
 	
 	UFUNCTION(BlueprintNativeEvent)
 		void OnInventoryOpen();
 	UFUNCTION(BlueprintNativeEvent)
 		void OnInventoryClose();
+	UFUNCTION(BlueprintNativeEvent)
+		void OnEscapeToogle();
 public:
 	/** Events **/
 	UFUNCTION(BlueprintNativeEvent)
 		void OnInventoryChange();
+	UFUNCTION(BlueprintNativeEvent)
+		void OnVictory();
+	UFUNCTION(BlueprintNativeEvent)
+		void OnDefeat();
 	
 };

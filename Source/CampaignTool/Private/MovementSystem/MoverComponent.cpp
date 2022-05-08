@@ -94,7 +94,7 @@ void UMoverComponent::OnTimelineFinished()
 	if (OwnerCharacter->CurrentSpeed >= 1.0f)
 	{
 		OwnerCharacter->bCanMove = true;
-		OwnerCharacter->bCanAct = true;
+		
 		OwnerCharacter->RefreshPathfinding();
 	}
 	
@@ -105,6 +105,7 @@ void UMoverComponent::OnTimelineFinished()
 		AAiCharacter* OwnerAsAiCharacter = Cast<AAiCharacter>(OwnerCharacter);
 		OwnerAsAiCharacter->ResolveAction();
 	}
+	OwnerCharacter->bCanAct = true;
 }
 
 void UMoverComponent::RefreshSpline()

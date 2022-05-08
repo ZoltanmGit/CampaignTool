@@ -80,10 +80,17 @@ public:
 		bool bFreeAction;
 	//Properties not exposed to the editor
 	bool bCanMove;
-	bool bCanAct;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		bool bCanAct;
 	bool bIsActive;
 	bool bIsAimingAbility;
 	bool bIsPlayerCharacter;
+	bool bIsAlive;
+	UFUNCTION(BlueprintCallable)
+		void OnCharacterDeath();
+	UFUNCTION(BlueprintCallable)
+		void OnEnemyDeath();
+
 	UFUNCTION(BlueprintCallable)
 		virtual void BeginTurn();
 	UFUNCTION(BlueprintCallable)

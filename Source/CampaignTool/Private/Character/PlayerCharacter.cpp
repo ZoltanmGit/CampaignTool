@@ -82,6 +82,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	PlayerInputComponent->BindAction("LMBAction", IE_Pressed, this, &APlayerCharacter::HandleLMBPress);
 	PlayerInputComponent->BindAction("ToogleInventory", IE_Pressed, this, &APlayerCharacter::HandleInventoryToogle);
 	PlayerInputComponent->BindAction("EndTurn", IE_Pressed, this, &APlayerCharacter::EndTurn);
+	PlayerInputComponent->BindAction("Escape", IE_Pressed, this, &APlayerCharacter::HandleEscape);
 	PlayerInputComponent->BindAction<FCustomInputDelegate>("Hotkey01", IE_Pressed, this, &APlayerCharacter::HandleHotkey, 0);
 	PlayerInputComponent->BindAction<FCustomInputDelegate>("Hotkey02", IE_Pressed, this, &APlayerCharacter::HandleHotkey, 1);
 	PlayerInputComponent->BindAction<FCustomInputDelegate>("Hotkey03", IE_Pressed, this, &APlayerCharacter::HandleHotkey, 2);
@@ -419,6 +420,25 @@ void APlayerCharacter::HandleLMBPress()
 	}
 }
 
+void APlayerCharacter::HandleEscape()
+{
+	if (bIsAimingMovement || bIsAimingAbility)
+	{
+		if (bIsAimingAbility)
+		{
+			CharacterAbilityComponent->CancelAbility();
+		}
+		if (bIsAimingMovement)
+		{
+			ToogleMovement();
+		}
+	}
+	else
+	{
+		OnEscapeToogle();
+	}
+}
+
 void APlayerCharacter::ChangePossession(ABaseCharacter* newCharacter)
 {
 	CleanupPathfinding(); // PLACEHOLDER
@@ -495,7 +515,7 @@ void APlayerCharacter::BeginPreparationTurn()
 	if (Grid && CharacterHealth && CharacterAttributes && Pathfinder && Mover && !bCanAct && !bCanMove && !bIsActive && Indicator && DefaultController)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Components are valid at BeginTurn"));
-		bCanAct = false;
+		bCanAct = true;
 		bCanMove = false;
 		bIsActive = true;
 		bAction = false;
@@ -510,3 +530,6 @@ void APlayerCharacter::BeginPreparationTurn()
 void APlayerCharacter::OnInventoryChange_Implementation(){}
 void APlayerCharacter::OnInventoryOpen_Implementation() {}
 void APlayerCharacter::OnInventoryClose_Implementation() {}
+void APlayerCharacter::OnEscapeToogle_Implementation() {}
+void APlayerCharacter::OnVictory_Implementation() {}
+void APlayerCharacter::OnDefeat_Implementation() {}

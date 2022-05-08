@@ -53,6 +53,19 @@ void UHealthComponent::HandleDamage(ABaseCharacter* Instigator ,float Damage, ED
 		}
 		break;
 	}
+	if (currentHealth == 0)
+	{
+		Owner->bIsAlive = false;
+		if (Owner->bIsPlayerCharacter)
+		{
+			Owner->OnCharacterDeath();
+		}
+		else
+		{
+			Owner->OnEnemyDeath();
+		}
+
+	}
 }
 
 float UHealthComponent::GetCurrentHealth()

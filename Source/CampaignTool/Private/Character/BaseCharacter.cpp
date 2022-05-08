@@ -25,7 +25,7 @@ ABaseCharacter::ABaseCharacter()
 
 	/** Character Mesh **/
 	CharacterMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CharacterMesh"));
-	CharacterMesh->SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECollisionResponse::ECR_Block);
+	//CharacterMesh->SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECollisionResponse::ECR_Block);
 	CharacterMesh->SetCollisionObjectType(ECollisionChannel::ECC_Pawn);
 	CharacterMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Overlap);
 	CharacterMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap); // So character's meshes can overlap without the collision going bonkers
@@ -56,11 +56,12 @@ void ABaseCharacter::BeginPlay()
 	{
 		CharacterHealth->SetFullHealth(CharacterAttributes->Stats.HitDie);
 		CharacterHealth->SetCurrentHealth(CharacterHealth->GetFullHealth());
-		OnHealthChange();
+		bIsAlive = true;
+		// OnHealthChange();
 	}
 	if (CharacterInventory != nullptr)
 	{
-		OnStatChange();
+		// OnStatChange();
 	}
 }
 
@@ -76,6 +77,20 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void ABaseCharacter::OnCharacterDeath()
+{
+	ACampaignToolGameModeBase* GameMode = Cast<ACampaignToolGameModeBase>(GetWorld()->GetAuthGameMode());
+	GameMode->HandleCharacterDeath(this);
+}
+
+void ABaseCharacter::OnEnemyDeath()
+{
+	UE_LOG(LogTemp, Warning, TEXT("BaseCharacter - EnemyDeathCalled()"));
+	ACampaignToolGameModeBase* GameMode = Cast<ACampaignToolGameModeBase>(GetWorld()->GetAuthGameMode());
+	
+	GameMode->HandleEnemyDeath(this);
 }
 
 void ABaseCharacter::BeginTurn()
@@ -284,8 +299,8 @@ void ABaseCharacter::InitializeEnemyCharacter(AGrid* ArgGrid, AIndicatorActor* A
 		
 		if (CharacterHealth)
 		{
-			CharacterHealth->SetFullHealth(120);
-			CharacterHealth->SetCurrentHealth(120);
+			CharacterHealth->SetFullHealth(CharacterAttributes->Stats.HitDie);
+			CharacterHealth->SetCurrentHealth(CharacterHealth->GetFullHealth());
 			OnHealthChange();
 		}
 	}
@@ -421,4 +436,6 @@ void ABaseCharacter::OnAttackEnemy_Implementation(const ABaseCharacter* attacked
 void ABaseCharacter::OnBeingAttacked_Implementation(const ABaseCharacter* attackingCharacter)
 {
 }
-void ABaseCharacter::OnConstructSpellBook_Implementation() {}
+void ABaseCharacter::OnConstructSpellBook_Implementation() 
+{
+}

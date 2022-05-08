@@ -49,7 +49,7 @@ void AAiCharacter::ResolveMovement()
 		int32 comparisonDistance = -1;
 
 		/** If there is a route to the first character **/
-		if (Pathfinder->Route.Num() > 2)
+		if (Pathfinder->Route.Num() > 2 && GameMode->PlayerCharacters[0]->bIsAlive)
 		{
 			currentDistanceToFocusedCharacter = 0;
 			// then the first character will be the movement focus
@@ -81,7 +81,7 @@ void AAiCharacter::ResolveMovement()
 				}
 
 				// Check if the route is better than the current route
-				if ( (currentDistanceToFocusedCharacter == -1 && comparisonDistance != -1) || (currentDistanceToFocusedCharacter != -1 && comparisonDistance != -1 && comparisonDistance < currentDistanceToFocusedCharacter) )
+				if ( (currentDistanceToFocusedCharacter == -1 && comparisonDistance != -1) || (currentDistanceToFocusedCharacter != -1 && comparisonDistance != -1 && comparisonDistance < currentDistanceToFocusedCharacter) && GameMode->PlayerCharacters[i]->bIsAlive)
 				{
 					// If it is then change movement focus
 					EnemyFocus = GameMode->PlayerCharacters[i];
