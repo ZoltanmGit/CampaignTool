@@ -147,13 +147,17 @@ void ACampaignToolGameModeBase::HandleCharacterDeath(ABaseCharacter* characterTh
 	Gridptr->GridDataArray[Index].ActorOnTile = nullptr;
 	characterThatDied->SetActorHiddenInGame(true);
 
-	if (!CharacterAlive())
+	if (!CharacterAlive() && !bIsGameOver)
 	{
+		bIsGameOver = true;
 		APlayerCharacter* character = Cast<APlayerCharacter>(PlayerCharacters[0]);
-		UserController->UnPossess();
-		character->DefaultController = UserController;
-		UserController->Possess(character);
-
+		if (characterThatDied != PlayerCharacters[0])
+		{
+			UserController->UnPossess();
+			character->DefaultController = UserController;
+			UserController->Possess(character);
+			
+		}
 		character->OnDefeat();
 	}
 }
@@ -168,8 +172,9 @@ void ACampaignToolGameModeBase::HandleEnemyDeath(ABaseCharacter* enemyThatDied)
 	Gridptr->GridDataArray[Index].ActorOnTile = nullptr;
 	enemyThatDied->SetActorHiddenInGame(true);
 	
-	if (!AnyEnemyAlive())
+	if (!AnyEnemyAlive() && !bIsGameOver)
 	{
+		bIsGameOver = true;
 		APlayerCharacter* character = Cast<APlayerCharacter>(PlayerCharacters[0]);
 		UserController->UnPossess();
 		character->DefaultController = UserController;
@@ -365,7 +370,6 @@ bool ACampaignToolGameModeBase::AnyEnemyAlive()
 			return true;
 		}
 	}
-	bIsGameOver = true;
 	return false;
 }
 
@@ -378,6 +382,5 @@ bool ACampaignToolGameModeBase::CharacterAlive()
 			return true;
 		}
 	}
-	bIsGameOver = true;
 	return false;
 }

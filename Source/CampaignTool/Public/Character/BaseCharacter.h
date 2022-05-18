@@ -137,4 +137,6 @@ public:
 		void OnAttackEnemy(const ABaseCharacter* attackedCharacter);
 	UFUNCTION(BlueprintNativeEvent)
 		void OnBeingAttacked(const ABaseCharacter* attackingCharacter);
+	UFUNCTION(BlueprintNativeEvent)
+		void OnDamaged();
 };

@@ -19,6 +19,7 @@ public:
 	ACampaignToolGameModeBase();
 protected:
 	virtual void BeginPlay() override;
+
 public:
 	
 	/** IndicatorActor **/

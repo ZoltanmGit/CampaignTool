@@ -57,11 +57,6 @@ void ABaseCharacter::BeginPlay()
 		CharacterHealth->SetFullHealth(CharacterAttributes->Stats.HitDie);
 		CharacterHealth->SetCurrentHealth(CharacterHealth->GetFullHealth());
 		bIsAlive = true;
-		// OnHealthChange();
-	}
-	if (CharacterInventory != nullptr)
-	{
-		// OnStatChange();
 	}
 }
 
@@ -81,6 +76,7 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 void ABaseCharacter::OnCharacterDeath()
 {
+	UE_LOG(LogTemp, Warning, TEXT("BaseCharacter - CharacterDeathCalled()"));
 	ACampaignToolGameModeBase* GameMode = Cast<ACampaignToolGameModeBase>(GetWorld()->GetAuthGameMode());
 	GameMode->HandleCharacterDeath(this);
 }
@@ -439,3 +435,4 @@ void ABaseCharacter::OnBeingAttacked_Implementation(const ABaseCharacter* attack
 void ABaseCharacter::OnConstructSpellBook_Implementation() 
 {
 }
+void ABaseCharacter::OnDamaged_Implementation(){}

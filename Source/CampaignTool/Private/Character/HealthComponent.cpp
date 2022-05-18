@@ -43,13 +43,16 @@ void UHealthComponent::HandleDamage(ABaseCharacter* Instigator ,float Damage, ED
 			{
 				//If resistant then take half damage
 				SetCurrentHealth(GetCurrentHealth() - (FMath::Floor(Damage / 2)));
+				Owner->OnDamaged();
 			}
 			else
 			{
 				//If not resistant nor immune than take the full damage | TODO: Saving throw
 				SetCurrentHealth(GetCurrentHealth() - Damage);
+				Owner->OnDamaged();
 			}
 			Owner->OnHealthChange();
+			
 		}
 		break;
 	}
@@ -64,7 +67,6 @@ void UHealthComponent::HandleDamage(ABaseCharacter* Instigator ,float Damage, ED
 		{
 			Owner->OnEnemyDeath();
 		}
-
 	}
 }
 
