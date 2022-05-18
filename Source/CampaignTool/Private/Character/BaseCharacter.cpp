@@ -204,8 +204,8 @@ void ABaseCharacter::InitializeCharacter(FCharacterStruct Character, AGrid* ArgG
 		CharacterAttributes->InitComponent(Character);
 		if (CharacterHealth)
 		{
-			CharacterHealth->SetFullHealth(CharacterAttributes->Stats.HitDie);
-			CharacterHealth->SetCurrentHealth(CharacterAttributes->Stats.HitDie);
+			CharacterHealth->SetFullHealth(CharacterAttributes->Stats.HitDie + CharacterAttributes->GetModifier(EAbilityType::Constitution));
+			CharacterHealth->SetCurrentHealth(CharacterHealth->GetFullHealth());
 			OnHealthChange();
 		}
 	}
