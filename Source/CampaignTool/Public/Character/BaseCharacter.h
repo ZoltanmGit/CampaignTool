@@ -68,7 +68,7 @@ public:
 	// Action Economy
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Combat)
 		int32 Initiative;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 		int32 SpellSlotNum;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		bool bAction;
@@ -109,6 +109,8 @@ public:
 		int32 GetRow() const;
 	UFUNCTION(BlueprintCallable)
 		int32 GetColumn() const;
+	UFUNCTION(BlueprintCallable)
+		bool MakeSave(TEnumAsByte<EAbilityType> Ability, int32 difficultyClass) const;
 public:
 
 	//Getters

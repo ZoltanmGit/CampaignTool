@@ -229,6 +229,7 @@ void ABaseCharacter::InitializeCharacter(FCharacterStruct Character, AGrid* ArgG
 		if (NewAbilityInstance != nullptr)
 		{
 			NewAbilityInstance->OwnerCharacter = this;
+			NewAbilityInstance->InternalUsageNumber = this->SpellSlotNum;
 			AbilityArray.Add(NewAbilityInstance);
 			UE_LOG(LogTemp, Warning, TEXT("Spell Added to Abilities"));
 		}
@@ -381,6 +382,21 @@ int32 ABaseCharacter::GetColumn() const
 	int32 Index = (((GetActorLocation().X - 50) / Grid->fieldSize) * Grid->Columns) + ((GetActorLocation().Y - 50) / Grid->fieldSize);
 	int32 column = Index % Grid->Columns;
 	return column;
+}
+
+bool ABaseCharacter::MakeSave(TEnumAsByte<EAbilityType> Ability, int32 difficultyClass) const
+{
+	if (DiceRoller)
+	{
+		int32 rolledDice = DiceRoller->Roll(20, 1);
+		rolledDice += CharacterAttributes->GetModifier(Ability);
+
+		if (rolledDice >= difficultyClass)
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 UHealthComponent* ABaseCharacter::GetCharacterHealth() const

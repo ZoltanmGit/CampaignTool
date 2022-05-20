@@ -285,6 +285,8 @@ void ANewCharacterGameMode::OnWizardChoice(const FString Skill01, const FString 
 	NewCharacter.SpellBook.Add("lightningstrike", EAbilityType::Intelligence);
 	NewCharacter.SpellBook.Add("firebreath", EAbilityType::Intelligence);
 	NewCharacter.SpellBook.Add("curewounds", EAbilityType::Intelligence);
+
+	NewCharacter.SpellBook.Add("g_restore", EAbilityType::UndefiniedAbility);
 	NewCharacter.AcquiredSpells.Add("g_mainattack", EAbilityType::UndefiniedAbility);
 	// Add some equipment
 }

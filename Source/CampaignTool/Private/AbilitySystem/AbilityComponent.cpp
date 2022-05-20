@@ -192,7 +192,7 @@ void UAbilityComponent::ExecuteAbility()
 
 void UAbilityComponent::SelectAbility(UBaseAbility* AbilityToSelect)
 {
-	if (AbilityToSelect->Cost <= Owner->SpellSlotNum)
+	if (AbilityToSelect->Cost <= Owner->SpellSlotNum && AbilityToSelect->InternalUsageNumber > 0)
 	{
 		if (AbilityToSelect->CastTime == ECastTime::Action && Owner->bAction)
 		{

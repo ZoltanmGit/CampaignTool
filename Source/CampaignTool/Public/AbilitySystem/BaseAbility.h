@@ -113,6 +113,8 @@ public:
 		TEnumAsByte<EAffectedTargetType> AfffectedTargetType;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = AbilityDetails)
 		TEnumAsByte<EAbilityType> SpellCastingAbility;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = AbilityDetails)
+		int32 InternalUsageNumber;
 
 	//Misc
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Particle)

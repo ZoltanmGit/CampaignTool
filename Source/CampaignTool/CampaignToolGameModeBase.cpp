@@ -340,6 +340,7 @@ void ACampaignToolGameModeBase::SpawnCharacter(FCharacterStruct character, int32
 	else if (character.Class == EClass::Wizard)
 	{
 		newCharacter = GetWorld()->SpawnActor<APlayerCharacter>(WizardClass, TransformParams, SpawnParams);
+		newCharacter->SpellSlotNum = 3;
 	}
 	// Initialize Character
 	if (newCharacter != nullptr && Gridptr != nullptr && Indicatorptr != nullptr && AbilityStorageptr != nullptr && ItemStorageptr != nullptr)
@@ -348,7 +349,6 @@ void ACampaignToolGameModeBase::SpawnCharacter(FCharacterStruct character, int32
 		newCharacter->bIsPlayerCharacter = true;
 		newCharacter->InitializeCharacter(character, Gridptr, Indicatorptr, AbilityStorageptr, ItemStorageptr);
 		newCharacter->Initiative = newCharacter->DiceRoller->Roll(20) + newCharacter->CharacterAttributes->GetModifier(EAbilityType::Dexterity);
-		
 	}
 	
 	APlayerCharacter* newPlayerCharacter = Cast<APlayerCharacter>(newCharacter);
