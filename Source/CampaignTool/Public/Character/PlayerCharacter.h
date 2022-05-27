@@ -113,5 +113,8 @@ public:
 		void OnVictory();
 	UFUNCTION(BlueprintNativeEvent)
 		void OnDefeat();
-	
+	UFUNCTION(BlueprintNativeEvent)
+		void OnEnemyTurn();
+	UFUNCTION(BlueprintNativeEvent)
+		void OnBeginTurn();
 };

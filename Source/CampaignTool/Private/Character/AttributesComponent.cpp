@@ -82,6 +82,7 @@ bool UAttributesComponent::IsProficientWith(TEnumAsByte<EWeapon> weapon)
 	{
 		return true;
 	}
+	UE_LOG(LogTemp, Warning, TEXT("Not Proficient"));
 	return false;
 }
 bool UAttributesComponent::IsProficientWith(TEnumAsByte<EArmor> armor)

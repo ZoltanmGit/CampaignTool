@@ -89,6 +89,129 @@ void ABaseCharacter::OnEnemyDeath()
 	GameMode->HandleEnemyDeath(this);
 }
 
+bool ABaseCharacter::IsFlankedByPlayers()
+{
+	/* A character is flanked if it's next two at least two player Characters */
+
+	int32 index;
+	FTileProperties tile = Grid->GetTilePropertiesFromTransform(GetActorTransform(), index);
+	int32 x = tile.Row;
+	int32 y = tile.Column;
+
+	int32 counter = 0;
+
+	if (y - 1 >= 0)
+	{
+		/** Check left **/
+		FTileProperties neighborTile = Grid->GetTilePropertiesFromCoord(x, y - 1);
+		if (neighborTile.ActorOnTile != nullptr)
+		{
+			ABaseCharacter* ActorAsCharacter = Cast<ABaseCharacter>(neighborTile.ActorOnTile);
+			if (ActorAsCharacter->bIsPlayerCharacter)
+			{
+				counter++;
+			}
+		}
+	}
+	if (y + 1 <= Grid->Columns - 1)
+	{
+		/** Check Right **/
+		FTileProperties neighborTile = Grid->GetTilePropertiesFromCoord(x, y + 1);
+		if (neighborTile.ActorOnTile != nullptr)
+		{
+			ABaseCharacter* ActorAsCharacter = Cast<ABaseCharacter>(neighborTile.ActorOnTile);
+			if (ActorAsCharacter->bIsPlayerCharacter)
+			{
+				counter++;
+			}
+		}
+	}
+	if (x + 1 <= Grid->Rows - 1)
+	{
+		/** Check Top **/
+		FTileProperties neighborTile = Grid->GetTilePropertiesFromCoord(x + 1, y);
+		if (neighborTile.ActorOnTile != nullptr)
+		{
+			ABaseCharacter* ActorAsCharacter = Cast<ABaseCharacter>(neighborTile.ActorOnTile);
+			if (ActorAsCharacter->bIsPlayerCharacter)
+			{
+				counter++;
+			}
+		}
+	}
+	if (x - 1 >= 0)
+	{
+		/** Check Bottom **/
+		FTileProperties neighborTile = Grid->GetTilePropertiesFromCoord(x - 1, y);
+		if (neighborTile.ActorOnTile != nullptr)
+		{
+			ABaseCharacter* ActorAsCharacter = Cast<ABaseCharacter>(neighborTile.ActorOnTile);
+			if (ActorAsCharacter->bIsPlayerCharacter)
+			{
+				counter++;
+			}
+		}
+	}
+	if (x + 1 <= Grid->Rows - 1 && y - 1 >= 0)
+	{
+		/** Check Top-Left **/
+		FTileProperties neighborTile = Grid->GetTilePropertiesFromCoord(x + 1, y - 1);
+		if (neighborTile.ActorOnTile != nullptr)
+		{
+			ABaseCharacter* ActorAsCharacter = Cast<ABaseCharacter>(neighborTile.ActorOnTile);
+			if (ActorAsCharacter->bIsPlayerCharacter)
+			{
+				counter++;
+			}
+		}
+	}
+	if (x + 1 <= Grid->Rows - 1 && y + 1 <= Grid->Columns - 1)
+	{
+		/** Check Top-Right **/
+		FTileProperties neighborTile = Grid->GetTilePropertiesFromCoord(x + 1, y + 1);
+		if (neighborTile.ActorOnTile != nullptr)
+		{
+			ABaseCharacter* ActorAsCharacter = Cast<ABaseCharacter>(neighborTile.ActorOnTile);
+			if (ActorAsCharacter->bIsPlayerCharacter)
+			{
+				counter++;
+			}
+		}
+	}
+	if (x - 1 >= 0 && y - 1 >= 0)
+	{
+		/** Check Bottom-Left **/
+		FTileProperties neighborTile = Grid->GetTilePropertiesFromCoord(x - 1, y - 1);
+		if (neighborTile.ActorOnTile != nullptr)
+		{
+			ABaseCharacter* ActorAsCharacter = Cast<ABaseCharacter>(neighborTile.ActorOnTile);
+			if (ActorAsCharacter->bIsPlayerCharacter)
+			{
+				counter++;
+			}
+		}
+	}
+	if (x - 1 >= 0 && y + 1 <= Grid->Columns - 1)
+	{
+		/** Check Bottom-Right **/
+		FTileProperties neighborTile = Grid->GetTilePropertiesFromCoord(x - 1, y + 1);
+		if (neighborTile.ActorOnTile != nullptr)
+		{
+			ABaseCharacter* ActorAsCharacter = Cast<ABaseCharacter>(neighborTile.ActorOnTile);
+			if (ActorAsCharacter->bIsPlayerCharacter)
+			{
+				counter++;
+			}
+		}
+	}
+	
+	if (counter >= 2)
+	{
+		return true;
+	}
+	return false;
+}
+
 void ABaseCharacter::BeginTurn()
 {
 	if (Grid && CharacterHealth && CharacterAttributes && Pathfinder && Mover && !bCanAct && !bCanMove && !bIsActive && Indicator)
@@ -204,7 +327,14 @@ void ABaseCharacter::InitializeCharacter(FCharacterStruct Character, AGrid* ArgG
 		CharacterAttributes->InitComponent(Character);
 		if (CharacterHealth)
 		{
-			CharacterHealth->SetFullHealth(CharacterAttributes->Stats.HitDie + CharacterAttributes->GetModifier(EAbilityType::Constitution));
+			if (CharacterAttributes->Stats.Race == ERace::Dwarf)
+			{
+				CharacterHealth->SetFullHealth(CharacterAttributes->Stats.HitDie + CharacterAttributes->GetModifier(EAbilityType::Constitution) + 1);
+			}
+			else
+			{
+				CharacterHealth->SetFullHealth(CharacterAttributes->Stats.HitDie + CharacterAttributes->GetModifier(EAbilityType::Constitution));
+			}
 			CharacterHealth->SetCurrentHealth(CharacterHealth->GetFullHealth());
 			OnHealthChange();
 		}

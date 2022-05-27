@@ -106,6 +106,7 @@ void UCharacterInventoryComponent::UpdateMainAttackBonus()
 		} while (!bIsProficientWithAny && loopVar < MainHandWeapon->WeaponTypeArray.Num());
 		if (bIsProficientWithAny)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("PROFICIENT: %i"), Owner->CharacterAttributes->GetProficiencyBonus());
 			mainHandAttackBonus += Owner->CharacterAttributes->GetProficiencyBonus();
 		}
 		/** If the weapon is magical, then we add that to the bonus **/

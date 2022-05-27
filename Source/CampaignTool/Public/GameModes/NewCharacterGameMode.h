@@ -32,7 +32,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void OnElfChoice();
 	UFUNCTION(BlueprintCallable)
-		void OnDragonbornChoice();
+		void OnDragonbornChoice(const FString Breath);
 	UFUNCTION(BlueprintCallable)
 		void OnDwarfChoice();
 	UFUNCTION(BlueprintCallable)

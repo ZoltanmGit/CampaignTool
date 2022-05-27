@@ -127,6 +127,11 @@ void ACampaignToolGameModeBase::NextTurn()
 						previousCharacter = Cast<APlayerCharacter>(Characters[turnIndex]);
 					}
 				}
+				else
+				{
+					previousCharacter->OnEnemyTurn();
+				}
+
 				Characters[turnIndex]->BeginTurn();
 			}
 			else

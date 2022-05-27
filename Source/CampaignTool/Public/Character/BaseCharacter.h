@@ -90,6 +90,8 @@ public:
 		void OnCharacterDeath();
 	UFUNCTION(BlueprintCallable)
 		void OnEnemyDeath();
+	UFUNCTION(BlueprintCallable)
+		bool IsFlankedByPlayers();
 
 	UFUNCTION(BlueprintCallable)
 		virtual void BeginTurn();

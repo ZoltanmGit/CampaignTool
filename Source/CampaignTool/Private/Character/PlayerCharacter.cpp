@@ -503,6 +503,7 @@ void APlayerCharacter::BeginTurn()
 		CurrentSpeed = CharacterAttributes->Stats.Speed / 5.0f;
 
 		OnStatChange();
+		OnBeginTurn();
 	}
 	else
 	{
@@ -533,3 +534,5 @@ void APlayerCharacter::OnInventoryClose_Implementation() {}
 void APlayerCharacter::OnEscapeToogle_Implementation() {}
 void APlayerCharacter::OnVictory_Implementation() {}
 void APlayerCharacter::OnDefeat_Implementation() {}
+void APlayerCharacter::OnEnemyTurn_Implementation() {}
+void APlayerCharacter::OnBeginTurn_Implementation() {}

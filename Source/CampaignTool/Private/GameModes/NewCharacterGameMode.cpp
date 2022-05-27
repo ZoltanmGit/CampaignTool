@@ -12,6 +12,7 @@ ANewCharacterGameMode::ANewCharacterGameMode()
 	NewCharacter.ClassLevelMap.Add(EClass::Wizard, 0);
 	NewCharacter.ClassLevelMap.Add(EClass::UndefinedClass, 0);
 	NewCharacter.ArmorClass = 10;
+	NewCharacter.ProficiencyBonus = 2;
 
 	{
 		// Painful init
@@ -79,7 +80,7 @@ void ANewCharacterGameMode::OnElfChoice()
 	NewCharacter.LanguageArray.Add(ELanguage::Elvish);
 }
 
-void ANewCharacterGameMode::OnDragonbornChoice()
+void ANewCharacterGameMode::OnDragonbornChoice(const FString Breath)
 {
 	//General
 	NewCharacter.Race = ERace::Dragonborn;
@@ -89,12 +90,28 @@ void ANewCharacterGameMode::OnDragonbornChoice()
 	AbilityBonusArray[5] = 1; //+1 to Charisma
 	NewCharacter.LanguageArray.Add(ELanguage::Common);
 	//ADD BREATH WEAPON
+	if (Breath == "Black")
+	{
+		NewCharacter.AcquiredSpells.Add("g_acidbreath", EAbilityType::UndefiniedAbility);
+	}
+	else if (Breath == "Bronze")
+	{
+		NewCharacter.AcquiredSpells.Add("g_lightningbreath", EAbilityType::UndefiniedAbility);
+	}
+	else if (Breath == "Gold")
+	{
+		NewCharacter.AcquiredSpells.Add("g_firebreath", EAbilityType::UndefiniedAbility);
+	}
+	else if (Breath == "Silver")
+	{
+		NewCharacter.AcquiredSpells.Add("g_coldbreath", EAbilityType::UndefiniedAbility);
+	}
 }
 
 void ANewCharacterGameMode::OnDwarfChoice()
 {
 	NewCharacter.Race = ERace::Dwarf;
-	NewCharacter.Speed = 25.0f; // TODO: Not Reduced by Heavy Armor 
+	NewCharacter.Speed = 25.0f; 
 	NewCharacter.Size = ESize::Medium;
 	AbilityBonusArray[2] = 2; // +2 to Constitution
 	AbilityBonusArray[4] = 1; // +1 to Wisdom
@@ -131,6 +148,8 @@ void ANewCharacterGameMode::OnTieflingChoice()
 	//Language
 	NewCharacter.LanguageArray.Add(ELanguage::Common);
 	NewCharacter.LanguageArray.Add(ELanguage::Infernal);
+
+	NewCharacter.AcquiredSpells.Add("g_tieflingspell", EAbilityType::UndefiniedAbility);
 }
 
 void ANewCharacterGameMode::ResetRaceChoice()
@@ -149,6 +168,8 @@ void ANewCharacterGameMode::ResetRaceChoice()
 	NewCharacter.ProficiencyWeaponArray.Empty();
 	NewCharacter.ProficiencyArmorArray.Empty();
 	NewCharacter.ProficiencyToolArray.Empty();
+	NewCharacter.AcquiredSpells.Empty();
+	NewCharacter.SpellBook.Empty();
 }
 
 void ANewCharacterGameMode::OnFighterChoice(const FString Skill01, const FString Skill02, const FString FightingStyle)
@@ -245,16 +266,41 @@ void ANewCharacterGameMode::OnRogueChoice(const FString Skill01, const FString S
 	AddWeaponProficiency(EWeapon::SimpleWeapons);
 	//Tools: Thieves' tools
 	AddToolProficiency(ETool::ThievesTools);
+
+	AddSkillProficiency(GetSkillFromString(Skill01));
+	AddSkillProficiency(GetSkillFromString(Skill02));
+
 	//Saving Throws: Dexterity, Intelligence
 	AddAbilitySavingThrowProficiency(EAbilityType::Dexterity);
 	AddAbilitySavingThrowProficiency(EAbilityType::Intelligence);
 	// Skills: Choose 4 from Acrobatics, Athletics, Deception, Insight, Intimidation, Investigation, Perception, Performance, Persuasion, Sleight of Hand, and Stealth
 	NewCharacter.AcquiredSpells.Add("g_mainattack", EAbilityType::UndefiniedAbility);
+
+	NewCharacter.Inventory.Add("w_dagger", 1);
+	NewCharacter.Inventory.Add("a_leather", 1);
 }
 
 void ANewCharacterGameMode::RevertRogueChoice()
 {
+	NewCharacter.HitDie = 0;
+	NewCharacter.PerLevelHitDie = 0;
+	NewCharacter.ClassLevelMap.Emplace(EClass::Fighter, 0);
+	NewCharacter.Class = EClass::UndefinedClass;
 
+	RemoveWeaponProficiency(EWeapon::Shortswords);
+	RemoveWeaponProficiency(EWeapon::HandCrossbows);
+	RemoveWeaponProficiency(EWeapon::Longswords);
+	RemoveWeaponProficiency(EWeapon::Rapiers);
+	RemoveWeaponProficiency(EWeapon::SimpleWeapons);
+
+	RevertSkillMap();
+	if (NewCharacter.Race == ERace::Elf)
+	{
+		AddSkillProficiency(ESkill::Perception);
+	}
+
+	NewCharacter.ProficiencyToolArray.Remove(ETool::ThievesTools);
+	NewCharacter.AcquiredSpells.Remove("g_mainattack");
 }
 
 void ANewCharacterGameMode::OnWizardChoice(const FString Skill01, const FString Skill02)
@@ -286,13 +332,33 @@ void ANewCharacterGameMode::OnWizardChoice(const FString Skill01, const FString 
 	NewCharacter.SpellBook.Add("firebreath", EAbilityType::Intelligence);
 	NewCharacter.SpellBook.Add("curewounds", EAbilityType::Intelligence);
 
-	NewCharacter.SpellBook.Add("g_restore", EAbilityType::UndefiniedAbility);
+	NewCharacter.AcquiredSpells.Add("g_restore", EAbilityType::UndefiniedAbility);
 	NewCharacter.AcquiredSpells.Add("g_mainattack", EAbilityType::UndefiniedAbility);
 	// Add some equipment
 }
 
 void ANewCharacterGameMode::RevertWizardChoice()
 {
+	NewCharacter.HitDie = 0;
+	NewCharacter.PerLevelHitDie = 0;
+	NewCharacter.ClassLevelMap.Emplace(EClass::Fighter, 0);
+	NewCharacter.Class = EClass::UndefinedClass;
+
+	RemoveWeaponProficiency(EWeapon::Daggers);
+	RemoveWeaponProficiency(EWeapon::Darts);
+	RemoveWeaponProficiency(EWeapon::Quarterstaffs);
+	RemoveWeaponProficiency(EWeapon::LightCrossbows);
+
+	RemoveAbilitySavingThrowProficiency(EAbilityType::Wisdom);
+	RemoveAbilitySavingThrowProficiency(EAbilityType::Intelligence);
+
+	NewCharacter.SpellBook.Remove("fireball");
+	NewCharacter.SpellBook.Remove("lightningstrike");
+	NewCharacter.SpellBook.Remove("firebreath");
+	NewCharacter.SpellBook.Remove("curewounds");
+	
+	NewCharacter.AcquiredSpells.Remove("g_restore");
+	NewCharacter.AcquiredSpells.Remove("g_mainattack");
 }
 
 void ANewCharacterGameMode::AddLanguage(const TEnumAsByte<ELanguage> LanguageToAdd)
