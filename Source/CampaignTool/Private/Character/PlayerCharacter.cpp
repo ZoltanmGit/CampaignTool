@@ -98,7 +98,6 @@ void APlayerCharacter::Tick(float DeltaTime)
 	//Line traces and Selection
 	if ((DefaultController != nullptr && bCastMouseLineTrace && PlayerCursorState == CursorState::OverGameWorld && bIsActive))
 	{
-
 		if (DefaultController->GetHitResultUnderCursorByChannel(UEngineTypes::ConvertToTraceType(ECC_GameTraceChannel1), true, UnderCursorHitResult))
 		{
 			if (UnderCursorHitResult.IsValidBlockingHit())
@@ -483,6 +482,14 @@ void APlayerCharacter::HandleInventoryToogle()
 
 void APlayerCharacter::EndTurn()
 {
+	if (bIsAimingMovement)
+	{
+		ToogleMovement();
+	}
+	if (bIsAimingAbility)
+	{
+		CharacterAbilityComponent->CancelAbility();
+	}
 	bIsAimingAbility = false;
 	bIsAimingMovement = false;
 	

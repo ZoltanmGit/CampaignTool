@@ -78,6 +78,8 @@ void ANewCharacterGameMode::OnElfChoice()
 	//Language
 	NewCharacter.LanguageArray.Add(ELanguage::Common);
 	NewCharacter.LanguageArray.Add(ELanguage::Elvish);
+
+	NewCharacter.AcquiredSpells.Add("g_elfspell", EAbilityType::UndefiniedAbility);
 }
 
 void ANewCharacterGameMode::OnDragonbornChoice(const FString Breath)
@@ -168,6 +170,9 @@ void ANewCharacterGameMode::ResetRaceChoice()
 	NewCharacter.ProficiencyWeaponArray.Empty();
 	NewCharacter.ProficiencyArmorArray.Empty();
 	NewCharacter.ProficiencyToolArray.Empty();
+	NewCharacter.AcquiredSpells.Empty();
+	NewCharacter.SpellBook.Empty();
+
 	NewCharacter.AcquiredSpells.Empty();
 	NewCharacter.SpellBook.Empty();
 }
